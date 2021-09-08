@@ -16,10 +16,7 @@ namespace Regnbuelinja.DAL
 
         public async Task<int> LagreBestilling()
         {
-
-        }
-        {
-
+            return 0;
         }
     }
 }
