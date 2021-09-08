@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Regnbuelinja.DAL
 {
-    public class Bestilling
+    public class Bestillinger
     {
         public int BeId { get; set; }
-        public virtual Kunde Kunde { get; set; }
+        //public virtual Kunde Kunde { get; set; }
         public double TotalPris { get; set; }
         public virtual List<Billett> Billetter { get; set; }
     } 
@@ -45,22 +45,23 @@ namespace Regnbuelinja.DAL
         public double pris { get; set; }
         
     }
-    public class Kunde
-    {
-        [Key]
-        public int KId { get; set; }
-        public string Fornavn { get; set; }
-        public string Etternavn { get; set; }
-        public string Adresse { get; set; }
-        public virtual Poststeder Poststed { get; set; }
-    }
+    //public class Kunde
+    //{
+    //    [Key]
+    //    public int KId { get; set; }
+    //    public string Fornavn { get; set; }
+    //    public string Etternavn { get; set; }
+    //    public string Adresse { get; set; }
+    //    public virtual Poststeder poststed { get; set; }
+    //}
 
-    public class Poststeder
-    {
-        [Key]
-        public string Postnr { get; set; }
-        public string Poststed { get; set; }
-    }
+  
+    //public class Poststeder
+    //{
+    //    [Key]
+    //    public string Postnr { get; set; }
+    //    public string Poststed { get; set; }
+    //}
     public class BestillingContext : DbContext
     {
         public BestillingContext(DbContextOptions<BestillingContext> options) : base(options)
@@ -68,14 +69,18 @@ namespace Regnbuelinja.DAL
             Database.EnsureCreated();
         }
 
-        public DbSet<Poststeder> Poststeder { get; set; }
-        public DbSet<Kunde> Kunder { get; set; }
+        //public DbSet<Poststeder> Poststeder { get; set; }
+        //public DbSet<Kunde> Kunder { get; set; }
         public DbSet<Rute> Ruter { get; set; }
         public DbSet<Ferd> Ferder { get; set; }
         public DbSet<Båt> Båter { get; set; }
-        public DbSet<Bestilling> Bestillinger { get; set; }
+        public DbSet<Bestillinger> Bestillinger { get; set; }
         public DbSet<Billett> Billetter { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+        }
 
     }
 }
