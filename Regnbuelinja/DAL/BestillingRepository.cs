@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Regnbuelinja.DAL
 {
-    public class BestillingRepository
+    public class BestillingRepository : IBestillingRepository
     {
         private readonly BestillingContext _db;
 
@@ -16,13 +16,13 @@ namespace Regnbuelinja.DAL
             _db = db;
         }
 
-        public async Task<List<Rute>> hentRuter(string nyttStartPunkt)
+        public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
         {
             List<Rute> ruter = await _db.Ruter.Where(r => r.Startpunkt.Equals(nyttStartPunkt)).ToListAsync();
             return ruter;
         }
 
-        public async Task<List<Ferd>> hentFerder(int ruteId)
+        public async Task<List<Ferd>> HentFerder(int ruteId)
         {
             List<Ferd> ferder = await _db.Ferder.Where(f => f.Rute.RId == ruteId).ToListAsync();
             return ferder;
@@ -65,6 +65,26 @@ namespace Regnbuelinja.DAL
             };
 
             await _db.SaveChangesAsync();
+        }
+
+        public async Task<Bestilling> HentBestilling(int id)
+        {
+            Bestillinger bestillingIDB = await _db.Bestillinger.FirstOrDefaultAsync(b => b.BeId == id);
+            Ferd ferden = bestillingIDB.Billetter.First().Ferd;
+            int antallVoksne = bestillingIDB.Billetter.Count(b => b.Voksen == true);
+            int antallBarn = (bestillingIDB.Billetter.Count() - antallVoksne);
+            Bestilling bestilling = new Bestilling()
+            {
+                Id = bestillingIDB.BeId,
+                Startpunkt = ferden.Rute.Startpunkt,
+                Endepunkt = ferden.Rute.Endepunkt,
+                Dato = ferden.Dato,
+                AntallVoksne = antallVoksne,
+                AntallBarn = antallBarn,
+                Båtnavn = ferden.Båt.Navn,
+                TotalPris = bestillingIDB.TotalPris
+            };
+            return bestilling;
         }
     }
 }

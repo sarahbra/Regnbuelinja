@@ -20,6 +20,7 @@ namespace Regnbuelinja
         {
             services.AddControllers();
             services.AddDbContext<BestillingContext>(options => options.UseSqlite("Data source=Bestilling.db"));
+            services.AddScoped<IBestillingRepository, BestillingRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -28,6 +29,7 @@ namespace Regnbuelinja
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                DbInit.Initialize(app);
             }
 
             app.UseRouting();
