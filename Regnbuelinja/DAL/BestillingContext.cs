@@ -40,9 +40,9 @@ namespace Regnbuelinja.DAL
     {
         [Key]
         public int RId { get; set; }
-        public string startpunkt { get; set; }
-        public string endepunkt { get; set; }
-        public double pris { get; set; }
+        public string Startpunkt { get; set; }
+        public string Endepunkt { get; set; }
+        public double Pris { get; set; }
         
     }
     //public class Kunde
