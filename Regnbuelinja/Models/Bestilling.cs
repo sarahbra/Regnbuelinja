@@ -12,7 +12,8 @@ namespace Regnbuelinja.Models
     {
         public string Startpunkt { get; set; }
         public string Endepunkt { get; set; }
-        public string Dato { get; set; }
+        public string AvreiseDato { get; set; }
+        public string HjemreiseDato { get; set; }
         public int AntallVoksne { get; set; }
         public int AntallBarn { get; set; }
         // Denne må parses til en Boolean 
