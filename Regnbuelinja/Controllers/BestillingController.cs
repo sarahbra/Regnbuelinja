@@ -29,7 +29,7 @@ namespace Regnbuelinja.Controllers
         }
 
         //BestillingInput, i stedetfor Bestilling og FromBody fordi vi vil sende inn et JSON-objekt
-        public async Task LagreBestilling([FromBody] BestillingInput nyBestilling)
+        public async Task LagreBestilling(BestillingInput nyBestilling)
         {
             await _db.LagreBestilling(nyBestilling);
         }
