@@ -28,15 +28,17 @@ namespace Regnbuelinja.DAL
             return ferder;
         }
 
-        public async Task LagreBestilling(Bestilling nyBestilling)
+        public async Task LagreBestilling(BestillingInput nyBestilling)
         {
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
+            // TODO: Lag flere billetter basert på nyBestilling.TurRetur
+
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.Dato) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
-            for(int i=1; i<=nyBestilling.AntallVoksne; i++)
+            for(int i=1; i<= nyBestilling.AntallVoksne; i++)
             {
                 Billett nyBillett = new Billett()
                 {
@@ -47,7 +49,7 @@ namespace Regnbuelinja.DAL
                 totalPris += ferd.Rute.Pris;
             }
 
-            for(int i=1; i<=nyBestilling.AntallBarn; i++)
+            for(int i=1; i<= nyBestilling.AntallBarn; i++)
             {
                 Billett nyBillett = new Billett()
                 {

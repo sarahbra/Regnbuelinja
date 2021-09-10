@@ -9,6 +9,7 @@ namespace Regnbuelinja.DAL
 {
     public class Bestillinger
     {
+        [Key]
         public int BeId { get; set; }
         //public virtual Kunde Kunde { get; set; }
         public double TotalPris { get; set; }
