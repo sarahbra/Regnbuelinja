@@ -1,0 +1,44 @@
+﻿html {
+    font-size: 20px;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}
+
+body {
+    font-size: 1rem;
+}
+
+h1 {
+    letter-spacing: 0.2rem;
+    text-transform: uppercase;
+    color: #563e7c;
+}
+
+#header {
+    height: 200px;
+    width: 100%;
+    background-image: url(./img/logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-color: #eff0f5;
+    margin-bottom: 40px;
+}
+
+.page {
+    max-width: 600px;
+    margin-bottom: 60px;
+}
+
+.datepicker {
+    font-size: 14px;
+}
+
+.hidden {
+    display: none;
+}
