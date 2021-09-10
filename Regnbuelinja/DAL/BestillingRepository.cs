@@ -35,7 +35,7 @@ namespace Regnbuelinja.DAL
 
             // TODO: Lag flere billetter basert på nyBestilling.TurRetur
 
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.Dato) &&
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.AvreiseDato) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             for(int i=1; i<= nyBestilling.AntallVoksne; i++)
