@@ -16,8 +16,6 @@ namespace Regnbuelinja.Models
         public string HjemreiseDato { get; set; }
         public int AntallVoksne { get; set; }
         public int AntallBarn { get; set; }
-        // Denne må parses til en Boolean 
-        public string TurRetur { get; set; }
     }
 
     public class Bestilling
