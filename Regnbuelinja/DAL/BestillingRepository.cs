@@ -58,7 +58,14 @@ namespace Regnbuelinja.DAL
                     Voksen = true,
                 };
                 billettListe.Add(nyBillett);
-                totalPris += ferd.Rute.Pris;
+                if (ferd != null)
+                {
+                    totalPris += ferd.Rute.Pris;
+                }
+                else
+                {
+                    
+                }
 
                 // Leger til en retur billetten
                 Billett returBillett;

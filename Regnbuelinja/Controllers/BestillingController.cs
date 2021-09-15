@@ -34,7 +34,7 @@ namespace Regnbuelinja.Controllers
             await _db.LagreBestilling(nyBestilling);
         }
 
-        public async Task<Bestilling> HentBestilling(int id)
+        public async Task<BestillingInput> HentBestilling(int id)
         {
             return await _db.HentBestilling(id);
         }
