@@ -22,21 +22,31 @@ $("input[type=radio][name=TurRetur]").change(function () {
 
 $("#orderForm"  ).submit(function (event) {
     event.preventDefault();
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-    /*
-      POST /test HTTP/1.1
-      Host: foo.example
-      Content-Type: application/x-www-form-urlencoded
-      Content-Length: 27
-  
-      field1=value1&field2=value2
-    */
+    var form = event.target;
+    var valid = form.checkValidity();
+    $(form).addClass('was-validated');
+    if (!valid) {
+        return false
+    }
 
-    //Serialiserer til formatet ovenfor. Slipper å hente ut data på "vanlig måte"
     $.post("/Bestilling/LagreBestilling", $(this).serialize(), function (data) {
-        //Gå til neste side med kunderegigistrering
+        //Gå til neste side med billettinfo
     });
 });
 
 
 //TODO: Hente havner fra backend!
+
+
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+    /*
+      POST /test HTTP/1.1
+      Host: foo.example
+      Content-Type: application/x-www-form-urlencoded
+      Content-Length: 27
+
+      field1=value1&field2=value2
+    */
+
+    //Serialiserer til formatet ovenfor. Slipper å hente ut data på "vanlig måte"
