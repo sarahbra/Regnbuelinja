@@ -1,8 +1,14 @@
-﻿$("#AvreiseDato,#HjemreiseDato").datepicker({
+﻿
+//Vi velger å avgrense besstillingsdatoer til én måned for å matche db.
+
+$("#AvreiseDato,#HjemreiseDato").datepicker({
     format: "dd/mm/yyyy",
     container: "body",
     todayHighlight: true,
     autoclose: true,
+    startDate: "01/12/2021",
+    endDate: "31/12/2021",
+    defaultViewDate: "01/12/2021",
 });
 
 $("input[type=radio][name=TurRetur]").change(function () {
@@ -14,7 +20,7 @@ $("input[type=radio][name=TurRetur]").change(function () {
     }
 });
 
-$("#orderForm").submit(function (event) {
+$("#orderForm"  ).submit(function (event) {
     event.preventDefault();
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
     /*
@@ -31,3 +37,6 @@ $("#orderForm").submit(function (event) {
         //Gå til neste side med kunderegigistrering
     });
 });
+
+
+//TODO: Hente havner fra backend!
