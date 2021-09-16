@@ -1,4 +1,8 @@
-﻿
+﻿$(function () {
+    $.get("Bestilling/HentAvgangshavner", function (havner) {
+        formaterAvgangsHavner(havner);
+    });
+})
 //Vi velger å avgrense besstillingsdatoer til én måned for å matche db.
 
 $("#AvreiseDato,#HjemreiseDato").datepicker({
@@ -29,14 +33,31 @@ $("#orderForm"  ).submit(function (event) {
         return false
     }
 
-    $.post("/Bestilling/LagreBestilling", $(this).serialize(), function (data) {
+    $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
         //Gå til neste side med billettinfo
     });
 });
 
 
 //TODO: Hente havner fra backend!
+function formaterAvgangsHavner(havner) {
+    let ut = "";
 
+    for (let havn of havner) {
+        ut += "<option value='" + havn + "' onclick='formaterAnkomstHavner(" + havn + ")'>" + havn + "</option>";
+    }
+
+    $("#Startpunkt").html(ut);
+}
+
+// FORTSETT HER, SARAH!
+function formaterAnkomstHavner(avgangsHavn) {
+    const url = "Bestilling/HentAnkomsthavner?avgangsHavn=" + avgangsHavn;
+    $.get(url, function (havner) {
+        let ut = "";
+        $("#Endepunkt").html(ut);
+    });
+}
 
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST

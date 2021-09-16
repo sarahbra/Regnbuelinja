@@ -18,11 +18,23 @@ namespace Regnbuelinja.Controllers
             _db = db;
         }
 
+        public async Task<List<string>> HentAvgangshavner()
+        {
+            return await _db.HentAvgangshavner();
+        }
+
+        public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
+        {
+            return await _db.HentAnkomsthavner(avgangsHavn);
+        }
+
+        //vet ikke om trengs. Kan nok fjernes
         public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
         {
             return await _db.HentRuter(nyttStartPunkt);
         }
 
+        //Samme gjelder denne
         public async Task<List<Ferd>> HentFerder(int ruteId)
         {
             return await _db.HentFerder(ruteId);

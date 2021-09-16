@@ -16,6 +16,28 @@ namespace Regnbuelinja.DAL
             _db = db;
         }
 
+        public async Task<List<string>> HentAvgangshavner()
+        {
+            List<string> havner = await _db.Ruter.Select<Rute,String>(r => r.Startpunkt).ToListAsync();
+            return havner;
+        }
+
+        public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
+        {
+            List<Rute> ruter = await _db.Ruter.ToListAsync();
+            List<string> havner = new List<string>();
+
+            foreach(Rute rute in ruter)
+            {
+                if(rute.Startpunkt.Equals(avgangsHavn))
+                {
+                    havner.Add(rute.Endepunkt);
+                }
+            }
+
+            return havner;
+        }
+
         public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
         {
             List<Rute> ruter = await _db.Ruter.Where(r => r.Startpunkt.Equals(nyttStartPunkt)).ToListAsync();
