@@ -42,21 +42,26 @@ $("#orderForm"  ).submit(function (event) {
 //TODO: Hente havner fra backend!
 function formaterAvgangsHavner(havner) {
     let ut = "";
-
     for (let havn of havner) {
-        ut += "<option value='" + havn + "' onclick='formaterAnkomstHavner(" + havn + ")'>" + havn + "</option>";
+        ut += "<option value='" + havn + "'>" + havn + "</option>";
     }
 
     $("#Startpunkt").html(ut);
 }
 
-// FORTSETT HER, SARAH!
-function formaterAnkomstHavner(avgangsHavn) {
+//Vet ikke hvorfor denne ikke funker. Hjelp!!! Hilsen Sarah
+function formaterAnkomstHavner() {
+    const avgangsHavn = $("#Startpunkt").val();
     const url = "Bestilling/HentAnkomsthavner?avgangsHavn=" + avgangsHavn;
+    let ut = "<label for='Endepunkt'>Hvor vil du reise til?</label>";
+    ut += "<select name = 'Endepunkt' class='form-control' id='Endepunkt'>";
     $.get(url, function (havner) {
-        let ut = "";
-        $("#Endepunkt").html(ut);
+        for (let havn of havner) {
+            ut += "<option value='" + havn + "'>" + havn + "</option>";
+        }
     });
+    ut += "</select>";
+    $("#EndepunktDiv").html(ut);
 }
 
 
