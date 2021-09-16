@@ -39,7 +39,6 @@ $("#orderForm"  ).submit(function (event) {
 });
 
 
-//TODO: Hente havner fra backend!
 function formaterAvgangsHavner(havner) {
     let ut = "";
     for (let havn of havner) {
@@ -49,20 +48,28 @@ function formaterAvgangsHavner(havner) {
     $("#Startpunkt").html(ut);
 }
 
-//Vet ikke hvorfor denne ikke funker. Hjelp!!! Hilsen Sarah
-function formaterAnkomstHavner() {
+function hentAnkomstHavner() {
     const avgangsHavn = $("#Startpunkt").val();
     const url = "Bestilling/HentAnkomsthavner?avgangsHavn=" + avgangsHavn;
-    let ut = "<label for='Endepunkt'>Hvor vil du reise til?</label>";
-    ut += "<select name = 'Endepunkt' class='form-control' id='Endepunkt'>";
     $.get(url, function (havner) {
-        for (let havn of havner) {
-            ut += "<option value='" + havn + "'>" + havn + "</option>";
-        }
+        formaterAnkomstHavner(havner);
     });
+}
+
+function formaterAnkomstHavner(havner) {
+    let ut = "<label for='Endepunkt'>Hvor vil du reise til?</label>";
+    ut += "<select name='Endepunkt' class='form-control' id='Endepunkt'>";
+   
+    for (let havn of havner) {
+        ut += "<option value='" + havn + "'>" + havn + "</option>";
+    }
+
     ut += "</select>";
     $("#EndepunktDiv").html(ut);
 }
+
+
+//TODO Legg til tilgjengelige datoer markert i kalender etter startpunkt og endepunkt er valgt
 
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
