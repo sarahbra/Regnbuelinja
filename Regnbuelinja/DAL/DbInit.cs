@@ -39,6 +39,7 @@ namespace Regnbuelinja.DAL
                 //Hardkodet totalpris
                 var bestillinger1 = new Bestillinger { Billetter = billetter, TotalPris= 798};
 
+                context.Bestillinger.Add(bestillinger1);
                 context.SaveChanges();
             }
 
