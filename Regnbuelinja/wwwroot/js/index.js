@@ -32,7 +32,6 @@ $("#orderForm"  ).submit(function (event) {
     if (!valid) {
         return false
     }
-
     $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
         //Gå til neste side med billettinfo
     });

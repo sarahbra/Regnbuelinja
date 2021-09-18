@@ -50,7 +50,6 @@ namespace Regnbuelinja.DAL
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.AvreiseDato) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
-            // finner ferden som er tilpasset til retur datoen og retur ruten (hvis bestillingen er tur/retur)
             Ferd ferdRetur;
             if (nyBestilling.HjemreiseDato != null)
             {

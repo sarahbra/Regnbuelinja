@@ -37,15 +37,15 @@
                     <div class="mb-3" id="EndepunktDiv">
                     </div>
                     <div class="mb-3">
-                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" onclick="hjemreisedatoNotRequired()" autocomplete="off"
+                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" autocomplete="off"
                                checked />
                         <label class="btn btn-outline-secondary" for="TurReturFalse">Én vei</label>
-                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturTrue" value="true" onclick="hjemreisedatoRequired()" autocomplete="off" />
+                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturTrue" value="true" autocomplete="off" />
                         <label class="btn btn-outline-secondary" for="TurReturTrue">Tur/retur</label>
                     </div>
                     <div class="mb-3">
                         <label for="Dato">Når vil du reise?</label>
-                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text"/>
+                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" required/>
                         <div class="invalid-feedback">
                             Du må velge en avreisedato
                         </div>
