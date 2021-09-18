@@ -30,11 +30,14 @@ namespace Regnbuelinja.DAL
         public virtual Båt Båt { get; set; }
         public virtual Rute Rute { get; set; }
         public string Dato { get; set; }
+        //Legges til? Diskutere senere
+        //public string Avgangstid { get; set; }
+        //public string Ankomsttid { get; set; }
     }
     public class Båt
     {
         [Key]
-        public string BId { get; set; }
+        public int BId { get; set; }
         public string Navn { get; set; }
     }
     public class Rute

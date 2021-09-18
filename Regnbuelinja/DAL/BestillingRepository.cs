@@ -16,6 +16,18 @@ namespace Regnbuelinja.DAL
             _db = db;
         }
 
+        public async Task<List<string>> HentAvgangshavner()
+        {
+            List<string> havner = await _db.Ruter.Select(r => r.Startpunkt).Distinct().ToListAsync();
+            return havner;
+        }
+
+        public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
+        {
+            List<string> havner = await _db.Ruter.Where(r => r.Startpunkt.Equals(avgangsHavn)).Select(r => r.Endepunkt).ToListAsync();
+            return havner;
+        }
+
         public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
         {
             List<Rute> ruter = await _db.Ruter.Where(r => r.Startpunkt.Equals(nyttStartPunkt)).ToListAsync();
@@ -50,54 +62,58 @@ namespace Regnbuelinja.DAL
                 ferdRetur = null;
             }
 
-            for (int i = 1; i <= nyBestilling.AntallVoksne; i++)
+            if (ferd != null)
             {
-                Billett nyBillett = new Billett()
+                Billett nyBillett;
+                for (int i = 1; i <= nyBestilling.AntallVoksne; i++)
                 {
-                    Ferd = ferd,
-                    Voksen = true,
-                };
-                billettListe.Add(nyBillett);
-                totalPris += ferd.Rute.Pris;
-
-                // Leger til en retur billetten
-                Billett returBillett;
-                if (ferdRetur != null)
-                {
-                    returBillett = new Billett()
+                    nyBillett = new Billett()
                     {
-                        Ferd = ferdRetur,
-                        Voksen = true
+                        Ferd = ferd,
+                        Voksen = true,
                     };
-                    billettListe.Add(returBillett);
-                    totalPris += ferdRetur.Rute.Pris;
+                    billettListe.Add(nyBillett);
+                    totalPris += ferd.Rute.Pris;
+
+                    if (ferdRetur != null)
+                    {
+                        Billett returBillett = new Billett()
+                        {
+                            Ferd = ferdRetur,
+                            Voksen = true
+                        };
+                        billettListe.Add(returBillett);
+                        totalPris += ferdRetur.Rute.Pris;
+                    }
+                }
+
+                for (int i = 1; i <= nyBestilling.AntallBarn; i++)
+                {
+                    nyBillett = new Billett()
+                    {
+                        Ferd = ferd,
+                        Voksen = false,
+                    };
+                    billettListe.Add(nyBillett);
+                    totalPris += (ferd.Rute.Pris * 0.5);
+
+                    // Leger til en retur billetten
+
+                    if (ferdRetur != null)
+                    {
+                        Billett returBillett = new Billett()
+                        {
+                            Ferd = ferdRetur,
+                            Voksen = true
+                        };
+                        billettListe.Add(returBillett);
+                        totalPris += ferdRetur.Rute.Pris * 0.5;
+                    }
+
                 }
             }
 
-            for(int i=1; i<= nyBestilling.AntallBarn; i++)
-            {
-                Billett nyBillett = new Billett()
-                {
-                    Ferd = ferd,
-                    Voksen = false,
-                };
-                billettListe.Add(nyBillett);
-                totalPris += (ferd.Rute.Pris * 0.5);
-
-                // Leger til en retur billetten
-                Billett returBillett;
-                if (ferdRetur != null)
-                {
-                    returBillett = new Billett()
-                    {
-                        Ferd = ferdRetur,
-                        Voksen = true
-                    };
-                    billettListe.Add(returBillett);
-                    totalPris += ferdRetur.Rute.Pris * 0.5;
-                }
-            }
-
+            //Oppretter bestillingen
             Bestillinger bestilling = new Bestillinger()
             {
                 TotalPris = totalPris,
@@ -105,7 +121,7 @@ namespace Regnbuelinja.DAL
             };
 
 
-            //_db.Bestillinger.Add(bestilling);
+            _db.Bestillinger.Add(bestilling);
             await _db.SaveChangesAsync();
         }
 
@@ -114,16 +130,24 @@ namespace Regnbuelinja.DAL
             Bestillinger bestillingIDB = await _db.Bestillinger.FirstOrDefaultAsync(b => b.BeId == id);
             Ferd ferden = bestillingIDB.Billetter.First().Ferd;
             Billett returBillett = bestillingIDB.Billetter.FirstOrDefault(b => b.Ferd.Dato != ferden.Dato);
-            Ferd returFerden = returBillett.Ferd;
+            Ferd returFerden;
+            string hjemreiseDato = null;
+            if(returBillett!= default(Billett))
+            {
+                returFerden = returBillett.Ferd;
+                hjemreiseDato = returFerden.Dato;
+            }
+      
             int antallVoksne = bestillingIDB.Billetter.Count(b => b.Voksen == true);
             int antallBarn = (bestillingIDB.Billetter.Count() - antallVoksne);
+
 
             BestillingInput bestilling = new BestillingInput()
             {
                 Startpunkt = ferden.Rute.Startpunkt,
                 Endepunkt = ferden.Rute.Endepunkt,
                 AvreiseDato = ferden.Dato,
-                HjemreiseDato = returFerden.Dato,
+                HjemreiseDato = hjemreiseDato,
                 AntallVoksne = antallVoksne,
                 AntallBarn = antallBarn
             };

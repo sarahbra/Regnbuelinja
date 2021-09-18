@@ -29,22 +29,12 @@
         <div class="row justify-content-md-center">
             <div class="col">
                 <h1 class="mb-5">Bestill din reise</h1>
-                <form id="orderForm">
+                <form id="orderForm" class="row needs-validation p-2" novalidate>
                     <div class="mb-3">
                         <label for="Startpunkt">Hvor vil du reise fra?</label>
-                        <select name="Startpunkt" class="form-control" id="Startpunkt">
-                            <option value="oslo">Oslo</option>
-                            <option value="copenhagen">København</option>
-                            <option value="stavanger">Stavanger</option>
-                        </select>
+                        <select name="Startpunkt" class="form-control" id="Startpunkt" onchange="hentAnkomstHavner()"></select>
                     </div>
-                    <div class="mb-3">
-                        <label for="travelToInput">Hvor vil du reise til?</label>
-                        <select name="Endepunkt" class="form-control" id="Endepunkt">
-                            <option value="bergen">Bergen</option>
-                            <option value="berlin">Berlin</option>
-                            <option value="new_york">New York</option>
-                        </select>
+                    <div class="mb-3" id="EndepunktDiv">
                     </div>
                     <div class="mb-3">
                         <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" autocomplete="off"
@@ -55,22 +45,31 @@
                     </div>
                     <div class="mb-3">
                         <label for="Dato">Når vil du reise?</label>
-                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYY" type="text" />
+                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" required/>
+                        <div class="invalid-feedback">
+                            Du må velge en avreisedato
+                        </div>
                     </div>
                     <div class="mb-3 hidden" id="TilbakeContainer">
-                        <label for="Dato">Når vil du tilbake?</label>
-                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text" />
+                        <label for="Dato">Når vil du reise tilbake?</label>
+                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text" required/>
+                        <div class="invalid-feedback">
+                            Du må velge en hjemreisedato
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="AntallVoksne">Antall voksne</label>
-                        <input class="form-control" name="AntallVoksne" type="number" min="1" />
+                        <input class="form-control" name="AntallVoksne" type="number" min="1" value="1" required />
+                        <div class="invalid-feedback">
+                            Du må velge minst én voksen
+                        </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="AntallBarn">Antall barn</label>
-                        <input class="form-control" name="AntallBarn" type="number" min="0" />
+                        <input class="form-control" name="AntallBarn" type="number" min="0" placeholder="Velg antall passasjerer under 18 år"/>
                     </div>
-                    <button class="btn btn-primary" type="submit" style="background-color: #563e7c">
-                        Gå videre
+                    <button class="btn btn-lg btn-primary col-sm-6" type="submit" style="background-color: #563e7c">
+                        Bestill billett
                     </button>
                 </form>
             </div>
