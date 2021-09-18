@@ -37,22 +37,22 @@
                     <div class="mb-3" id="EndepunktDiv">
                     </div>
                     <div class="mb-3">
-                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" autocomplete="off"
+                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" onclick="hjemreisedatoNotRequired()" autocomplete="off"
                                checked />
                         <label class="btn btn-outline-secondary" for="TurReturFalse">Én vei</label>
-                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturTrue" value="true" autocomplete="off" />
+                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturTrue" value="true" onclick="hjemreisedatoRequired()" autocomplete="off" />
                         <label class="btn btn-outline-secondary" for="TurReturTrue">Tur/retur</label>
                     </div>
                     <div class="mb-3">
                         <label for="Dato">Når vil du reise?</label>
-                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" required/>
+                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text"/>
                         <div class="invalid-feedback">
                             Du må velge en avreisedato
                         </div>
                     </div>
                     <div class="mb-3 hidden" id="TilbakeContainer">
                         <label for="Dato">Når vil du reise tilbake?</label>
-                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text" required/>
+                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text"/>
                         <div class="invalid-feedback">
                             Du må velge en hjemreisedato
                         </div>
