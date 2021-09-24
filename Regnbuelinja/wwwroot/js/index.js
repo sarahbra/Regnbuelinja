@@ -33,6 +33,7 @@ $("#orderForm"  ).submit(function (event) {
         return false
     }
     $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
+        window.location = "https://localhost:44392/bestilling.html?id="+data;
         //Gå til neste side med billettinfo
     });
 });

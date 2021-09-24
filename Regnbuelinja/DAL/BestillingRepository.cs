@@ -40,7 +40,7 @@ namespace Regnbuelinja.DAL
             return ferder;
         }
 
-        public async Task LagreBestilling(BestillingInput nyBestilling)
+        public async Task<string> LagreBestilling(BestillingInput nyBestilling)
         {
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
@@ -122,6 +122,7 @@ namespace Regnbuelinja.DAL
 
             _db.Bestillinger.Add(bestilling);
             await _db.SaveChangesAsync();
+            return bestilling.BeId + "";
         }
 
         public async Task<BestillingInput> HentBestilling(int id)
