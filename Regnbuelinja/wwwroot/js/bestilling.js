@@ -7,12 +7,15 @@
     });
 })
 
+function test(bestillingInput) {
+    let ut = "Startpunkt: " + bestillingInput.startpunkt + " Endepunkt: " + bestillingInput.endepunkt + " Avreisedato: " + bestillingInput.avreiseDato;
+    ut += " Hjemreisedato: " + bestillingInput.hjemreiseDato + " Antall voksne: " + bestillingInput.antallVoksne + " Antall barn: " + bestillingInput.antallBarn;
+    $("#test").html(ut);
+}
+
 function formaterSide(bestillingInput) {
     formaterBestilling(bestillingInput);
-    formaterKjøpsInfo(bestillingInput);
-    if (bestillingInput.hjemreiseDato) {
-        formaterReturReise(bestillingInput);
-    }
+    //test(bestillingInput);
 }
 
 function formaterBestilling(bestillingInput) {
@@ -21,6 +24,11 @@ function formaterBestilling(bestillingInput) {
     $("#skip").html("Båtten Anna");  //TODO - Add båtnavn
     $("#strekning").html(bestillingInput.startpunkt + " - " + bestillingInput.endepunkt);
     $("#id").html(best);
+    if (bestillingInput.hjemreiseDato) {
+        formaterReturReise(bestillingInput);
+    } else {
+        formaterKjøpsInfo(bestillingInput);
+    }
 }
 
 //Funker ikke skikkelig. Teori om at hjemreiseDato = null
@@ -29,7 +37,8 @@ function formaterReturBestilling(bestillingInput) {
     $("#retur_dato").html(bestillingInput.hjemreiseDato);
     $("#retur_skip").html("Båtten Anna");
     $("#retur_strekning").html(bestillingInput.endepunkt + " - " + bestillingInput.startpunkt);
-    $("#returReise").show();
+    //$("#returReise").show();
+    formaterKjøpsInfo(bestillingInput);
 }
 
 //Fungerer ikke som den skal
