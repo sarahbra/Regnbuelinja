@@ -1,5 +1,5 @@
 ﻿$(function () {
-    //$("#returReise").hide();       //TODO - Make this not show up on refresh
+    //$("#returReise").hide();       //TODO - Frontend-people! Hide div tag if hjemreiseDato = null
     const id = window.location.search.substring(1);
     const url = "Bestilling/HentBestilling?" + id;
     $.get(url, function (bestillingInput) {
@@ -7,57 +7,57 @@
     });
 })
 
-function test(bestillingInput) {
-    let ut = "Startpunkt: " + bestillingInput.startpunkt + " Endepunkt: " + bestillingInput.endepunkt + " Avreisedato: " + bestillingInput.avreiseDato;
-    ut += " Hjemreisedato: " + bestillingInput.hjemreiseDato + " Antall voksne: " + bestillingInput.antallVoksne + " Antall barn: " + bestillingInput.antallBarn;
-    $("#test").html(ut);
-}
-
 function formaterSide(bestillingInput) {
-    //formaterBestilling(bestillingInput);
-    test(bestillingInput);
-}
-
-function formaterBestilling(bestillingInput) {
-    $("#utreiseHeader").html("Utreise fra " + bestillingInput.startpunkt);
-    $("#dato").html(bestillingInput.avreiseDato);
-    $("#skip").html("Båtten Anna");  //TODO - Add båtnavn
-    $("#strekning").html(bestillingInput.startpunkt + " - " + bestillingInput.endepunkt);
-    $("#id").html(best);
+    formaterBestilling(bestillingInput);
     if (bestillingInput.hjemreiseDato) {
-        formaterReturReise(bestillingInput);
+        formaterReturBestilling(bestillingInput);
     } else {
         formaterKjøpsInfo(bestillingInput);
     }
 }
 
-//Funker ikke skikkelig. Teori om at hjemreiseDato = null
+// TODO - Add båtnavn
+function formaterBestilling(bestillingInput) {
+    $("#utreiseHeader").html("Utreise fra " + bestillingInput.startpunkt);
+    let ut = "";
+    ut += "<li class='list-group-item'><label for='dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.avreiseDato + "</li>" +
+          "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>08:30</li>" +
+          "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>20:00</li>" +
+        "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
+        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</li>";
+    $("#utreise").html(ut);
+}
+
+
 function formaterReturBestilling(bestillingInput) {
-    $("#returReiseHeader").html("Hjemreise fra " + bestillingInput.endepunkt);
-    $("#retur_dato").html(bestillingInput.hjemreiseDato);
-    $("#retur_skip").html("Båtten Anna");
-    $("#retur_strekning").html(bestillingInput.endepunkt + " - " + bestillingInput.startpunkt);
-    //$("#returReise").show();
+    $("#returreiseHeader").html("Hjemreise fra " + bestillingInput.endepunkt);
+    let ut = "";
+    ut += "<li class='list-group-item'><label for='retur_dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.hjemreiseDato + "</li>" +
+        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>14:00</li>" +
+        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>23:00</li>" +
+        "<li class='list-group-item'><label for='retur_skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
+        "<li class='list-group-item'><label for='retur_strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</li>";
+    $("#returreise").html(ut);
     formaterKjøpsInfo(bestillingInput);
 }
 
-//Fungerer ikke som den skal
+
 function formaterKjøpsInfo(bestillingInput) {
     let ut = "<table class='table'><thead><tr>";
-    ut += "<th>#</th><th>Produkt></th><th>Produkt beskrivelse</th>" +
+    ut += "<th>#</th><th>Produkt</th><th>Produkt beskrivelse</th>" +
         "<th>Antall</th><th>Pris</th></tr></thead>" +
         "<tbody>" +
         "<tr><th>1</th>" +
-        "<td>" + bestillingInput.startpunkt + "-" + bestillingInput.endepunkt + "</td>" +
+        "<td>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</td>" +
         "<td>Økonomibillett</td> " +
-        "<td>" + bestillingInput.antallVoksne + "voksne + " + bestillingInput.antallBarn + " barn</td>" +
+        "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
         "<td>1350</td></tr>"; //TODO: pris ikke lagt inn i bestillingInput!!!
 
     if (bestillingInput.hjemreiseDato) {
         ut += "<tr><th>2</th>" +
-            "<td>" + bestillingInput.endepunkt + "-" + bestillingInput.startpunkt + "</td>" +
+            "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
             "<td>Økonomibillett</td>" +
-            "<td>" + bestillingInput.antallVoksne + "voksne + " + bestillingInput.antallBarn + " barn</td>" +
+            "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
             "<td>650</td></tr>"; //TODO: pris ikke lagt inn i bestillingInput!!!
     }
     ut += "</tbody</table>";
