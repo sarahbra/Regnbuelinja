@@ -25,8 +25,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <label for="dato"
-                               class="col-12 col-sm-3 fw-bold">Dato</label>
-                        <p id="dato"></p>
+                               class="col-12 col-sm-3 fw-bold">Dato</label><div id="dato"></div>
                     </li>
                     <li class="list-group-item">
                         <label for="avgang"
@@ -38,19 +37,45 @@
                             Ankomst
                         </label>20:00
                     </li>
-                    <li class="list-group-item" id="skip">
+                    <li class="list-group-item">
                         <label for="skip"
-                               class="col-12 col-sm-3 fw-bold">Skip</label>
-                        <p id="skip"></p>
+                               class="col-12 col-sm-3 fw-bold">Skip</label><div id="skip"></div>
                     </li>
-                    <li class="list-group-item" id="strekning">
+                    <li class="list-group-item">
                         <label for="strekning"
-                               class="col-12 col-sm-3 fw-bold">Strekning</label>
-                        <p id="strekning"></p>
+                               class="col-12 col-sm-3 fw-bold">Strekning</label><div id="strekning"></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-6" id="returReise">
+                <h3 id="returReiseHeader"></h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <label for="retur_dato"
+                               class="col-12 col-sm-3 fw-bold">Dato</label><div id="retur_dato"></div>
+                    </li>
+                    <li class="list-group-item" id="avgang">
+                        <label for="dato"
+                               class="col-12 col-sm-3 fw-bold">Avgang</label>14:30
+                    </li>
+                    <li class="list-group-item" id="ankomst">
+                        <label for="ankomst"
+                               class="col-12 col-sm-3 fw-bold">
+                            Ankomst
+                        </label>23:00
+                    </li>
+                    <li class="list-group-item">
+                        <label for="retur_skip"
+                               class="col-12 col-sm-3 fw-bold">Skip</label><div id="retur_skip"></div>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="retur_strekning"
+                               class="col-12 col-sm-3 fw-bold">Strekning</label><div id="retur_strekning"></div>
                     </li>
                 </ul>
             </div>
         </div>
+        <div class="table container mt-5 " id="kjøpsInfo"></div>
     </div>
     <script src="./js/bestilling.js"></script>
 </body>

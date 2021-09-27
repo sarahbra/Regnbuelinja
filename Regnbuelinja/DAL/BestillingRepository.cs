@@ -132,7 +132,7 @@ namespace Regnbuelinja.DAL
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
                 AvreiseDato = b.Billetter.First().Ferd.Dato,
-                HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.Dato != b.Billetter.First().Ferd.Dato).Ferd.Dato,
+                HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
                 AntallVoksne = b.Billetter.Select(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == true).Count(),
                 AntallBarn = b.Billetter.Select(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
