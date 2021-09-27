@@ -17,7 +17,41 @@
 </head>
 <body>
     <div id="header"></div>
-    <div class="container" id="bestillingen"></div>
+    <div class="container mb-5">
+        <h1 class="mb-5">Bestillingssammendrag</h1>
+        <div class="row">
+            <div class="col-lg-6 mb-5">
+                <h3 id="utreiseHeader"></h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <label for="dato"
+                               class="col-12 col-sm-3 fw-bold">Dato</label>
+                        <p id="dato"></p>
+                    </li>
+                    <li class="list-group-item">
+                        <label for="avgang"
+                               class="col-12 col-sm-3 fw-bold">Avgang</label>08:30
+                    </li>
+                    <li class="list-group-item" id="ankomst">
+                        <label for="ankomst"
+                               class="col-12 col-sm-3 fw-bold">
+                            Ankomst
+                        </label>20:00
+                    </li>
+                    <li class="list-group-item" id="skip">
+                        <label for="skip"
+                               class="col-12 col-sm-3 fw-bold">Skip</label>
+                        <p id="skip"></p>
+                    </li>
+                    <li class="list-group-item" id="strekning">
+                        <label for="strekning"
+                               class="col-12 col-sm-3 fw-bold">Strekning</label>
+                        <p id="strekning"></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
     <script src="./js/bestilling.js"></script>
 </body>
 </html>
