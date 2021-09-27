@@ -14,8 +14,8 @@ function test(bestillingInput) {
 }
 
 function formaterSide(bestillingInput) {
-    formaterBestilling(bestillingInput);
-    //test(bestillingInput);
+    //formaterBestilling(bestillingInput);
+    test(bestillingInput);
 }
 
 function formaterBestilling(bestillingInput) {

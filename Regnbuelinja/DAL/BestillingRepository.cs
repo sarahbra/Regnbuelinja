@@ -134,8 +134,8 @@ namespace Regnbuelinja.DAL
                 AvreiseDato = b.Billetter.First().Ferd.Dato,
                 HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
                 //TODO: Disse returnerer totalt antall billetter og IKKE antall voksen og antall barn
-                AntallVoksne = b.Billetter.Select(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == true).Count(),
-                AntallBarn = b.Billetter.Select(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == false).Count()
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == true).ToList().Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == false).ToList().Count()
             }).FirstOrDefaultAsync();
 
             return bestilling;
