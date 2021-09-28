@@ -127,30 +127,16 @@ namespace Regnbuelinja.DAL
 
         public async Task<BestillingInput> HentBestilling(int id)
         {
-            Bestillinger bestillingIDB = await _db.Bestillinger.FirstOrDefaultAsync(b => b.BeId == id);
-            Ferd ferden = bestillingIDB.Billetter.First().Ferd;
-            Billett returBillett = bestillingIDB.Billetter.FirstOrDefault(b => b.Ferd.Dato != ferden.Dato);
-            Ferd returFerden;
-            string hjemreiseDato = null;
-            if(returBillett!= default(Billett))
+            BestillingInput bestilling = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => new BestillingInput
             {
-                returFerden = returBillett.Ferd;
-                hjemreiseDato = returFerden.Dato;
-            }
-      
-            int antallVoksne = bestillingIDB.Billetter.Count(b => b.Voksen == true);
-            int antallBarn = (bestillingIDB.Billetter.Count() - antallVoksne);
-
-
-            BestillingInput bestilling = new BestillingInput()
-            {
-                Startpunkt = ferden.Rute.Startpunkt,
-                Endepunkt = ferden.Rute.Endepunkt,
-                AvreiseDato = ferden.Dato,
-                HjemreiseDato = hjemreiseDato,
-                AntallVoksne = antallVoksne,
-                AntallBarn = antallBarn
-            };
+                Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
+                Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
+                AvreiseDato = b.Billetter.First().Ferd.Dato,
+                HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
+                //TODO: Disse returnerer totalt antall billetter og IKKE antall voksen og antall barn
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == true).Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == false).Count()
+            }).FirstOrDefaultAsync();
 
             return bestilling;
         }

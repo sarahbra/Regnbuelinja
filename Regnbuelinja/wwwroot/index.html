@@ -45,14 +45,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="Dato">Når vil du reise?</label>
-                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" required/>
+                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" required />
                         <div class="invalid-feedback">
                             Du må velge en avreisedato
                         </div>
                     </div>
                     <div class="mb-3 hidden" id="TilbakeContainer">
                         <label for="Dato">Når vil du reise tilbake?</label>
-                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text"/>
+                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text" />
                         <div class="invalid-feedback">
                             Du må velge en hjemreisedato
                         </div>
@@ -66,13 +66,14 @@
                     </div>
                     <div class="mb-4">
                         <label for="AntallBarn">Antall barn</label>
-                        <input class="form-control" name="AntallBarn" type="number" min="0" placeholder="Velg antall passasjerer under 18 år"/>
+                        <input class="form-control" name="AntallBarn" type="number" min="0" placeholder="Velg antall passasjerer under 18 år" />
                     </div>
                     <button class="btn btn-lg btn-primary col-sm-6" type="submit" style="background-color: #563e7c">
                         Bestill billett
                     </button>
                 </form>
             </div>
+            <span id="feil" style="color: red"></span>
         </div>
     </div>
 
