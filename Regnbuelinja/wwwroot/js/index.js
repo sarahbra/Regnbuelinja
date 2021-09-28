@@ -16,11 +16,14 @@ $("#AvreiseDato,#HjemreiseDato").datepicker({
 });
 
 $("input[type=radio][name=TurRetur]").change(function () {
+    var hjemreiseDato = $("#HjemreiseDato");
     var tilbakeContainer = $("#TilbakeContainer");
     if (this.value === "true") {
         tilbakeContainer.removeClass("hidden");
+        hjemreiseDato.attr("required", true);
     } else if (this.value === "false") {
         tilbakeContainer.addClass("hidden");
+        hjemreiseDato.attr("required", false);
     }
 });
 
@@ -35,7 +38,12 @@ $("#orderForm"  ).submit(function (event) {
     $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
         window.location = "https://localhost:44392/bestilling.html?id="+data;
         //Gå til neste side med billettinfo
-    });
+    })
+        .fail(function () {
+            //Kan eventuelt hente ut feilmelding fra server her hvis vi vil etter at det er implementert
+
+            $("#feil").html("Feil på server - prøv igjen senere");
+        });
 });
 
 
