@@ -34,7 +34,7 @@ namespace Regnbuelinja.DAL
                 var ferd1 = new Ferd { Båt = båt1, Rute = rute1, Dato = "01/12/2021" };
                 
                 //avreisedatoer for rute1
-                for (int i = 2; i< 32; i++)
+                for (int i = 2; i< 32; i+=2)
                 {
                     if (i < 10)
                     {
@@ -47,7 +47,7 @@ namespace Regnbuelinja.DAL
                 }
 
                 //avreisedatoer for rute2
-                for (int i = 1; i < 32; i++)
+                for (int i = 1; i < 32; i+=2)
                 {
                     if (i < 10)
                     {
@@ -77,11 +77,11 @@ namespace Regnbuelinja.DAL
                 {
                     if (i < 10)
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = "0" + i + "/12/2021" });
+                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute4, Dato = "0" + i + "/12/2021" });
                     }
                     else
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = i + "/12/2021" });
+                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute4, Dato = i + "/12/2021" });
                     }
                 }
 
