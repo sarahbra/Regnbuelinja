@@ -32,9 +32,11 @@
                 <form id="orderForm" class="row needs-validation p-2" novalidate>
                     <div class="mb-3">
                         <label for="Startpunkt">Hvor vil du reise fra?</label>
-                        <select name="Startpunkt" class="form-control" id="Startpunkt" onchange="hentAnkomstHavner()"></select>
+                        <select name="Startpunkt" class="form-control" id="Startpunkt"></select>
                     </div>
-                    <div class="mb-3" id="EndepunktDiv">
+                    <div class="mb-3" id="EndepunktDiv" style="display: none;">
+                        <label for="Endepunkt">Hvor vil du reise til?</label>
+                        <select name="Endepunkt" class="form-control" id="Endepunkt"></select>
                     </div>
                     <div class="mb-3">
                         <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" autocomplete="off"
