@@ -22,7 +22,7 @@ function hentId() {
 function formaterBestilling(bestillingInput) {
     $("#utreiseHeader").html("Utreise fra " + bestillingInput.startpunkt);
     let ut = "";
-    ut += "<li class='list-group-item'><label for='dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.avreiseDato + "</li>" +
+    ut += "<li class='list-group-item'><label for='dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.avreiseDato.toString() + "</li>" +
           "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>08:30</li>" +
           "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>20:00</li>" +
         "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
@@ -36,7 +36,6 @@ function hentPris() {
     $.get(url, function (pris) {
         prisen = pris;
     });
-
     return prisen;
 }
 
@@ -44,7 +43,7 @@ function hentPris() {
 function formaterReturBestilling(bestillingInput) {
     $("#returreiseHeader").html("Hjemreise fra " + bestillingInput.endepunkt);
     let ut = "";
-    ut += "<li class='list-group-item'><label for='retur_dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.hjemreiseDato + "</li>" +
+    ut += "<li class='list-group-item'><label for='retur_dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.hjemreiseDato.toString() + "</li>" +
         "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>14:00</li>" +
         "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>23:00</li>" +
         "<li class='list-group-item'><label for='retur_skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +

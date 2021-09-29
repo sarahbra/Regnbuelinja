@@ -146,9 +146,16 @@ namespace Regnbuelinja.DAL
             return pris;
         }
 
-        public async Task<List<DateTime>> HentReturDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
         {
-            List<DateTime> Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.Dato).ToListAsync();
+            List<DateTime> Datoer;
+            if(AvreiseDato == null)
+            {
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.Dato).ToListAsync();
+            } else
+            {
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.Dato.CompareTo(AvreiseDato) > 0).Select(f => f.Dato).ToListAsync();
+            }
             Datoer.Sort();
             return Datoer;
         }
