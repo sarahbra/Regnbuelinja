@@ -87,5 +87,17 @@ namespace Regnbuelinja.Controllers
             List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseDato);
             return Ok(Datoer);
         }
+
+        public async Task<ActionResult> HentPris(int id)
+        {
+            double TotalPris = await _db.HentPris(id);
+            return Ok(TotalPris);
+        }
+
+        public async Task<ActionResult> HentAnkomstTid(DateTime AvgangsTid)
+        {
+            DateTime AnkomstTid = await _db.HentAnkomstTid(AvgangsTid);
+            return Ok(AnkomstTid);
+        }
     }
 }

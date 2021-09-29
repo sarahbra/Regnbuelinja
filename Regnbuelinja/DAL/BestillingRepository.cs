@@ -46,13 +46,13 @@ namespace Regnbuelinja.DAL
 
             // TODO: Lag flere billetter basert på nyBestilling.TurRetur
 
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.AvreiseDato) &&
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
-            if (nyBestilling.HjemreiseDato != null)
+            if (nyBestilling.HjemreiseTid != null)
             {
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.HjemreiseDato) &&
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.HjemreiseTid) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
             }
             else
@@ -130,10 +130,10 @@ namespace Regnbuelinja.DAL
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
-                AvreiseDato = b.Billetter.First().Ferd.Dato,
-                HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
-                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == true).Count(),
-                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == false).Count()
+                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid,
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid,
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
             return bestilling;
@@ -145,18 +145,24 @@ namespace Regnbuelinja.DAL
             return pris;
         }
 
-        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime ReturAvreiseTid)
         {
             List<DateTime> Datoer;
-            if(AvreiseDato == null)
+            if(ReturAvreiseTid == null)
             {
-                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.Dato).ToListAsync();
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.AvreiseTid).ToListAsync();
             } else
             {
-                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.Dato.CompareTo(AvreiseDato) > 0).Select(f => f.Dato).ToListAsync();
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.AnkomstTid.CompareTo(ReturAvreiseTid) > 0).Select(f => f.AvreiseTid).ToListAsync();
             }
             Datoer.Sort();
             return Datoer;
+        }
+
+        public async Task<DateTime> HentAnkomstTid(DateTime AvreiseTid)
+        {
+            DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(AvreiseTid)).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
+            return AnkomstTid;
         }
     }
 }
