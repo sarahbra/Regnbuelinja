@@ -67,25 +67,29 @@ $.get("Bestilling/HentAvgangshavner", function (havner) {
 
 function visFerdKalender(datoer) {
     function formaterDato(datoStreng) {
-        const deler = datoStreng.split("/").map(function (s) {
+        const deler = datoStreng.split(/[-T]+/).map(function (s) {
             return parseInt(s)
         });
-        return new Date(deler[2], deler[1] - 1, deler[0]);
+        console.log(datoStreng)
+        console.log(deler)
+        console.log(new Date(deler[0], deler[1] - 1, deler[2]));
+        return new Date(deler[0], deler[1] - 1, deler[2]);
     }
 
     const sorterteDatoer = datoer.map(formaterDato).sort(function (a, b) {
         return a - b;
     });
+    console.log(sorterteDatoer[0]);
+    console.log(sorterteDatoer[sorterteDatoer.length - 1]);
 
     //Setter det samme på hjemreise og avreise. Sånn kan det ikke være
-
     $("#AvreiseDato,#HjemreiseDato").datepicker({
         format: "dd/mm/yyyy",
         container: "body",
         todayHighlight: true,
         autoclose: true,
-        startDate: sorterteDatoer.slice(0).shift(),
-        endDate: sorterteDatoer.slice(0).pop(),
+        startDate: sorterteDatoer[0],//sorterteDatoer.slice(0).shift(),
+        endDate: sorterteDatoer[sorterteDatoer.length-1],//sorterteDatoer.slice(0).pop(),
         beforeShowDay: function (date) {
             const gyldig = sorterteDatoer.some(function (d) {
                 return d.getTime() === date.getTime();
@@ -94,7 +98,6 @@ function visFerdKalender(datoer) {
         }
     });
 }
-
 
 
 function hentTilgjengeligeFerdDatoer() {
