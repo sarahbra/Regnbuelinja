@@ -1,7 +1,5 @@
 ﻿$(function () {
-    //$("#returReise").hide();       //TODO - Frontend-people! Hide div tag if hjemreiseDato = null
-    const id = window.location.search.substring(1);
-    const url = "Bestilling/HentBestilling?" + id;
+    const url = "Bestilling/HentBestilling?" + hentId();
     $.get(url, function (bestillingInput) {
         formaterSide(bestillingInput);
     });
@@ -16,6 +14,10 @@ function formaterSide(bestillingInput) {
     }
 }
 
+function hentId() {
+    return window.location.search.substring(1);
+}
+
 // TODO - Add båtnavn
 function formaterBestilling(bestillingInput) {
     $("#utreiseHeader").html("Utreise fra " + bestillingInput.startpunkt);
@@ -26,6 +28,16 @@ function formaterBestilling(bestillingInput) {
         "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
         "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</li>";
     $("#utreise").html(ut);
+}
+
+function hentPris() {
+    let prisen = 0.0;
+    const url = "Bestilling/HentPris?" + hentId();
+    $.get(url, function (pris) {
+        prisen = pris;
+    });
+
+    return prisen;
 }
 
 
@@ -51,15 +63,17 @@ function formaterKjøpsInfo(bestillingInput) {
         "<td>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</td>" +
         "<td>Økonomibillett</td> " +
         "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
-        "<td>1350</td></tr>"; //TODO: pris ikke lagt inn i bestillingInput!!!
+        "<td></td></tr>"; //TODO: reisePris ikke i kontroller
 
     if (bestillingInput.hjemreiseDato) {
         ut += "<tr><th>2</th>" +
             "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
             "<td>Økonomibillett</td>" +
             "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
-            "<td>650</td></tr>"; //TODO: pris ikke lagt inn i bestillingInput!!!
+            "<td></td></tr>"; //TODO: reisePris ikke i kontroller
     }
+
+    ut += "<tr><td></td><td></td><th></th><td>Totalpris</td><td>" + hentPris() + "</td>";
     ut += "</tbody</table>";
     $("#kjøpsInfo").html(ut);
 }
