@@ -24,7 +24,7 @@ namespace Regnbuelinja.Controllers
 
         public async Task<List<string>> HentAvgangshavner()
         {
-            _log.LogInformation("Hallo loggen!");
+            _log.LogInformation("------");
             return await _db.HentAvgangshavner();
         }
 
