@@ -94,9 +94,9 @@ namespace Regnbuelinja.Controllers
             return Ok(TotalPris);
         }
 
-        public async Task<ActionResult> HentAnkomstTid(DateTime AvgangsTid)
+        public async Task<ActionResult> HentAnkomstTid(string AvgangsTid)
         {
-            DateTime AnkomstTid = await _db.HentAnkomstTid(AvgangsTid);
+            string AnkomstTid = await _db.HentAnkomstTid(AvgangsTid);
             return Ok(AnkomstTid);
         }
     }

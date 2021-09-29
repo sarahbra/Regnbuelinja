@@ -130,8 +130,8 @@ namespace Regnbuelinja.DAL
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
-                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid,
-                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid,
+                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString(),
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid.ToString(),
                 AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
@@ -159,9 +159,9 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
-        public async Task<DateTime> HentAnkomstTid(DateTime AvreiseTid)
+        public async Task<string> HentAnkomstTid(string AvreiseTid)
         {
-            DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(AvreiseTid)).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
+            string AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.ToString().Equals(AvreiseTid)).Select(f => f.AnkomstTid.ToString()).FirstOrDefaultAsync();
             return AnkomstTid;
         }
     }
