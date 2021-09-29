@@ -34,7 +34,7 @@ $("#Startpunkt").change(function () {
 });
 
 $("#Endepunkt").change(function () {
-  hentTilgjengeligeFerdDatoer();
+  hentTilgjengeligeFerdDatoerAvreise();
 });
 
 function hentAnkomstHavner() {
@@ -59,11 +59,8 @@ $.get("Bestilling/HentAvgangshavner", function (havner) {
   visHavner($("#Startpunkt"), havner);
 });
 
-//Hadde ikke trengt å sortere dato-strengene hvis vi hadde brukt Date backend. Da kunne vi brukt innebygde metoder på Date
-
-function visFerdKalender(datoer) {
-  //Setter det samme på hjemreise og avreise. Sånn kan det ikke være
-  $("#AvreiseDato,#HjemreiseDato").datepicker({
+function visFerdKalenderAvreise(datoer) {
+  $("#AvreiseDato").datepicker({
     format: "dd/mm/yyyy",
     container: "body",
     todayHighlight: true,
@@ -71,38 +68,69 @@ function visFerdKalender(datoer) {
     startDate: datoer[0],
     endDate: datoer[datoer.length - 1],
     beforeShowDay: function (date) {
-      const gyldig = sorterteDatoer.some(function (d) {
-        return d.getTime() === date.getTime();
-      });
-      return gyldig;
+      return date;
+    },
+  });
+  hentTilgjengeligeFerdDatoerHjemreise();
+}
+
+function visFerdKalenderHjemreise(datoer) {
+  $("#HjemreiseDato").datepicker({
+    format: "dd/mm/yyyy",
+    container: "body",
+    todayHighlight: true,
+    autoclose: true,
+    startDate: datoer[0],
+    endDate: datoer[datoer.length - 1],
+    beforeShowDay: function (date) {
+      return date;
     },
   });
 }
 
-function hentTilgjengeligeFerdDatoer() {
-    const startPunkt = $("#Startpunkt").val();
-    const endePunkt = $("#Endepunkt").val();
+function hentTilgjengeligeFerdDatoerAvreise() {
+  const startPunkt = $("#Startpunkt").val();
+  const endePunkt = $("#Endepunkt").val();
 
-    let params = {
-        "Startpunkt": startPunkt,
-        "Endepunkt": endePunkt,
-        "AvreiseDato": null
-    };
+  let params = {
+    Startpunkt: startPunkt,
+    Endepunkt: endePunkt,
+    AvreiseDato: null,
+  };
 
-    console.log(params);
-
-    $.get("Bestilling/HentDatoer", params, function (datoer) {
-        let datoFormat = [];
-        datoer.forEach(function(dato) {
-            datoFormat.push(formaterDato(dato))
-        });
-        visFerdKalender(datoFormat);
-
+  $.get("Bestilling/HentDatoer", params, function (datoer) {
+    let formaterteDatoer = [];
+    datoer.forEach(function (dato) {
+      formaterteDatoer.push(formaterDato(dato));
     });
-    console.log(datoFormat);
-    //visFerdKalender(datoFormat);
+    visFerdKalenderAvreise(formaterteDatoer);
   });
-  //Todo: Hvis tur/retur er valgt -> Hent datoer basert på startPunkt = endepunkt og endePunkt = startPunkt?
+}
+
+function hentTilgjengeligeFerdDatoerHjemreise() {
+  const startPunkt = $("#Endepunkt").val();
+  const endePunkt = $("#Startpunkt").val();
+  const avreiseDatoString = $("#AvreiseDato").data("datepicker").date;
+
+  console.log(avreiseDatoString);
+
+  const avreiseDato = new Date(avreiseDatoString);
+  console.log(avreiseDato);
+
+  let params = {
+    Startpunkt: startPunkt,
+    Endepunkt: endePunkt,
+    AvreiseDato: avreiseDato,
+  };
+
+  $.get("Bestilling/HentDatoer", params, function (datoer) {
+    let formaterteDatoer = [];
+    datoer.forEach(function (dato) {
+      formaterteDatoer.push(formaterDato(dato));
+      console.log(formaterteDatoer);
+    });
+    visFerdKalenderHjemreise(formaterteDatoer);
+  });
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
@@ -131,3 +159,13 @@ function hentTilgjengeligeFerdDatoer() {
         return a - b;
     });
     */
+
+/*
+     * beforeShowDay: function (date) {
+            const gyldig = sorterteDatoer.some(function (d) {
+                return d.getTime() === date.getTime();
+            })
+            return gyldig;
+        }
+
+*/
