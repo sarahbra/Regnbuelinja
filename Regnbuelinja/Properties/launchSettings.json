@@ -1,7 +1,7 @@
-﻿{
+{
   "iisSettings": {
-    "windowsAuthentication": false, 
-    "anonymousAuthentication": true, 
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:61312",
       "sslPort": 44392
@@ -16,10 +16,19 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "Custom": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:12084",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
     "Regnbuelinja": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "index.html",
+      "launchUrl": "https://localhost:44392/index.html",
+      "applicationUrl": "https://localhost:44392",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
