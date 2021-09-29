@@ -80,22 +80,24 @@ function visFerdKalender(datoer) {
 }
 
 function hentTilgjengeligeFerdDatoer() {
-  const startPunkt = $("#Startpunkt").val();
-  const endePunkt = $("#Endepunkt").val();
+    const startPunkt = $("#Startpunkt").val();
+    const endePunkt = $("#Endepunkt").val();
 
-  let params = {
-    Startpunkt: startPunkt,
-    Endepunkt: endePunkt,
-    AvreiseDato: null,
-  };
+    let params = {
+        "Startpunkt": startPunkt,
+        "Endepunkt": endePunkt,
+        "AvreiseDato": null
+    };
 
-  console.log(params);
+    console.log(params);
 
-  $.get("Bestilling/HentDatoer", params, function (datoer) {
-    console.log(datoer);
-    let datoFormat = [];
-    datoer.forEach(function (dato) {
-      datoFormat.push(formaterDato(dato));
+    $.get("Bestilling/HentDatoer", params, function (datoer) {
+        let datoFormat = [];
+        datoer.forEach(function(dato) {
+            datoFormat.push(formaterDato(dato))
+        });
+        visFerdKalender(datoFormat);
+
     });
     console.log(datoFormat);
     //visFerdKalender(datoFormat);
