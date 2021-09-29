@@ -71,6 +71,8 @@ function visFerdKalenderAvreise(datoer) {
       return date;
     },
   });
+
+  //HJELP! Hvorfor funker ikke dette???
   hentTilgjengeligeFerdDatoerHjemreise();
 }
 
@@ -103,8 +105,9 @@ function hentTilgjengeligeFerdDatoerAvreise() {
     datoer.forEach(function (dato) {
       formaterteDatoer.push(formaterDato(dato));
     });
-    visFerdKalenderAvreise(formaterteDatoer);
   });
+
+  visFerdKalenderAvreise(formaterteDatoer);
 }
 
 function hentTilgjengeligeFerdDatoerHjemreise() {
