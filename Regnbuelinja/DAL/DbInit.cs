@@ -49,13 +49,13 @@ namespace Regnbuelinja.DAL
                 for (int i = 1; i < 32;i++)
                 {
                     
-                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = new DateTime(2021, 12, i, 16, 0, 0)});
+                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute3, Dato = new DateTime(2021, 12, i, 16, 0, 0)});
                 }
 
                 //avreisedatoer for rute 4
                 for (int i = 1; i < 32;i++)
                 {
-                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = new DateTime(2021, 12, i, 20, 0, 0) });
+                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute3, Dato = new DateTime(2021, 12, i, 20, 0, 0) });
                 }
 
                 //Kun bestilling og billett til ferd1 foreløpig, kun 1 bestilling men 2 ruter, 2 båter og to mulige ferder

@@ -15,7 +15,8 @@ function formaterSide(bestillingInput) {
 }
 
 function hentId() {
-    return window.location.search.substring(1);
+    const url = window.location.search.substring(1);
+    return url;
 }
 
 // TODO - Add båtnavn

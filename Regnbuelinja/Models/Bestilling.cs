@@ -13,21 +13,8 @@ namespace Regnbuelinja.Models
         public string Startpunkt { get; set; }
         public string Endepunkt { get; set; }
         public DateTime AvreiseDato { get; set; }
-        public DateTime HjemreiseDato { get; set; }
+        public Nullable<DateTime> HjemreiseDato { get; set; }
         public int AntallVoksne { get; set; }
         public int AntallBarn { get; set; }
-    }
-
-    public class Bestilling
-    {
-        public int Id { get; set; }
-        public string Startpunkt { get; set; }
-        public string Endepunkt { get; set; }
-        //Denne bør være typet til en DateTime som igjen blir parset fra BestillingInput som er en string (som kommer fra JSON)
-        public string Dato { get; set; }
-        public int AntallVoksne { get; set; }
-        public int AntallBarn { get; set; }
-        public string Båtnavn { get; set; }
-        public double TotalPris { get; set; }
     }
 }
