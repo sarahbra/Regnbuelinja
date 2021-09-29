@@ -1,5 +1,4 @@
 ﻿$(function () {
-    //$("#returReise").hide();       //TODO - Frontend-people! Hide div tag if hjemreiseDato = null
     const id = window.location.search.substring(1);
     const url = "Bestilling/HentBestilling?" + id;
     $.get(url, function (bestillingInput) {
