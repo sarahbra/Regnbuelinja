@@ -81,5 +81,11 @@ namespace Regnbuelinja.Controllers
             BestillingInput hentBestilling = await _db.HentBestilling(id);
             return Ok(hentBestilling);
         }
+
+        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        {
+            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseDato);
+            return Ok(Datoer);
+        }
     }
 }
