@@ -23,6 +23,11 @@ namespace Regnbuelinja.Controllers
             return await _db.HentAvgangshavner();
         }
 
+        public async Task<double> HentPris(int id)
+        {
+            return await _db.HentPris(id);
+        }
+
         public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
         {
             return await _db.HentAnkomsthavner(avgangsHavn);

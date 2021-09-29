@@ -21,7 +21,6 @@ namespace Regnbuelinja.DAL
             List<string> havner = await _db.Ruter.Select(r => r.Startpunkt).Distinct().ToListAsync();
             return havner;
         }
-
         public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
         {
             List<string> havner = await _db.Ruter.Where(r => r.Startpunkt.Equals(avgangsHavn)).Select(r => r.Endepunkt).ToListAsync();
@@ -139,6 +138,12 @@ namespace Regnbuelinja.DAL
             }).FirstOrDefaultAsync();
 
             return bestilling;
+        }
+
+        public async Task<double> HentPris(int id)
+        {
+            double pris = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
+            return pris;
         }
     }
 }
