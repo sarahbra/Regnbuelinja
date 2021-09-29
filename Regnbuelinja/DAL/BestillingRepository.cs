@@ -133,8 +133,8 @@ namespace Regnbuelinja.DAL
                 AvreiseDato = b.Billetter.First().Ferd.Dato,
                 HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
                 //TODO: Disse returnerer totalt antall billetter og IKKE antall voksen og antall barn
-                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == true).Count(),
-                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == false).Count()
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == true).Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
             return bestilling;
@@ -144,6 +144,13 @@ namespace Regnbuelinja.DAL
         {
             double pris = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
             return pris;
+        }
+
+        public async Task<List<DateTime>> HentReturDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        {
+            List<DateTime> Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.Dato).ToListAsync();
+            Datoer.Sort();
+            return Datoer;
         }
     }
 }

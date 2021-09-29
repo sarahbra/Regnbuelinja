@@ -29,7 +29,8 @@ namespace Regnbuelinja.DAL
         public int FId { get; set; }
         public virtual Båt Båt { get; set; }
         public virtual Rute Rute { get; set; }
-        public string Dato { get; set; }
+        public DateTime Dato{ get; set; }
+
         //Legges til? Diskutere senere
         //public string Avgangstid { get; set; }
         //public string Ankomsttid { get; set; }

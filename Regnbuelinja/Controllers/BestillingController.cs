@@ -28,7 +28,12 @@ namespace Regnbuelinja.Controllers
             return await _db.HentPris(id);
         }
 
-        public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
+        public async Task<List<DateTime>> HentReturDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        {
+            return await _db.HentReturDatoer(Startpunkt, Endepunkt, AvreiseDato);
+        }
+
+        public async Task<List<string>> HentAnkomsthavner(String avgangsHavn)
         {
             return await _db.HentAnkomsthavner(avgangsHavn);
         }

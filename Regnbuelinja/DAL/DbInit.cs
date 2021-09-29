@@ -31,58 +31,31 @@ namespace Regnbuelinja.DAL
                 var båt2 = new Båt { Navn = "Unicorn" };
 
 
-                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, Dato = "01/12/2021" };
+                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, Dato = new DateTime(2021, 12, 1, 14, 0, 0) };
                 
                 //avreisedatoer for rute1
-                for (int i = 2; i< 32; i+=2)
+                for (int i = 2; i< 32; i++)
                 {
-                    if (i < 10)
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, Dato = "0" + i + "/12/2021" });
-                    }
-                    else
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, Dato = i + "/12/2021" });
-                    }
+                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, Dato = new DateTime(2021, 12, i, 14, 0, 0) });
                 }
 
                 //avreisedatoer for rute2
-                for (int i = 1; i < 32; i+=2)
+                for (int i = 1; i < 32; i++)
                 {
-                    if (i < 10)
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute2, Dato = "0" + i + "/12/2021" });
-                    }
-                    else
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute2, Dato = i + "/12/2021" });
-                    }
+                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute2, Dato = new DateTime(2021, 12, i, 11, 0, 0) });
                 }
 
                 //avreisedatoer for rute 3
                 for (int i = 1; i < 32;i++)
                 {
-                    if (i < 10)
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = "0" + i + "/12/2021" });
-                    }
-                    else
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = i + "/12/2021" });
-                    }
+                    
+                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = new DateTime(2021, 12, i, 16, 0, 0)});
                 }
 
                 //avreisedatoer for rute 4
                 for (int i = 1; i < 32;i++)
                 {
-                    if (i < 10)
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute4, Dato = "0" + i + "/12/2021" });
-                    }
-                    else
-                    {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute4, Dato = i + "/12/2021" });
-                    }
+                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute3, Dato = new DateTime(2021, 12, i, 20, 0, 0) });
                 }
 
                 //Kun bestilling og billett til ferd1 foreløpig, kun 1 bestilling men 2 ruter, 2 båter og to mulige ferder
