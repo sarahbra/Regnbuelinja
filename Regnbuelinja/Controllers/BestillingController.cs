@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Regnbuelinja.DAL;
 using Regnbuelinja.Models;
 using System;
@@ -13,13 +14,17 @@ namespace Regnbuelinja.Controllers
     {
         private readonly IBestillingRepository _db;
 
-        public BestillingController(IBestillingRepository db)
+        private ILogger<BestillingController> _log;
+
+        public BestillingController(IBestillingRepository db, ILogger<BestillingController> log)
         {
             _db = db;
+            _log = log;
         }
 
         public async Task<List<string>> HentAvgangshavner()
         {
+            _log.LogInformation("Hallo loggen!");
             return await _db.HentAvgangshavner();
         }
 
