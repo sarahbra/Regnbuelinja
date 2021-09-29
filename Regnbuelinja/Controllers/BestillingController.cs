@@ -18,37 +18,63 @@ namespace Regnbuelinja.Controllers
             _db = db;
         }
 
-        public async Task<List<string>> HentAvgangshavner()
+        public async Task<ActionResult> HentAvgangshavner()
         {
-            return await _db.HentAvgangshavner();
+            List<string> hentAvgangsHavner = await _db.HentAvgangshavner();
+            if (hentAvgangsHavner == null)
+            {
+                return NotFound("Finner ikke avgangshavner i repository");
+            }
+            return Ok(hentAvgangsHavner);
         }
 
-        public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
+        public async Task<ActionResult> HentAnkomsthavner(string avgangsHavn)
         {
-            return await _db.HentAnkomsthavner(avgangsHavn);
+            List<string> hentAnkomstHavner = await _db.HentAnkomsthavner(avgangsHavn);
+            if (hentAnkomstHavner == null)
+            {
+                NotFound("Finner ikke ankomsthavner i repository");
+            }
+            return Ok(hentAnkomstHavner);
         }
 
         //vet ikke om trengs. Kan nok fjernes
-        public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
+        public async Task<ActionResult> HentRuter(string nyttStartPunkt)
         {
-            return await _db.HentRuter(nyttStartPunkt);
+            List<Rute> hentRuter = await _db.HentRuter(nyttStartPunkt);
+            if(hentRuter == null)
+            {
+                return NotFound("Finner ikke ruter i repository");
+            }
+            return Ok(hentRuter);
         }
 
         //Samme gjelder denne
-        public async Task<List<Ferd>> HentFerder(int ruteId)
+        public async Task<ActionResult> HentFerder(int ruteId)
         {
-            return await _db.HentFerder(ruteId);
+            List<Ferd> hentFerder = await _db.HentFerder(ruteId);
+            if(hentFerder == null)
+            {
+                return NotFound("Finner ikke ferder i repository");
+            }
+            return Ok(hentFerder);
         }
 
         //BestillingInput, i stedetfor Bestilling og FromBody fordi vi vil sende inn et JSON-objekt
-        public async Task<string> LagreBestilling(BestillingInput nyBestilling)
+        public async Task<ActionResult> LagreBestilling(BestillingInput nyBestilling)
         {
-            return await _db.LagreBestilling(nyBestilling);
+            string lagreBestilling = await _db.LagreBestilling(nyBestilling);
+            if (lagreBestilling.Equals(null))
+            {
+                return BadRequest("Kunne ikke lagre kunden i repository");
+            }
+            return Ok(lagreBestilling);
         }
 
-        public async Task<BestillingInput> HentBestilling(int id)
+        public async Task<ActionResult> HentBestilling(int id)
         {
-            return await _db.HentBestilling(id);
+            BestillingInput hentBestilling = await _db.HentBestilling(id);
+            return Ok(hentBestilling);
         }
     }
 }
