@@ -21,7 +21,6 @@ namespace Regnbuelinja.DAL
             List<string> havner = await _db.Ruter.Select(r => r.Startpunkt).Distinct().ToListAsync();
             return havner;
         }
-
         public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
         {
             List<string> havner = await _db.Ruter.Where(r => r.Startpunkt.Equals(avgangsHavn)).Select(r => r.Endepunkt).ToListAsync();
@@ -133,12 +132,31 @@ namespace Regnbuelinja.DAL
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
                 AvreiseDato = b.Billetter.First().Ferd.Dato,
                 HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
-                //TODO: Disse returnerer totalt antall billetter og IKKE antall voksen og antall barn
-                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == true).Count(),
-                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato == b.Billetter.First().Ferd.Dato && bi.Voksen == false).Count()
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == true).Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
             return bestilling;
+        }
+
+        public async Task<double> HentPris(int id)
+        {
+            double pris = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
+            return pris;
+        }
+
+        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        {
+            List<DateTime> Datoer;
+            if(AvreiseDato == null)
+            {
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.Dato).ToListAsync();
+            } else
+            {
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.Dato.CompareTo(AvreiseDato) > 0).Select(f => f.Dato).ToListAsync();
+            }
+            Datoer.Sort();
+            return Datoer;
         }
     }
 }
