@@ -6,11 +6,11 @@
 })
 
 function formaterSide(bestillingInput) {
-    $.post("Bestilling/HentAnkomstTid", bestillingInput.avreiseTid, function (ankomstTid) {
+    $.get("Bestilling/HentAnkomstTid", bestillingInput.avreiseTid, function (ankomstTid) {
         url = "Bestilling/HentPris?" + hentId();
         $.get(url, function (totalPris) {
             if (bestillingInput.hjemreiseTid) {
-                $.post("Bestilling/HentAnkomstTid", bestillingInput.hjemreiseTid, function (ankomstTid_retur) {
+                $.get("Bestilling/HentAnkomstTid", bestillingInput.hjemreiseTid, function (ankomstTid_retur) {
                     formaterBestilling(bestillingInput, ankomstTid_retur, "Båtten Anna", true);
                 });
             }
