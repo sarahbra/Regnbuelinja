@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -10,7 +11,9 @@ namespace Regnbuelinja.Models
     //Man vil alltid representere den datamodellen som faktisk er, i dette tilfellet er det input fra klienten. 
     public class BestillingInput
     {
+        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string Startpunkt { get; set; }
+        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string Endepunkt { get; set; }
         public string AvreiseTid { get; set; }
         public string HjemreiseTid { get; set; }

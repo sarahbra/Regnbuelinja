@@ -24,12 +24,13 @@ namespace Regnbuelinja.Controllers
 
         public async Task<ActionResult> HentAvgangshavner()
         {
-            _log.LogInformation("------");
             List<string> hentAvgangsHavner = await _db.HentAvgangshavner();
             if (hentAvgangsHavner == null)
             {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAvgangshavner: Avgangshavnene ble ikke returnert.");
                 return NotFound("Finner ikke avgangshavner i repository");
             }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAvgangshavner: Vellykket. Avgangshavnene har blitt returnert.");
             return Ok(hentAvgangsHavner);
         }
 
@@ -38,47 +39,62 @@ namespace Regnbuelinja.Controllers
             List<string> hentAnkomstHavner = await _db.HentAnkomsthavner(avgangsHavn);
             if (hentAnkomstHavner == null)
             {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomsthavner: Amkomsthavnene ble ikke returnert.");
                 NotFound("Finner ikke ankomsthavner i repository");
             }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomsthavner: Vellykket. Ankomsthavnene har blitt returnert.");
             return Ok(hentAnkomstHavner);
         }
 
         //vet ikke om trengs. Kan nok fjernes
-        public async Task<ActionResult> HentRuter(string nyttStartPunkt)
+        public async Task<ActionResult> HentRuter(string nyttstartpunkt)
         {
-            List<Rute> hentRuter = await _db.HentRuter(nyttStartPunkt);
-            if (hentRuter == null)
+            List<Rute> hentruter = await _db.HentRuter(nyttstartpunkt);
+            if (hentruter == null)
             {
-                return NotFound("Finner ikke ruter i repository");
+                return NotFound("finner ikke ruter i repository");
             }
-            return Ok(hentRuter);
+            return Ok(hentruter);
         }
 
-        //Samme gjelder denne
-        public async Task<ActionResult> HentFerder(int ruteId)
+        //samme gjelder denne
+        public async Task<ActionResult> HentFerder(int ruteid)
         {
-            List<Ferd> hentFerder = await _db.HentFerder(ruteId);
-            if (hentFerder == null)
+            List<Ferd> hentferder = await _db.HentFerder(ruteid);
+            if (hentferder == null)
             {
-                return NotFound("Finner ikke ferder i repository");
+                return NotFound("finner ikke ferder i repository");
             }
-            return Ok(hentFerder);
+            return Ok(hentferder);
         }
 
         //BestillingInput, i stedetfor Bestilling og FromBody fordi vi vil sende inn et JSON-objekt
         public async Task<ActionResult> LagreBestilling(BestillingInput nyBestilling)
         {
-            string lagreBestilling = await _db.LagreBestilling(nyBestilling);
-            if (lagreBestilling.Equals(null))
+            if (ModelState.IsValid)
             {
-                return BadRequest("Kunne ikke lagre kunden i repository");
+                string lagreBestilling = await _db.LagreBestilling(nyBestilling);
+                if (lagreBestilling == null)
+                {
+                    _log.LogInformation("/Controllers/BestillingController.cs: LagreBestilling: Kunne ikke lagre bestilling i databasen (sannsynligvis i BestillingRepository.cs)");
+                    return BadRequest("Kunne ikke lagre bestillingen i databasen");
+                }
+                _log.LogInformation("/Controllers/BestillingController.cs: LagreBestilling: Vellykket. Bestillingen har blitt lagret.");
+                return Ok(lagreBestilling);
             }
-            return Ok(lagreBestilling);
+            _log.LogInformation("/Controllers/BestillingController.cs: LagreBestilling: Invalid client input.");
+            return ValidationProblem("Invalid input object from client");
         }
 
         public async Task<ActionResult> HentBestilling(int id)
         {
             BestillingInput hentBestilling = await _db.HentBestilling(id);
+            if (hentBestilling == null)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet.");
+                return BadRequest("Ingen bestilling med ID " + id + " har blitt funnet.");           
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Bestilling med ID " + id + " har blitt funnet.");
             return Ok(hentBestilling);
         }
 

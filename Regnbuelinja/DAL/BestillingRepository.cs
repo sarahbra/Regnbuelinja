@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Regnbuelinja.Models;
 using System;
 using System.Collections.Generic;
@@ -11,19 +12,34 @@ namespace Regnbuelinja.DAL
     {
         private readonly BestillingContext _db;
 
-        public BestillingRepository(BestillingContext db)
+        private ILogger<BestillingRepository> _log;
+
+        public BestillingRepository(BestillingContext db, ILogger<BestillingRepository> log)
         {
             _db = db;
+            _log = log;
         }
 
         public async Task<List<string>> HentAvgangshavner()
         {
             List<string> havner = await _db.Ruter.Select(r => r.Startpunkt).Distinct().ToListAsync();
+            if (havner != null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAvgangshavner: Vellykket. Avgangshavnene ble returnert fra databasen.");
+                return havner;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAvgangshavner: Avgangshavnene ble ikke returnert fra databasen.");
             return havner;
         }
         public async Task<List<string>> HentAnkomsthavner(string avgangsHavn)
         {
             List<string> havner = await _db.Ruter.Where(r => r.Startpunkt.Equals(avgangsHavn)).Select(r => r.Endepunkt).ToListAsync();
+            if (havner != null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomsthavner: Vellykket. Ankomsthavnene ble returnert fra databasen.");
+                return havner;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomsthavner: Ankomstshavnene ble ikke returnert fra databasen.");
             return havner;
         }
 
@@ -44,9 +60,8 @@ namespace Regnbuelinja.DAL
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
-            // TODO: Lag flere billetter basert på nyBestilling.TurRetur
-
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseDato);
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.AvreiseDato) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
@@ -62,6 +77,7 @@ namespace Regnbuelinja.DAL
 
             if (ferd != null)
             {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme start- og endepunktene har blitt funnet i databasen.");
                 Billett nyBillett;
                 for (int i = 1; i <= nyBestilling.AntallVoksne; i++)
                 {
@@ -95,8 +111,7 @@ namespace Regnbuelinja.DAL
                     billettListe.Add(nyBillett);
                     totalPris += (ferd.Rute.Pris * 0.5);
 
-                    // Leger til en retur billetten
-
+                    // Legger til retur billetten
                     if (ferdRetur != null)
                     {
                         Billett returBillett = new Billett()
@@ -109,19 +124,24 @@ namespace Regnbuelinja.DAL
                     }
 
                 }
+                //Oppretter bestillingen
+                Bestillinger bestilling = new Bestillinger()
+                {
+                    TotalPris = totalPris,
+                    Billetter = billettListe
+                };
+
+
+                _db.Bestillinger.Add(bestilling);
+                await _db.SaveChangesAsync();
+                return bestilling.BeId + "";
+
             }
-
-            //Oppretter bestillingen
-            Bestillinger bestilling = new Bestillinger()
+            else
             {
-                TotalPris = totalPris,
-                Billetter = billettListe
-            };
-
-
-            _db.Bestillinger.Add(bestilling);
-            await _db.SaveChangesAsync();
-            return bestilling.BeId + "";
+                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme start- og endepunktene har ikke blitt funnet i databasen.");
+                return null;
+            }
         }
 
         public async Task<BestillingInput> HentBestilling(int id)
@@ -136,6 +156,12 @@ namespace Regnbuelinja.DAL
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
+            if (bestilling != null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentBestilling: Vellykket. Et BestillingInput objekt blir returnert.");
+                return bestilling;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet i databasen");
             return bestilling;
         }
 
@@ -156,6 +182,12 @@ namespace Regnbuelinja.DAL
                 Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.AnkomstTid.CompareTo(ReturAvreiseTid) > 0).Select(f => f.AvreiseTid).ToListAsync();
             }
             Datoer.Sort();
+            if (Datoer == null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med Startpunkt '" + Startpunkt + "' og Endepunkt '"+Endepunkt+"' har blitt funnet i databasen.");
+                return Datoer;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Vellykket. Ferd med Startpunkt '" + Startpunkt + "' og Endepunkt '" + Endepunkt + "' har blitt funnet i databasen.");
             return Datoer;
         }
 
