@@ -1,5 +1,4 @@
-﻿
-$("input[type=radio][name=TurRetur]").change(function () {
+﻿$("input[type=radio][name=TurRetur]").change(function () {
     var hjemreiseDato = $("#HjemreiseDato");
     var tilbakeContainer = $("#TilbakeContainer");
     if (this.value === "true") {
@@ -15,20 +14,17 @@ $("#orderForm").submit(function (event) {
     event.preventDefault();
     var form = event.target;
     var valid = form.checkValidity();
-    $(form).addClass('was-validated');
+    $(form).addClass("was-validated");
     if (!valid) {
-        return false
+        return false;
     }
     $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
-        //console.log($(this))
         window.location = "https://localhost:44392/bestilling.html?id=" + data;
-        //Gå til neste side med billettinfo
-    })
-        .fail(function () {
-            //Kan eventuelt hente ut feilmelding fra server her hvis vi vil etter at det er implementert
-
-            $("#feil").html("Feil på server - prøv igjen senere");
-        });
+        //Gå til neste side med billettinfo 
+    }).fail(function () {
+        //Kan eventuelt hente ut feilmelding fra server her hvis vi vil etter at det er implementert
+        $("#feil").html("Feil på server - prøv igjen senere");
+    });
 });
 
 $("#Startpunkt").change(function () {
@@ -36,9 +32,8 @@ $("#Startpunkt").change(function () {
 });
 
 $("#Endepunkt").change(function () {
-    hentTilgjengeligeFerdDatoer();
+    hentTilgjengeligeFerdDatoerAvreise();
 });
-
 
 function hentAnkomstHavner() {
     const avgangsHavn = $("#Startpunkt").val();
@@ -49,12 +44,11 @@ function hentAnkomstHavner() {
     });
 }
 
-//Trenger ikke to sånne metoder som gjør det samme
 function visHavner(selectBox, havner) {
     selectBox.empty();
     selectBox.append('<option value="" disabled selected>Velg havn</option>');
-    for (let havn of havner) {
-        selectBox.append('<option value="' + havn + '">' + havn + '</option>');
+    for (const havn of havner) {
+        selectBox.append('<option value="' + havn + '">' + havn + "</option>");
     }
 }
 
@@ -62,83 +56,73 @@ $.get("Bestilling/HentAvgangshavner", function (havner) {
     visHavner($("#Startpunkt"), havner);
 });
 
-
-//Hadde ikke trengt å sortere dato-strengene hvis vi hadde brukt Date backend. Da kunne vi brukt innebygde metoder på Date
-
-function visFerdKalender(datoer) {
-    function formaterDato(datoStreng) {
-        const deler = datoStreng.split(/[-T]+/).map(function (s) {
-            return parseInt(s)
-        });
-        console.log(datoStreng)
-        console.log(deler)
-        console.log(new Date(deler[0], deler[1] - 1, deler[2]));
-        return new Date(deler[0], deler[1] - 1, deler[2]);
+function visKalender(kalender, datoer) {
+    if (kalender.data().datepicker) {
+        kalender.data().datepicker.destroy();
     }
-
-    const sorterteDatoer = datoer.map(formaterDato).sort(function (a, b) {
-        return a - b;
-    });
-    console.log(sorterteDatoer[0]);
-    console.log(sorterteDatoer[sorterteDatoer.length - 1]);
-
-    //Setter det samme på hjemreise og avreise. Sånn kan det ikke være
-    $("#AvreiseDato,#HjemreiseDato").datepicker({
+    kalender.datepicker({
         format: "dd/mm/yyyy",
         container: "body",
         todayHighlight: true,
         autoclose: true,
-        startDate: sorterteDatoer[0],//sorterteDatoer.slice(0).shift(),
-        endDate: sorterteDatoer[sorterteDatoer.length-1],//sorterteDatoer.slice(0).pop(),
+        startDate: datoer[0],
+        endDate: datoer[datoer.length - 1],
         beforeShowDay: function (date) {
-            const gyldig = sorterteDatoer.some(function (d) {
-                return d.getTime() === date.getTime();
-            })
-            return gyldig;
-        }
+            // Return true dersom date skal kunne velges
+            return datoer.some(d => d.getTime() === date.getTime());
+        },
     });
 }
 
+function formatterKalenderDato(str) {
+    const deler = str.split("/");
+    return new Date(parseInt(deler[2]), parseInt(deler[1]) - 1, parseInt(deler[0]));
+}
 
-function hentTilgjengeligeFerdDatoer() {
+function hentTilgjengeligeFerdDatoerAvreise() {
     const startPunkt = $("#Startpunkt").val();
     const endePunkt = $("#Endepunkt").val();
 
-    $.get("Bestilling/HentRuter?nyttStartPunkt=" + startPunkt, function (startRuter) {
-        const ruter = startRuter.filter(function (startRute) {
-            return startRute.endepunkt === endePunkt;
-        });
-        Promise.all(ruter.map(function (rute) {
-            return $.get("Bestilling/HentFerder?ruteId=" + rute.rId);
-        })).then(function (results) {
-            const datoer = [];
-            for (const result of results) {
-                for (const ferd of result) {
-                    datoer.push(ferd.dato);
-                }
-            }
-            visFerdKalender(datoer);
-        });
-    });
+    const params = {
+        Startpunkt: startPunkt,
+        Endepunkt: endePunkt,
+        AvreiseDato: null,
+    };
 
-    //Todo: Hvis tur/retur er valgt -> Hent datoer basert på startPunkt = endepunkt og endePunkt = startPunkt?
+    $.get("Bestilling/HentDatoer", params, function (datoer) {
+        visKalender($("#AvreiseDato"), datoer.map(function (d) {
+            return new Date(d);
+        }));
+    });
 }
 
+//Hvis avreisedato er valgt OG tur/retur er valgt så hentes tilgjengelige hjemreiseDatoer
+$("#AvreiseDato").change(function () {
+    $("#HjemreiseDato").val("");
+    if ($("#TurReturTrue").is(":checked")) {
+        hentTilgjengeligeFerdDatoerHjemreise();
+    }
+});
 
+//Henter tilgjengelige hjemreisedatoer basert på avreisedato
 
+function hentTilgjengeligeFerdDatoerHjemreise() {
+    const startPunkt = $("#Endepunkt").val();
+    const endePunkt = $("#Startpunkt").val();
+    const avreiseDato = formatterKalenderDato($("#AvreiseDato").val());
 
+    const dato = new Date(avreiseDato);
+    const avreiseDatoISOStr = avreiseDato.toISOString();
 
+    const params = {
+        Startpunkt: startPunkt,
+        Endepunkt: endePunkt,
+        AvreiseDato: avreiseDatoISOStr,
+    };
 
-
-
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-/*
-  POST /test HTTP/1.1
-  Host: foo.example
-  Content-Type: application/x-www-form-urlencoded
-  Content-Length: 27
-
-  field1=value1&field2=value2
-*/
-
-//Serialiserer til formatet ovenfor. Slipper å hente ut data på "vanlig måte"
+    $.get("Bestilling/HentDatoer", params, function (datoer) {
+        visKalender($("#HjemreiseDato"), datoer.map(function (d) {
+            return new Date(d);
+        }));
+    });
+}
