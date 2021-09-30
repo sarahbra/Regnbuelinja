@@ -38,7 +38,7 @@ function formaterBestilling(bestillingInput, ankomstTid, skip, retur) {
     }
 
     let ut = "";
-    ut += "<li class='list-group-item'><label for='dato' class='col-12 col-sm-3 fw-bold'>Dato</label></li>" +
+    ut += "<li class='list-group-item'></li>" +
         "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>" + bestillingInput.avreiseTid.toString() + "</li>" +
         "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstTid.toString() + "</li>" +
         "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + skip + "</li>" +
@@ -49,7 +49,7 @@ function formaterBestilling(bestillingInput, ankomstTid, skip, retur) {
 
 function formaterKjøpsInfo(bestillingInput, pris) {
     let ut = "<table class='table'><thead><tr>";
-    ut += "<th>#</th><th>Produkt</th><th>Produkt beskrivelse</th>" +
+    ut += "<th>#</th><th>Produkt</th><th>Produktbeskrivelse</th>" +
         "<th>Antall</th><th>Pris</th></tr></thead>" +
         "<tbody>" +
         "<tr><th>1</th>" +

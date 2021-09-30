@@ -32,10 +32,6 @@ namespace Regnbuelinja.DAL
         public DateTime AvreiseTid{ get; set; }
 
         public DateTime AnkomstTid { get; set; }
-
-        //Legges til? Diskutere senere
-        //public string Avgangstid { get; set; }
-        //public string Ankomsttid { get; set; }
     }
     public class Båt
     {
