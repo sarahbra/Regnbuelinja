@@ -1,24 +1,22 @@
 ﻿$(function () {
-    const url = "Bestilling/HentBestilling?id=" + hentId();
+    const url = "Bestilling/HentBestilling?" + hentId();
     $.get(url, function (bestillingInput) {
         formaterSide(bestillingInput);
     });
 })
 
 function formaterSide(bestillingInput) {
-    const url = "Bestilling/HentAnkomstTid?avreiseTid=" + bestillingInput.avreiseTid;
-    $.get(url, function (ankomstTid) {
-        url = "Bestilling/HentPris?id=" + hentId();
+    $.post("Bestilling/HentAnkomstTid", bestillingInput.avreiseTid, function (ankomstTid) {
+        url = "Bestilling/HentPris?" + hentId();
         $.get(url, function (totalPris) {
             if (bestillingInput.hjemreiseTid) {
-                url = "Bestilling/HentAnkomstTid?avreiseTid=" + bestillingInput.avreiseTid;
-                $.get(url, function (ankomstTid_retur) {
-                    formaterReturBestilling(bestillingInput, ankomstTid_retur);
+                $.post("Bestilling/HentAnkomstTid", bestillingInput.hjemreiseTid, function (ankomstTid_retur) {
+                    formaterBestilling(bestillingInput, ankomstTid_retur, "Båtten Anna", true);
                 });
             }
             formaterKjøpsInfo(bestillingInput, totalPris);
         });
-        formaterBestilling(bestillingInput, ankomstTid);
+        formaterBestilling(bestillingInput, ankomstTid, "Kjærleiksbåten", false);
     });
 }
 
@@ -28,28 +26,24 @@ function hentId() {
 }
 
 // TODO - Add båtnavn
-function formaterBestilling(bestillingInput, ankomstTid) {
-    $("#utreiseHeader").html("Utreise fra " + bestillingInput.startpunkt);
+function formaterBestilling(bestillingInput, ankomstTid, skip, retur) {
+
+    let startpunkt = bestillingInput.startpunkt;
+    let endepunkt = bestillingInput.endepunkt;
+    var container = $("#utreise");
+    if (retur) {
+        startpunkt = bestillingInput.endepunkt;
+        endepunkt = bestillingInput.startpunkt;
+        container = $("#returreise");
+    }
+
     let ut = "";
     ut += "<li class='list-group-item'><label for='dato' class='col-12 col-sm-3 fw-bold'>Dato</label></li>" +
         "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>" + bestillingInput.avreiseTid.toString() + "</li>" +
-        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstTid + "</li>" +
-        "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
-        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</li>";
-    $("#utreise").html(ut);
-}
-
-
-function formaterReturBestilling(bestillingInput, ankomstTid) {
-    $("#returreiseHeader").html("Hjemreise fra " + bestillingInput.endepunkt);
-    let ut = "";
-    ut += "<li class='list-group-item'><label for='retur_dato' class='col-12 col-sm-3 fw-bold'>Dato</label></li>" +
-        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>" + bestillingInput.hjemreiseTid.toString() + "</li>" +
-        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'></label>" + ankomstTid + "</li>" +
-        "<li class='list-group-item'><label for='retur_skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
-        "<li class='list-group-item'><label for='retur_strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</li>";
-    $("#returreise").html(ut);
-    formaterKjøpsInfo(bestillingInput);
+        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstTid.toString() + "</li>" +
+        "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + skip + "</li>" +
+        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
+    container.html(ut);
 }
 
 
@@ -72,7 +66,7 @@ function formaterKjøpsInfo(bestillingInput, pris) {
             "<td></td></tr>"; //TODO: reisePris ikke i kontroller
     }
 
-    ut += "<tr><td></td><td></td><th></th><td>Totalpris</td><td>" + pris + "</td>";
+    ut += "<tr><td></td><td></td><th></th><th>Totalpris</th><td>" + pris + "</td>";
     ut += "</tbody</table>";
     $("#kjøpsInfo").html(ut);
 }

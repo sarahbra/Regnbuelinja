@@ -60,8 +60,8 @@ namespace Regnbuelinja.DAL
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
-            System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseDato);
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.AvreiseDato) &&
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseTid);
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
@@ -191,9 +191,9 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
-        public async Task<string> HentAnkomstTid(string AvreiseTid)
+        public async Task<DateTime> HentAnkomstTid(DateTime AvreiseTid)
         {
-            string AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.ToString().Equals(AvreiseTid)).Select(f => f.AnkomstTid.ToString()).FirstOrDefaultAsync();
+            DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(AvreiseTid)).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
             return AnkomstTid;
         }
     }

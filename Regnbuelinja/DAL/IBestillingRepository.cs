@@ -17,7 +17,7 @@ namespace Regnbuelinja.DAL
         Task<List<Ferd>> HentFerder(int ruteId);
         Task<string> LagreBestilling(BestillingInput nyBestilling);
         Task<BestillingInput> HentBestilling(int id);
-        Task<string> HentAnkomstTid(string avreiseTid);
+        Task<DateTime> HentAnkomstTid(DateTime avreiseTid);
 
     }
 }
