@@ -34,7 +34,7 @@ namespace Regnbuelinja.DAL
                 var ferd1 = new Ferd { Båt = båt1, Rute = rute1, Dato = new DateTime(2021, 12, 1, 0, 0, 0) };
                 
                 //avreisedatoer for rute1
-                for (int i = 2; i< 32; i++)
+                for (int i = 2; i< 32; i+=2)
                 {
                     context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, Dato = new DateTime(2021, 12, i, 0, 0, 0) });
                 }
