@@ -19,7 +19,6 @@ $("#orderForm").submit(function (event) {
         return false;
     }
     $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
-        //console.log($(this))
         window.location = "https://localhost:44392/bestilling.html?id=" + data;
         //Gå til neste side med billettinfo 
     }).fail(function () {
@@ -48,7 +47,7 @@ function hentAnkomstHavner() {
 function visHavner(selectBox, havner) {
     selectBox.empty();
     selectBox.append('<option value="" disabled selected>Velg havn</option>');
-    for (let havn of havner) {
+    for (const havn of havner) {
         selectBox.append('<option value="' + havn + '">' + havn + "</option>");
     }
 }
@@ -57,8 +56,11 @@ $.get("Bestilling/HentAvgangshavner", function (havner) {
     visHavner($("#Startpunkt"), havner);
 });
 
-function visFerdKalenderAvreise(datoer) {
-    $("#AvreiseDato").datepicker({
+function visKalender(kalender, datoer) {
+    if (kalender.data().datepicker) {
+        kalender.data().datepicker.destroy();
+    }
+    kalender.datepicker({
         format: "dd/mm/yyyy",
         container: "body",
         todayHighlight: true,
@@ -66,80 +68,61 @@ function visFerdKalenderAvreise(datoer) {
         startDate: datoer[0],
         endDate: datoer[datoer.length - 1],
         beforeShowDay: function (date) {
-            return date;
+            // Return true dersom date skal kunne velges
+            return datoer.some(d => d.getTime() === date.getTime());
         },
     });
 }
 
-function visFerdKalenderHjemreise(datoer) {
-    $("#HjemreiseDato").datepicker({
-        format: "dd/mm/yyyy",
-        container: "body",
-        todayHighlight: true,
-        autoclose: true,
-        startDate: datoer[0],
-        endDate: datoer[datoer.length - 1],
-        beforeShowDay: function (date) {
-            return date;
-        },
-    });
+function formatterKalenderDato(str) {
+    const deler = str.split("/");
+    return new Date(parseInt(deler[2]), parseInt(deler[1]) - 1, parseInt(deler[0]));
 }
 
 function hentTilgjengeligeFerdDatoerAvreise() {
     const startPunkt = $("#Startpunkt").val();
     const endePunkt = $("#Endepunkt").val();
 
-    let params = {
+    const params = {
         Startpunkt: startPunkt,
         Endepunkt: endePunkt,
         AvreiseDato: null,
     };
 
     $.get("Bestilling/HentDatoer", params, function (datoer) {
-        let formaterteDatoer = [];
-
-        datoer.forEach(function (dato) {
-            formaterteDatoer.push(formaterDato(dato));
-        });
-        visFerdKalenderAvreise(formaterteDatoer);
+        visKalender($("#AvreiseDato"), datoer.map(function (d) {
+            return new Date(d);
+        }));
     });
 }
 
-//Hvis avreisedato er valgt OG tur/retur er valgt
+//Hvis avreisedato er valgt OG tur/retur er valgt så hentes tilgjengelige hjemreiseDatoer
 $("#AvreiseDato").change(function () {
     $("#HjemreiseDato").val("");
     if ($("#TurReturTrue").is(":checked")) {
-        alert("it's checked");
-        //Denne funker første gangen, men hvis man endrer avreisedato så blir den ikke trigget igjen 
         hentTilgjengeligeFerdDatoerHjemreise();
     }
 });
 
-//Hent tilgjengelige hjemreisedatoer basert på avreisedato
+//Henter tilgjengelige hjemreisedatoer basert på avreisedato
 
 function hentTilgjengeligeFerdDatoerHjemreise() {
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
-    const avreiseDato = $("#AvreiseDato").data().datepicker.viewDate;
-    console.log(avreiseDato);
+    const avreiseDato = formatterKalenderDato($("#AvreiseDato").val());
 
     const dato = new Date(avreiseDato);
     const avreiseDatoISOStr = avreiseDato.toISOString();
 
-    console.log(avreiseDatoISOStr);
-
-    let params = {
+    const params = {
         Startpunkt: startPunkt,
         Endepunkt: endePunkt,
         AvreiseDato: avreiseDatoISOStr,
     };
 
     $.get("Bestilling/HentDatoer", params, function (datoer) {
-        let formaterteDatoer = [];
-        datoer.forEach(function (dato) {
-            formaterteDatoer.push(formaterDato(dato));
-        });
-        console.log(formaterteDatoer);
-        visFerdKalenderHjemreise(formaterteDatoer);
+        visKalender($("#HjemreiseDato"), datoer.map(function (d) {
+            return new Date(d);
+        }));
     });
 }
