@@ -46,7 +46,6 @@ function hentAnkomstHavner() {
   });
 }
 
-//Trenger ikke to sånne metoder som gjør det samme
 function visHavner(selectBox, havner) {
   selectBox.empty();
   selectBox.append('<option value="" disabled selected>Velg havn</option>');
@@ -71,9 +70,6 @@ function visFerdKalenderAvreise(datoer) {
       return date;
     },
   });
-
-  //HJELP! Hvorfor funker ikke dette???
-  hentTilgjengeligeFerdDatoerHjemreise();
 }
 
 function visFerdKalenderHjemreise(datoer) {
@@ -102,28 +98,37 @@ function hentTilgjengeligeFerdDatoerAvreise() {
 
   $.get("Bestilling/HentDatoer", params, function (datoer) {
     let formaterteDatoer = [];
+
     datoer.forEach(function (dato) {
       formaterteDatoer.push(formaterDato(dato));
     });
+    visFerdKalenderAvreise(formaterteDatoer);
   });
-
-  visFerdKalenderAvreise(formaterteDatoer);
 }
 
+//Hvis avreisedato er valgt OG tur/retur er valgt
+$("#AvreiseDato").change(function () {
+  if ($("#TurReturTrue").is(":checked")) {
+    alert("it's checked");
+    hentTilgjengeligeFerdDatoerHjemreise();
+  }
+});
+
+//Hent tilgjengelige hjemreisedatoer basert på avreisedato
 function hentTilgjengeligeFerdDatoerHjemreise() {
   const startPunkt = $("#Endepunkt").val();
   const endePunkt = $("#Startpunkt").val();
-  const avreiseDatoString = $("#AvreiseDato").data("datepicker").date;
+  const avreiseDatoString = $("#AvreiseDato").data().datepicker.viewDate;
 
-  console.log(avreiseDatoString);
-
-  const avreiseDato = new Date(avreiseDatoString);
+  let avreiseDato = new Date(avreiseDatoString);
   console.log(avreiseDato);
+  let avreiseDatoStr = avreiseDato.toISOString();
+  console.log(avreiseDatoStr);
 
   let params = {
     Startpunkt: startPunkt,
     Endepunkt: endePunkt,
-    AvreiseDato: avreiseDato,
+    AvreiseDato: avreiseDatoStr,
   };
 
   $.get("Bestilling/HentDatoer", params, function (datoer) {
@@ -135,40 +140,3 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
     visFerdKalenderHjemreise(formaterteDatoer);
   });
 }
-
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-/*
-  POST /test HTTP/1.1
-  Host: foo.example
-  Content-Type: application/x-www-form-urlencoded
-  Content-Length: 27
-
-  field1=value1&field2=value2
-*/
-
-//Serialiserer til formatet ovenfor. Slipper å hente ut data på "vanlig måte"
-
-//Gammel formaterDato da vi fikk String fra server
-
-/*
-    function formaterDato(datoStreng) {
-        const deler = datoStreng.split("/").map(function (s) {
-            return parseInt(s)
-        });
-        return new Date(deler[2], deler[1] - 1, deler[0]);
-    }
-
-    const sorterteDatoer = datoer.map(formaterDato).sort(function (a, b) {
-        return a - b;
-    });
-    */
-
-/*
-     * beforeShowDay: function (date) {
-            const gyldig = sorterteDatoer.some(function (d) {
-                return d.getTime() === date.getTime();
-            })
-            return gyldig;
-        }
-
-*/
