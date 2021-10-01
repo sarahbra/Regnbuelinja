@@ -60,14 +60,19 @@ namespace Regnbuelinja.DAL
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
+            System.Diagnostics.Debug.WriteLine(nyBestilling.Startpunkt);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.Endepunkt);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseTid);
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
+            System.Diagnostics.Debug.WriteLine(nyBestilling.HjemreiseTid);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AntallVoksne);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(parseDato(nyBestilling.AvreiseTid)) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
             if (nyBestilling.HjemreiseTid != null)
             {
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.HjemreiseTid) &&
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(parseDato(nyBestilling.HjemreiseTid)) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
             }
             else
@@ -135,7 +140,6 @@ namespace Regnbuelinja.DAL
                 _db.Bestillinger.Add(bestilling);
                 await _db.SaveChangesAsync();
                 return bestilling.BeId + "";
-
             }
             else
             {
@@ -195,6 +199,12 @@ namespace Regnbuelinja.DAL
         {
             DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(AvreiseTid)).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
             return AnkomstTid;
+        }
+
+        private DateTime parseDato(string tid)
+        {
+            string[] dato = tid.Split("/");
+            return new DateTime(Int32.Parse(dato[2]), Int32.Parse(dato[1]), Int32.Parse(dato[0]));
         }
     }
 }

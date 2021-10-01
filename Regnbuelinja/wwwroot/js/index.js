@@ -18,7 +18,16 @@ $("#orderForm").submit(function (event) {
     if (!valid) {
         return false;
     }
-    $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
+
+    const input = {
+        Startpunkt: $("#Startpunkt").val(),
+        Endepunkt: $("#Endepunkt").val(),
+        AvreiseTid: $("#AvreiseDato").val(),
+        HjemreiseTid: $("#HjemreiseDato").val(),
+        AntallVoksne: $('input[type=number][name=AntallVoksne]').val(),
+        AntallBarn: $('input[type=number][name=AntallBarn]').val()
+    }
+    $.post("Bestilling/LagreBestilling", input, function (data) {
         window.location = "https://localhost:44392/bestilling.html?id=" + data;
         //Gå til neste side med billettinfo 
     }).fail(function () {

@@ -113,6 +113,12 @@ namespace Regnbuelinja.Controllers
         public async Task<ActionResult> HentAnkomstTid(DateTime AvgangsTid)
         {
             DateTime AnkomstTid = await _db.HentAnkomstTid(AvgangsTid);
+            if (AnkomstTid == null)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomst tid funnet for avgangstid " + AvgangsTid);
+                return BadRequest("Ingen ankomst tid funnet for avgangstid " + AvgangsTid);
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet etter avgangstid " + AvgangsTid);
             return Ok(AnkomstTid);
         }
     }

@@ -1,12 +1,13 @@
 ﻿$(function () {
     const url = "Bestilling/HentBestilling?" + hentId();
     $.get(url, function (bestillingInput) {
+        console.log(bestillingInput)
         formaterSide(bestillingInput);
     });
 })
 
 function formaterSide(bestillingInput) {
-    $.get("Bestilling/HentAnkomstTid", bestillingInput.avreiseTid, function (ankomstTid) {
+    $.get("Bestilling/HentAnkomstTid", bestillingInput.AvreiseTid, function (ankomstTid) {
         url = "Bestilling/HentPris?" + hentId();
         $.get(url, function (totalPris) {
             if (bestillingInput.hjemreiseTid) {
