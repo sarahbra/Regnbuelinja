@@ -110,15 +110,15 @@ namespace Regnbuelinja.Controllers
             return Ok(TotalPris);
         }
 
-        public async Task<ActionResult> HentAnkomstTid(DateTime AvgangsTid)
+        public async Task<ActionResult> HentAnkomstTid(int AvreiseTicks)
         {
-            DateTime AnkomstTid = await _db.HentAnkomstTid(AvgangsTid);
+            DateTime AnkomstTid = await _db.HentAnkomstTid(AvreiseTicks);
             if (AnkomstTid == null)
             {
-                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomst tid funnet for avgangstid " + AvgangsTid);
-                return BadRequest("Ingen ankomst tid funnet for avgangstid " + AvgangsTid);
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomst tid funnet for avgangstid " + new DateTime(AvreiseTicks));
+                return BadRequest("Ingen ankomst tid funnet for avgangstid " + new DateTime(AvreiseTicks));
             }
-            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet etter avgangstid " + AvgangsTid);
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet etter avgangstid " + new DateTime(AvreiseTicks));
             return Ok(AnkomstTid);
         }
     }

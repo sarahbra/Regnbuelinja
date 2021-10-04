@@ -7,11 +7,16 @@
 })
 
 function formaterSide(bestillingInput) {
-    $.get("Bestilling/HentAnkomstTid", bestillingInput.AvreiseTid, function (ankomstTid) {
+    let avreiseTid = new Date(bestillingInput.avreiseTid);
+    console.log(avreiseTid);
+    const avreiseTidTicks = avreiseTid.getTime();
+    console.log(avreiseTidTicks);
+    $.get("Bestilling/HentAnkomstTid?avreiseTicks=" + avreiseTidTicks, function (ankomstTid) {
         url = "Bestilling/HentPris?" + hentId();
         $.get(url, function (totalPris) {
             if (bestillingInput.hjemreiseTid) {
-                $.get("Bestilling/HentAnkomstTid", bestillingInput.hjemreiseTid, function (ankomstTid_retur) {
+                const hjemreiseTid = new Date(bestillingInput.hjemreiseTid).toISOString();
+                $.get("Bestilling/HentAnkomstTid", hjemreiseTid, function (ankomstTid_retur) {
                     formaterBestilling(bestillingInput, ankomstTid_retur, "Båtten Anna", true);
                 });
             }

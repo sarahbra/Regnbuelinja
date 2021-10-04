@@ -18,16 +18,7 @@ $("#orderForm").submit(function (event) {
     if (!valid) {
         return false;
     }
-
-    const input = {
-        Startpunkt: $("#Startpunkt").val(),
-        Endepunkt: $("#Endepunkt").val(),
-        AvreiseTid: $("#AvreiseDato").val(),
-        HjemreiseTid: $("#HjemreiseDato").val(),
-        AntallVoksne: $('input[type=number][name=AntallVoksne]').val(),
-        AntallBarn: $('input[type=number][name=AntallBarn]').val()
-    }
-    $.post("Bestilling/LagreBestilling", input, function (data) {
+    $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
         window.location = "https://localhost:44392/bestilling.html?id=" + data;
         //Gå til neste side med billettinfo 
     }).fail(function () {
@@ -35,6 +26,7 @@ $("#orderForm").submit(function (event) {
         $("#feil").html("Feil på server - prøv igjen senere");
     });
 });
+
 
 $("#Startpunkt").change(function () {
     hentAnkomstHavner();
@@ -95,7 +87,7 @@ function hentTilgjengeligeFerdDatoerAvreise() {
     const params = {
         Startpunkt: startPunkt,
         Endepunkt: endePunkt,
-        AvreiseDato: null,
+        AvreiseTid: null,
     };
 
     $.get("Bestilling/HentDatoer", params, function (datoer) {
@@ -126,7 +118,7 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
     const params = {
         Startpunkt: startPunkt,
         Endepunkt: endePunkt,
-        AvreiseDato: avreiseDatoISOStr,
+        AvreiseTid: avreiseDatoISOStr,
     };
 
     $.get("Bestilling/HentDatoer", params, function (datoer) {

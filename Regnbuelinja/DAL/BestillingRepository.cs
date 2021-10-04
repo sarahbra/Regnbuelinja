@@ -66,13 +66,13 @@ namespace Regnbuelinja.DAL
             System.Diagnostics.Debug.WriteLine(nyBestilling.HjemreiseTid);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AntallVoksne);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(parseDato(nyBestilling.AvreiseTid)) &&
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
             if (nyBestilling.HjemreiseTid != null)
             {
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(parseDato(nyBestilling.HjemreiseTid)) &&
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.HjemreiseTid) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
             }
             else
@@ -154,8 +154,8 @@ namespace Regnbuelinja.DAL
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
-                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString(),
-                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid.ToString(),
+                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid,
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid,
                 AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
@@ -195,16 +195,21 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
-        public async Task<DateTime> HentAnkomstTid(DateTime AvreiseTid)
+        public async Task<DateTime> HentAnkomstTid(int AvreiseTicks)
         {
+            DateTime AvreiseTid = new DateTime(AvreiseTicks);
+            _log.LogInformation("/Controllers/BestillingRepository.cs: Vellykket. HentAnkomstTid: AvreiseTid = '" + AvreiseTid.ToString() + "'");
             DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(AvreiseTid)).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
             return AnkomstTid;
         }
 
-        private DateTime parseDato(string tid)
+        private DateTime parseDatoOgTid(string dato_tid)
         {
-            string[] dato = tid.Split("/");
-            return new DateTime(Int32.Parse(dato[2]), Int32.Parse(dato[1]), Int32.Parse(dato[0]));
+            string[] dato_og_tid = dato_tid.Split('T');
+            string[] dato = dato_og_tid[0].Split('-');
+            string[] tid = dato_og_tid[1].Split(":");
+
+            return new DateTime(Int32.Parse(dato[0]), Int32.Parse(dato[1]), Int32.Parse(dato[2]), Int32.Parse(tid[0]), Int32.Parse(tid[1]), Int32.Parse(tid[2]));
         }
     }
 }

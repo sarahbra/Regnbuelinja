@@ -22,7 +22,7 @@ namespace Regnbuelinja.DAL
                 var rute1 = new Rute { Startpunkt = "Oslo", Endepunkt = "København", Pris = 799 };
                 var rute2 = new Rute { Startpunkt = "København", Endepunkt = "Oslo", Pris = 799 };
 
-                // Oslo - Bergen
+                // Oslo - Kiel
                 var rute3 = new Rute { Startpunkt = "Oslo", Endepunkt = "Kiel", Pris = 399 };
                 var rute4 = new Rute { Startpunkt = "Kiel", Endepunkt = "Oslo", Pris = 399 };
 
@@ -31,7 +31,7 @@ namespace Regnbuelinja.DAL
                 var båt2 = new Båt { Navn = "Unicorn" };
 
 
-                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 0, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 0, 0, 0)};
+                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
 
                 //avreisedatoer for rute1
                 for (int i = 2; i < 31; i++)
