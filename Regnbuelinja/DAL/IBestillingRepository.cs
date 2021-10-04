@@ -11,7 +11,7 @@ namespace Regnbuelinja.DAL
     {
         Task<List<string>> HentAvgangshavner();
         Task<double> HentPris(int id);
-        Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string ReturAvreiseTid);
+        Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid);
         Task<List<string>> HentAnkomsthavner(string avgangsHavn);
         Task<List<Rute>> HentRuter(string nyttStartPunkt);
         Task<List<Ferd>> HentFerder(int ruteId);

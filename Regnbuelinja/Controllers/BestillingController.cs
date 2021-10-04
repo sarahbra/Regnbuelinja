@@ -98,9 +98,9 @@ namespace Regnbuelinja.Controllers
             return Ok(hentBestilling);
         }
 
-        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, string ReturAvreiseTid)
+        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid)
         {
-            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, ReturAvreiseTid);
+            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseTid);
             return Ok(Datoer);
         }
 
