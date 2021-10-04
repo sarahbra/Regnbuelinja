@@ -11,13 +11,13 @@ namespace Regnbuelinja.DAL
     {
         Task<List<string>> HentAvgangshavner();
         Task<double> HentPris(int id);
-        Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato);
+        Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string ReturAvreiseTid);
         Task<List<string>> HentAnkomsthavner(string avgangsHavn);
         Task<List<Rute>> HentRuter(string nyttStartPunkt);
         Task<List<Ferd>> HentFerder(int ruteId);
         Task<string> LagreBestilling(BestillingInput nyBestilling);
         Task<BestillingInput> HentBestilling(int id);
-        Task<DateTime> HentAnkomstTid(int avreiseTicks);
+        Task<DateTime> HentAnkomstTid(string avreiseISOString);
 
     }
 }

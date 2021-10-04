@@ -98,9 +98,9 @@ namespace Regnbuelinja.Controllers
             return Ok(hentBestilling);
         }
 
-        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, string ReturAvreiseTid)
         {
-            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseDato);
+            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, ReturAvreiseTid);
             return Ok(Datoer);
         }
 
@@ -110,15 +110,15 @@ namespace Regnbuelinja.Controllers
             return Ok(TotalPris);
         }
 
-        public async Task<ActionResult> HentAnkomstTid(int AvreiseTicks)
+        public async Task<ActionResult> HentAnkomstTid(string AvreiseISOString)
         {
-            DateTime AnkomstTid = await _db.HentAnkomstTid(AvreiseTicks);
+            DateTime AnkomstTid = await _db.HentAnkomstTid(AvreiseISOString);
             if (AnkomstTid == null)
             {
-                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomst tid funnet for avgangstid " + new DateTime(AvreiseTicks));
-                return BadRequest("Ingen ankomst tid funnet for avgangstid " + new DateTime(AvreiseTicks));
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomst tid funnet for avgangstid " + AvreiseISOString);
+                return BadRequest("Ingen ankomst tid funnet for avgangstid " + AvreiseISOString);
             }
-            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet etter avgangstid " + new DateTime(AvreiseTicks));
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet etter avgangstid " + AvreiseISOString);
             return Ok(AnkomstTid);
         }
     }

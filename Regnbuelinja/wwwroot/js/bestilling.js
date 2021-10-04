@@ -6,23 +6,19 @@
     });
 })
 
+
 function formaterSide(bestillingInput) {
-    let avreiseTid = new Date(bestillingInput.avreiseTid);
-    console.log(avreiseTid);
-    const avreiseTidTicks = avreiseTid.getTime();
-    console.log(avreiseTidTicks);
-    $.get("Bestilling/HentAnkomstTid?avreiseTicks=" + avreiseTidTicks, function (ankomstTid) {
+    $.get("Bestilling/HentAnkomstTid?avreiseISOString=" + bestillingInput.avreiseTid, function (ankomstTidSerialized) {
         url = "Bestilling/HentPris?" + hentId();
         $.get(url, function (totalPris) {
             if (bestillingInput.hjemreiseTid) {
-                const hjemreiseTid = new Date(bestillingInput.hjemreiseTid).toISOString();
-                $.get("Bestilling/HentAnkomstTid", hjemreiseTid, function (ankomstTid_retur) {
-                    formaterBestilling(bestillingInput, ankomstTid_retur, "Båtten Anna", true);
+                $.get("Bestilling/HentAnkomstTid", bestillingInput.hjemreiseTid, function (ankomstTidReturSerialized) {
+                    formaterBestilling(bestillingInput, ankomstTidReturSerialized, "Båtten Anna", true);
                 });
             }
             formaterKjøpsInfo(bestillingInput, totalPris);
         });
-        formaterBestilling(bestillingInput, ankomstTid, "Kjærleiksbåten", false);
+        formaterBestilling(bestillingInput, ankomstTidSerialized, "Kjærleiksbåten", false);
     });
 }
 
@@ -32,21 +28,30 @@ function hentId() {
 }
 
 // TODO - Add båtnavn
-function formaterBestilling(bestillingInput, ankomstTid, skip, retur) {
+function formaterBestilling(bestillingInput, ankomstTidSerialized, skip, retur) {
 
-    let startpunkt = bestillingInput.startpunkt;
-    let endepunkt = bestillingInput.endepunkt;
+    const startpunkt = bestillingInput.startpunkt;
+    const endepunkt = bestillingInput.endepunkt;
+    const avreiseSerialized = bestillingInput.avreiseTid;
+
     var container = $("#utreise");
     if (retur) {
         startpunkt = bestillingInput.endepunkt;
         endepunkt = bestillingInput.startpunkt;
+        avreiseSerialized = bestillingInput.hjemreiseTid;
         container = $("#returreise");
     }
 
+    const avreiseDate = new Date(avreiseSerialized);
+    console.log(avreiseDate.toDateString())
+    const ankomstDate = new Date(ankomstTidSerialized);
+    console.log(ankomstDate.toDateString())
+
     let ut = "";
-    ut += "<li class='list-group-item'></li>" +
-        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>" + bestillingInput.avreiseTid.toString() + "</li>" +
-        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstTid.toString() + "</li>" +
+    ut += "<li class='list-group-item'><label for='dato_avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + "</li>" +
+        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + avreiseDate.toLocaleTimeString() + "</li>" +
+        "<li class='list-group-item'><label for='dato_ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + "</li>" +
+        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + ankomstDate.toLocaleTimeString() + "</li>" +
         "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + skip + "</li>" +
         "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
     container.html(ut);

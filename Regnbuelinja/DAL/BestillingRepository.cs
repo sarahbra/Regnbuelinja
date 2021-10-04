@@ -175,7 +175,7 @@ namespace Regnbuelinja.DAL
             return pris;
         }
 
-        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime ReturAvreiseTid)
+        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string ReturAvreiseTid)
         {
             List<DateTime> Datoer;
             if(ReturAvreiseTid == null)
@@ -183,7 +183,7 @@ namespace Regnbuelinja.DAL
                 Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.AvreiseTid).ToListAsync();
             } else
             {
-                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.AnkomstTid.CompareTo(ReturAvreiseTid) > 0).Select(f => f.AvreiseTid).ToListAsync();
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.AnkomstTid.CompareTo(parseDato(ReturAvreiseTid)) > 0).Select(f => f.AvreiseTid).ToListAsync();
             }
             Datoer.Sort();
             if (Datoer == null)
@@ -195,21 +195,16 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
-        public async Task<DateTime> HentAnkomstTid(int AvreiseTicks)
+        public async Task<DateTime> HentAnkomstTid(string AvreiseISOString)
         {
-            DateTime AvreiseTid = new DateTime(AvreiseTicks);
-            _log.LogInformation("/Controllers/BestillingRepository.cs: Vellykket. HentAnkomstTid: AvreiseTid = '" + AvreiseTid.ToString() + "'");
-            DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(AvreiseTid)).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
+            DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(parseDato(AvreiseISOString))).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
             return AnkomstTid;
         }
 
-        private DateTime parseDatoOgTid(string dato_tid)
+        private DateTime parseDato(string dato_tid)
         {
-            string[] dato_og_tid = dato_tid.Split('T');
-            string[] dato = dato_og_tid[0].Split('-');
-            string[] tid = dato_og_tid[1].Split(":");
-
-            return new DateTime(Int32.Parse(dato[0]), Int32.Parse(dato[1]), Int32.Parse(dato[2]), Int32.Parse(tid[0]), Int32.Parse(tid[1]), Int32.Parse(tid[2]));
+            DateTime dato = DateTime.Parse(dato_tid, null, System.Globalization.DateTimeStyles.AssumeLocal);
+            return dato; 
         }
     }
 }
