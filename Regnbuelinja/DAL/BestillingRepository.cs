@@ -66,6 +66,7 @@ namespace Regnbuelinja.DAL
             System.Diagnostics.Debug.WriteLine(nyBestilling.HjemreiseTid);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AntallVoksne);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
+            DateTime AvreiseTid = parseDato(nyBestilling.AvreiseTid);
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 

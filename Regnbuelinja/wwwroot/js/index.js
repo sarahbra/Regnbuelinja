@@ -18,15 +18,31 @@ $("#orderForm").submit(function (event) {
     if (!valid) {
         return false;
     }
-    $.post("Bestilling/LagreBestilling", $(this).serialize(), function (data) {
-        window.location = "https://localhost:44392/bestilling.html?id=" + data;
-        //Gå til neste side med billettinfo 
-    }).fail(function () {
-        //Kan eventuelt hente ut feilmelding fra server her hvis vi vil etter at det er implementert
-        $("#feil").html("Feil på server - prøv igjen senere");
+
+    const params = new URLSearchParams();
+    params.set("Startpunkt", $("#Startpunkt").val());
+    params.set("Endepunkt", $("#Endepunkt").val());
+    params.set("TurRetur", $("#TurRetur").val());
+    params.set("AvreiseDato", formaterKalenderDato($("#AvreiseDato").val()).toISOString());
+    if ($("#TurReturTrue").is(":checked")) {
+        params.set("HjemreiseDato", formaterKalenderDato($("#HjemreiseDato").val()).toISOString());
+    }
+    params.set("AntallVoksne", $("#AntallVoksne").val());
+    const antallBarn = ($("#AntallBarn").val() || "").trim();
+    if (antallBarn.length) {
+        params.set("AntallBarn", antallBarn);
+    }
+
+    $.post("Bestilling/LagreBestilling", params.toString(), function (id) {
+        window.location.assign("/bestilling.html?id=" + id);
+        //Gå til neste side med billettinfo
+        //window.location.href = "/endre.html?" + id;
+    }).fail(function (jqXHR) {
+        const json = $.parseJSON(jqXHR.responseText);
+        $("#feil").html("Feil på server - prøv igjen senere: " + json.message);
+        return false;
     });
 });
-
 
 $("#Startpunkt").change(function () {
     hentAnkomstHavner();
@@ -75,7 +91,7 @@ function visKalender(kalender, datoer) {
     });
 }
 
-function formatterKalenderDato(str) {
+function formaterKalenderDato(str) {
     const deler = str.split("/");
     return new Date(parseInt(deler[2]), parseInt(deler[1]) - 1, parseInt(deler[0]));
 }
@@ -110,9 +126,14 @@ $("#AvreiseDato").change(function () {
 function hentTilgjengeligeFerdDatoerHjemreise() {
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
-    const avreiseDato = formatterKalenderDato($("#AvreiseDato").val());
+    const avreiseFormatert = $("#AvreiseDato").val();
+    if (avreiseFormatert === null) {
+        return;
+    }
+    const avreiseDato = formaterKalenderDato(avreiseFormatert);
     console.log(avreiseDato);
     const avreiseDatoISOStr = avreiseDato.toISOString();
+    console.log(avreiseDatoISOStr);
 
     const params = {
         Startpunkt: startPunkt,
