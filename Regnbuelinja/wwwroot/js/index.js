@@ -23,9 +23,9 @@ $("#orderForm").submit(function (event) {
     params.set("Startpunkt", $("#Startpunkt").val());
     params.set("Endepunkt", $("#Endepunkt").val());
     params.set("TurRetur", $("#TurRetur").val());
-    params.set("AvreiseDato", formaterKalenderDato($("#AvreiseDato").val()).toISOString());
+    params.set("AvreiseTid", formaterKalenderDato($("#AvreiseDato").val()).toISOString());
     if ($("#TurReturTrue").is(":checked")) {
-        params.set("HjemreiseDato", formaterKalenderDato($("#HjemreiseDato").val()).toISOString());
+        params.set("HjemreiseTid", formaterKalenderDato($("#HjemreiseDato").val()).toISOString());
     }
     params.set("AntallVoksne", $("#AntallVoksne").val());
     const antallBarn = ($("#AntallBarn").val() || "").trim();
@@ -93,7 +93,7 @@ function visKalender(kalender, datoer) {
 
 function formaterKalenderDato(str) {
     const deler = str.split("/");
-    return new Date(parseInt(deler[2]), parseInt(deler[1]) - 1, parseInt(deler[0]));
+    return new Date(parseInt(deler[2]), (parseInt(deler[1])-1), parseInt(deler[0]));
 }
 
 function hentTilgjengeligeFerdDatoerAvreise() {
@@ -131,9 +131,7 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
         return;
     }
     const avreiseDato = formaterKalenderDato(avreiseFormatert);
-    console.log(avreiseDato);
     const avreiseDatoISOStr = avreiseDato.toISOString();
-    console.log(avreiseDatoISOStr);
 
     const params = {
         Startpunkt: startPunkt,

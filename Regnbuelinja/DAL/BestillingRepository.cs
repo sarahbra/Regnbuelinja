@@ -66,14 +66,16 @@ namespace Regnbuelinja.DAL
             System.Diagnostics.Debug.WriteLine(nyBestilling.HjemreiseTid);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AntallVoksne);
             System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
-            DateTime AvreiseTid = parseDato(nyBestilling.AvreiseTid);
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.AvreiseTid) &&
+            DateTime AvreiseTid = parseDatoLocal(nyBestilling.AvreiseTid);
+            
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(AvreiseTid.Date) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
             if (nyBestilling.HjemreiseTid != null)
             {
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Equals(nyBestilling.HjemreiseTid) &&
+                DateTime HjemreiseTid = parseDatoLocal(nyBestilling.HjemreiseTid);
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(HjemreiseTid.Date) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
             }
             else
@@ -155,8 +157,8 @@ namespace Regnbuelinja.DAL
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
-                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid,
-                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid,
+                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString("o"),
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid.ToString("o"),
                 AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
@@ -184,7 +186,7 @@ namespace Regnbuelinja.DAL
                 Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.AvreiseTid).ToListAsync();
             } else
             {
-                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)) && f.AnkomstTid.CompareTo(parseDato(AvreiseTid)) > 0)).Select(f => f.AvreiseTid).ToListAsync();
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)) && f.AnkomstTid.CompareTo(parseDatoLocal(AvreiseTid)) > 0)).Select(f => f.AvreiseTid).ToListAsync();
             }
             Datoer.Sort();
             if (Datoer == null)
@@ -196,13 +198,21 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
-        public async Task<DateTime> HentAnkomstTid(string AvreiseISOString)
+        public async Task<string> HentAnkomstTid(int id, string Startpunkt)
         {
-            DateTime AnkomstTid = await _db.Ferder.Where(f => f.AvreiseTid.Equals(parseDato(AvreiseISOString))).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
+            List<Billett> billetter = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).ToListAsync();
+            string AnkomstTid = null;
+            foreach(Billett b in billetter)
+            {
+                if(b.Ferd.Rute.Startpunkt.Equals(Startpunkt))
+                {
+                    AnkomstTid = b.Ferd.AnkomstTid.ToString("O");
+                }
+            }
             return AnkomstTid;
         }
 
-        private DateTime parseDato(string dato_tid)
+        private DateTime parseDatoLocal(string dato_tid)
         {
             DateTime dato = DateTime.Parse(dato_tid, null, System.Globalization.DateTimeStyles.AssumeLocal);
             return dato; 

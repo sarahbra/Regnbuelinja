@@ -8,11 +8,13 @@
 
 
 function formaterSide(bestillingInput) {
-    $.get("Bestilling/HentAnkomstTid?avreiseISOString=" + bestillingInput.avreiseTid, function (ankomstTidSerialized) {
+    let url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.startpunkt;
+    $.get(url, function (ankomstTidSerialized) {
         url = "Bestilling/HentPris?" + hentId();
         $.get(url, function (totalPris) {
             if (bestillingInput.hjemreiseTid) {
-                $.get("Bestilling/HentAnkomstTid", bestillingInput.hjemreiseTid, function (ankomstTidReturSerialized) {
+                url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.endepunkt;
+                $.get(url, function (ankomstTidReturSerialized) {
                     formaterBestilling(bestillingInput, ankomstTidReturSerialized, "Båtten Anna", true);
                 });
             }
@@ -30,9 +32,9 @@ function hentId() {
 // TODO - Add båtnavn
 function formaterBestilling(bestillingInput, ankomstTidSerialized, skip, retur) {
 
-    const startpunkt = bestillingInput.startpunkt;
-    const endepunkt = bestillingInput.endepunkt;
-    const avreiseSerialized = bestillingInput.avreiseTid;
+    let startpunkt = bestillingInput.startpunkt;
+    let endepunkt = bestillingInput.endepunkt;
+    let avreiseSerialized = bestillingInput.avreiseTid;
 
     var container = $("#utreise");
     if (retur) {

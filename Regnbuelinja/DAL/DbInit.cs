@@ -34,7 +34,7 @@ namespace Regnbuelinja.DAL
                 var ferd1 = new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
 
                 //avreisedatoer for rute1
-                for (int i = 2; i < 31; i++)
+                for (int i = 2; i < 31; i+=2)
                 {
                     context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+1, 0, 0, 0) });
                 }
@@ -55,7 +55,7 @@ namespace Regnbuelinja.DAL
                 //avreisedatoer for rute 4
                 for (int i = 1; i < 30; i++)
                 {
-                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute3, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+2, 0, 0, 0)});
+                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+2, 0, 0, 0)});
                 }
 
                 //Kun bestilling og billett til ferd1 foreløpig, kun 1 bestilling men 2 ruter, 2 båter og to mulige ferder
