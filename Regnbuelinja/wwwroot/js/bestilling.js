@@ -38,6 +38,7 @@ function formaterBestilling(bestillingInput, ankomstTidSerialized, skip, retur) 
 
     var container = $("#utreise");
     if (retur) {
+        $("#returBilde").removeClass("hidden");
         startpunkt = bestillingInput.endepunkt;
         endepunkt = bestillingInput.startpunkt;
         avreiseSerialized = bestillingInput.hjemreiseTid;
@@ -83,3 +84,4 @@ function formaterKjøpsInfo(bestillingInput, pris) {
     ut += "</tbody</table>";
     $("#kjøpsInfo").html(ut);
 }
+
