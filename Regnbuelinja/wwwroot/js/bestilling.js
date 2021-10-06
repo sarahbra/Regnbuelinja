@@ -61,23 +61,23 @@ function formaterKjøpsInfo(bestillingInput) {
     $.get(url, function (totalpris) {
         let ut = "<table class='table'><thead><tr>";
         ut += "<th>#</th><th>Produkt</th><th>Produktbeskrivelse</th>" +
-            "<th>Antall</th><th>Pris</th></tr></thead>" +
+            "<th>Antall</th></tr></thead>" +
             "<tbody>" +
             "<tr><th>1</th>" +
             "<td>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</td>" +
             "<td>Økonomibillett</td> " +
             "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
-            "<td></td></tr>"; //TODO: reisePris ikke i kontroller
+            "</tr>"; //TODO: reisePris ikke i kontroller
 
         if (bestillingInput.hjemreiseTid) {
             ut += "<tr><th>2</th>" +
                 "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
                 "<td>Økonomibillett</td>" +
                 "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
-                "<td></td></tr>"; //TODO: reisePris ikke i kontroller
+                "</tr>"; //TODO: reisePris ikke i kontroller
         }
-
-        ut += "<tr><td></td><td></td><th></th><th>Totalpris</th><td>" + totalpris + "</td>";
+        //Kan eventuelt legge totalpris i nytt table under(?) Ser nok bedre ut
+        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + "</td>";
         ut += "</tbody</table>";
         $("#kjøpsInfo").html(ut);
     });
