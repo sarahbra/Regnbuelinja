@@ -34,6 +34,18 @@ namespace Regnbuelinja.Controllers
             return Ok(hentAvgangsHavner);
         }
 
+        public async Task<ActionResult> HentBåt(int id, string Startpunkt)
+        {
+            string Båtnavn = await _db.HentBåt(id, Startpunkt);
+            if (Båtnavn == null)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Båtnavn ble ikke returnert.");
+                return NotFound("Finner ikke båtnavn i repository");
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Vellykket. Båtnavn har blitt returnert.");
+            return Ok(Båtnavn);
+        }
+
         public async Task<ActionResult> HentAnkomsthavner(string avgangsHavn)
         {
             List<string> hentAnkomstHavner = await _db.HentAnkomsthavner(avgangsHavn);

@@ -201,16 +201,14 @@ namespace Regnbuelinja.DAL
 
         public async Task<string> HentAnkomstTid(int id, string Startpunkt)
         {
-            List<Billett> billetter = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).ToListAsync();
-            string AnkomstTid = null;
-            foreach(Billett b in billetter)
-            {
-                if(b.Ferd.Rute.Startpunkt.Equals(Startpunkt))
-                {
-                    AnkomstTid = b.Ferd.AnkomstTid.ToString("O");
-                }
-            }
-            return AnkomstTid;
+            DateTime AnkomstTid = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.AnkomstTid).FirstOrDefaultAsync();
+            return AnkomstTid.ToString("o");
+        }
+
+        public async Task<string> HentBåt(int id, string Startpunkt)
+        {
+            string Båtnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Båt.Navn).FirstOrDefaultAsync();
+            return Båtnavn;
         }
 
         private DateTime parseDatoLocal(string dato_tid)

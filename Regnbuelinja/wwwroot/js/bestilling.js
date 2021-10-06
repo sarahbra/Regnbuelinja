@@ -15,12 +15,12 @@ function formaterSide(bestillingInput) {
             if (bestillingInput.hjemreiseTid) {
                 url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.endepunkt;
                 $.get(url, function (ankomstTidReturSerialized) {
-                    formaterBestilling(bestillingInput, ankomstTidReturSerialized, "Båtten Anna", true);
+                    formaterBestilling(bestillingInput, ankomstTidReturSerialized, true);
                 });
             }
             formaterKjøpsInfo(bestillingInput, totalPris);
         });
-        formaterBestilling(bestillingInput, ankomstTidSerialized, "Kjærleiksbåten", false);
+        formaterBestilling(bestillingInput, ankomstTidSerialized, false);
     });
 }
 
@@ -30,7 +30,7 @@ function hentId() {
 }
 
 // TODO - Add båtnavn
-function formaterBestilling(bestillingInput, ankomstTidSerialized, skip, retur) {
+function formaterBestilling(bestillingInput, ankomstTidSerialized, retur) {
 
     let startpunkt = bestillingInput.startpunkt;
     let endepunkt = bestillingInput.endepunkt;
@@ -45,18 +45,19 @@ function formaterBestilling(bestillingInput, ankomstTidSerialized, skip, retur) 
     }
 
     const avreiseDate = new Date(avreiseSerialized);
-    console.log(avreiseDate.toDateString())
     const ankomstDate = new Date(ankomstTidSerialized);
-    console.log(ankomstDate.toDateString())
 
-    let ut = "";
-    ut += "<li class='list-group-item'><label for='dato_avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + "</li>" +
-        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + avreiseDate.toLocaleTimeString() + "</li>" +
-        "<li class='list-group-item'><label for='dato_ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + "</li>" +
-        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + ankomstDate.toLocaleTimeString() + "</li>" +
-        "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + skip + "</li>" +
-        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
-    container.html(ut);
+    const url = "Bestilling/HentBåt?" + hentId() + "&startpunkt=" + startpunkt;
+    $.get(url, function (båtnavn) {
+        let ut = "";
+        ut += "<li class='list-group-item'><label for='dato_avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + "</li>" +
+            "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + avreiseDate.toLocaleTimeString() + "</li>" +
+            "<li class='list-group-item'><label for='dato_ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + "</li>" +
+            "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + ankomstDate.toLocaleTimeString() + "</li>" +
+            "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + båtnavn + "</li>" +
+            "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
+        container.html(ut);
+    })
 }
 
 
