@@ -44,12 +44,12 @@ function formaterBestilling(bestillingInput, ankomstTidSerialized, retur) {
     const avreiseDate = new Date(avreiseSerialized);
     const ankomstDate = new Date(ankomstTidSerialized);
 
-    const url = "Bestilling/HentBåt?" + hentId() + "&startpunkt=" + startpunkt;
-    $.get(url, function (båtnavn) {
+    const url = "Bestilling/HentBaat?" + hentId() + "&startpunkt=" + startpunkt;
+    $.get(url, function (baatnavn) {
         let ut = "";
         ut += "<li class='list-group-item'><label for='avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + " - " + avreiseDate.toLocaleTimeString() + "</li>" +
             "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + " - " + ankomstDate.toLocaleTimeString() + "</li>" +
-            "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + båtnavn + "</li>" +
+            "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + baatnavn + "</li>" +
             "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
         container.html(ut);
     })

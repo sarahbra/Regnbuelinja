@@ -60,12 +60,8 @@ namespace Regnbuelinja.DAL
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
-            System.Diagnostics.Debug.WriteLine(nyBestilling.Startpunkt);
-            System.Diagnostics.Debug.WriteLine(nyBestilling.Endepunkt);
-            System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseTid);
-            System.Diagnostics.Debug.WriteLine(nyBestilling.HjemreiseTid);
-            System.Diagnostics.Debug.WriteLine(nyBestilling.AntallVoksne);
-            System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
+            
+            //System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
             DateTime AvreiseTid = parseDatoLocal(nyBestilling.AvreiseTid);
             
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(AvreiseTid.Date) &&
@@ -202,15 +198,28 @@ namespace Regnbuelinja.DAL
         public async Task<string> HentAnkomstTid(int id, string Startpunkt)
         {
             DateTime AnkomstTid = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.AnkomstTid).FirstOrDefaultAsync();
+            if (AnkomstTid == null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomstTid: Enten ingen ferd med startpunkt "+Startpunkt+" eller ingen bestilling med ID "+id+" har ikke blitt funnet i databasen");
+                return null;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomstTid: Vellykket.");
             return AnkomstTid.ToString("o");
         }
 
-        public async Task<string> HentBåt(int id, string Startpunkt)
+        public async Task<string> HentBaat(int id, string Startpunkt)
         {
-            string Båtnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Båt.Navn).FirstOrDefaultAsync();
-            return Båtnavn;
+            string Baatnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Båt.Navn).FirstOrDefaultAsync();
+            if (Baatnavn == null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentBaat: Enten ingen billett med startpunkt " + Startpunkt + " eller ingen bestilling med ID " + id + " har blitt funnet i databasen");
+                return Baatnavn;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentBaat: Vellykket.");
+            return Baatnavn;
         }
 
+        // En lokal metode for å konvertere dato strenger til DateTime objekter
         private DateTime parseDatoLocal(string dato_tid)
         {
             DateTime dato = DateTime.Parse(dato_tid, null, System.Globalization.DateTimeStyles.AssumeLocal);
