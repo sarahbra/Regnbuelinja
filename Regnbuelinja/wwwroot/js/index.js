@@ -1,4 +1,5 @@
 ﻿
+
 $("input[type=radio][name=TurRetur]").change(function () {
     var hjemreiseDato = $("#HjemreiseDato");
     var tilbakeContainer = $("#TilbakeContainer");
@@ -36,15 +37,16 @@ $("#orderForm").submit(function (event) {
     }
 
     $.post("Bestilling/LagreBestilling", params.toString(), function (id) {
+             //Gå til neste side med billettinfo
+
         window.location.assign("/bestilling.html?id=" + id);
-        //Gå til neste side med billettinfo
-        //window.location.href = "/endre.html?" + id;
     }).fail(function (jqXHR) {
         const json = $.parseJSON(jqXHR.responseText);
         $("#feil").html("Feil på server - prøv igjen senere: " + json.message);
         return false;
     });
 });
+
 
 $("#Startpunkt").change(function () {
     nullstillKalender($("#AvreiseDato,#HjemreiseDato"));
@@ -61,7 +63,8 @@ function hentAnkomstHavner() {
     const url = "Bestilling/HentAnkomsthavner?avgangsHavn=" + avgangsHavn;
     $.get(url, function (havner) {
         visHavner($("#Endepunkt"), havner);
-        $("#EndepunktDiv").show();
+        $("#EndepunktDiv").removeClass("hidden");
+        $("#Endepunkt").attr("required", true);
     });
 }
 
@@ -93,8 +96,8 @@ function visKalender(kalender, datoer) {
         autoclose: true,
         startDate: datoer[0],
         endDate: datoer[datoer.length - 1],
+         // Returnerer true dersom date skal kunne velges
         beforeShowDay: function (date) {
-            // Returnerer true dersom date skal kunne velges
             return datoer.some(d => d.getTime() === date.getTime());
         },
     });
