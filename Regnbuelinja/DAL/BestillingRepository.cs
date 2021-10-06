@@ -175,7 +175,7 @@ namespace Regnbuelinja.DAL
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
-            if (bestilling != default(BestillingInput))
+            if (bestilling != default(Bestilling))
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentBestilling: Vellykket. Et BestillingInput objekt blir returnert.");
                 return bestilling;
