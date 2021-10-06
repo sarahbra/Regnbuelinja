@@ -135,9 +135,11 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
     const avreiseFormatert = $("#AvreiseDato").val();
+
     if (avreiseFormatert === null) {
         return;
     }
+
     const avreiseDato = formaterKalenderDato(avreiseFormatert);
     const avreiseDatoISOStr = avreiseDato.toISOString();
 
