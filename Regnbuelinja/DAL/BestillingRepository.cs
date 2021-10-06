@@ -74,7 +74,7 @@ namespace Regnbuelinja.DAL
 
             DateTime AvreiseTid = parseDatoLocal(nyBestilling.AvreiseTid);
             
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(AvreiseTid.Date) &&
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(utenTimer(AvreiseTid.Date)) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
@@ -82,7 +82,7 @@ namespace Regnbuelinja.DAL
             if (nyBestilling.HjemreiseTid != null)
             {
                 DateTime HjemreiseTid = parseDatoLocal(nyBestilling.HjemreiseTid);
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(HjemreiseTid.Date) &&
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(utenTimer(HjemreiseTid.Date)) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
                 _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: ferdRetur variablen har blitt definert.");
             }
@@ -212,6 +212,10 @@ namespace Regnbuelinja.DAL
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med Startpunkt '" + Startpunkt + "' og Endepunkt '"+ Endepunkt +"' har blitt funnet i databasen.");
                 return Datoer;
             }
+            // endrer time tallet til 0 får å unngå problemer med Bootstrap sin Javascript kalender
+            for (int i = 0; i < Datoer.Count; i++){
+                Datoer[i] = utenTimer(Datoer[i]);
+            }
             _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Vellykket. Ferd med Startpunkt '" + Startpunkt + "' og Endepunkt '" + Endepunkt + "' har blitt funnet i databasen.");
             return Datoer;
         }
@@ -245,6 +249,11 @@ namespace Regnbuelinja.DAL
         {
             DateTime dato = DateTime.Parse(dato_tid, null, System.Globalization.DateTimeStyles.AssumeLocal);
             return dato; 
+        }
+
+        private DateTime utenTimer(DateTime dato)
+        {
+            return new DateTime(dato.Year, dato.Month, dato.Day, 0, 0 ,0); 
         }
     }
 }
