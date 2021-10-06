@@ -1,4 +1,6 @@
-# ITPE3200 Webapplikasjoner - Regnbuelinja - Webapplikasjon for bestilling av båtreiser
+# Regnbuelinja
+
+# ITPE3200 Webapplikasjoner - Webapplikasjon for bestilling av båtreiser
 
 ## Studenter:
 
