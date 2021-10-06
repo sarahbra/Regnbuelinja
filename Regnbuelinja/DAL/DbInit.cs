@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Regnbuelinja.DAL
 {
@@ -27,28 +25,28 @@ namespace Regnbuelinja.DAL
                 var rute4 = new Rute { Startpunkt = "Kiel", Endepunkt = "Oslo", Pris = 399 };
 
 
-                var båt1 = new Båt { Navn = "Båtten Anna" };
-                var båt2 = new Båt { Navn = "Unicorn" };
-                var båt3 = new Båt { Navn = "Heisann" };
-                var båt4 = new Båt { Navn = "ILikeBigBoats" };
-                var båt5 = new Båt { Navn = "SheGotTheHouse" };
-                var båt6 = new Båt { Navn = "HMK Pride" };
-                var båt7 = new Båt { Navn = "Boaty McBoatface" };
-                var båt8 = new Båt { Navn = "The Queen" };
+                var baat1 = new Baat { Navn = "Båtten Anna" };
+                var baat2 = new Baat { Navn = "Unicorn" };
+                var baat3 = new Baat { Navn = "Heisann" };
+                var baat4 = new Baat { Navn = "ILikeBigBoats" };
+                var baat5 = new Baat { Navn = "SheGotTheHouse" };
+                var baat6 = new Baat { Navn = "HMK Pride" };
+                var baat7 = new Baat { Navn = "Boaty McBoatface" };
+                var baat8 = new Baat { Navn = "The Queen" };
 
 
-                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
+                var ferd1 = new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
 
                 //avreisedatoer for rute1
                 for (int i = 1; i < 31; i += 1)
                 {
                     if (i % 2 == 0)
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
                     }
                     else
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat2, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
                     }
                 }
 
@@ -57,11 +55,11 @@ namespace Regnbuelinja.DAL
                 {
                     if (i % 2 == 0)
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt3, Rute = rute2, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat3, Rute = rute2, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
                     }
                     else
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt4, Rute = rute2, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat4, Rute = rute2, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 0, 0, 0) });
                     }
 
                 }
@@ -71,11 +69,11 @@ namespace Regnbuelinja.DAL
                 {
                     if (i % 2 == 0)
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt5, Rute = rute3, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat5, Rute = rute3, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
                     }
                     else
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt6, Rute = rute3, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat6, Rute = rute3, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
                     }
                 }
 
@@ -84,11 +82,11 @@ namespace Regnbuelinja.DAL
                 {
                     if (i % 2 == 0)
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt7, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat7, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
                     }
                     else
                     {
-                        context.Ferder.Add(new Ferd { Båt = båt8, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat8, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 0, 0, 0) });
                     }
                 }
 

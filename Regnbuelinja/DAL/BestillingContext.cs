@@ -27,13 +27,13 @@ namespace Regnbuelinja.DAL
     {
         [Key]
         public int FId { get; set; }
-        public virtual Båt Båt { get; set; }
+        public virtual Baat Baat { get; set; }
         public virtual Rute Rute { get; set; }
         public DateTime AvreiseTid{ get; set; }
 
         public DateTime AnkomstTid { get; set; }
     }
-    public class Båt
+    public class Baat
     {
         [Key]
         public int BId { get; set; }
@@ -76,7 +76,7 @@ namespace Regnbuelinja.DAL
         //public DbSet<Kunde> Kunder { get; set; }
         public DbSet<Rute> Ruter { get; set; }
         public DbSet<Ferd> Ferder { get; set; }
-        public DbSet<Båt> Båter { get; set; }
+        public DbSet<Baat> Baater { get; set; }
         public DbSet<Bestillinger> Bestillinger { get; set; }
         public DbSet<Billett> Billetter { get; set; }
 

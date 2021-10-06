@@ -209,7 +209,7 @@ namespace Regnbuelinja.DAL
 
         public async Task<string> HentBaat(int id, string Startpunkt)
         {
-            string Baatnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Båt.Navn).FirstOrDefaultAsync();
+            string Baatnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Baat.Navn).FirstOrDefaultAsync();
             if (Baatnavn == null)
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentBaat: Enten ingen billett med startpunkt " + Startpunkt + " eller ingen bestilling med ID " + id + " har blitt funnet i databasen");
