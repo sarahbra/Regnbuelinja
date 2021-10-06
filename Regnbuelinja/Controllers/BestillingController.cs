@@ -34,16 +34,16 @@ namespace Regnbuelinja.Controllers
             return Ok(hentAvgangsHavner);
         }
 
-        public async Task<ActionResult> HentBåt(int id, string Startpunkt)
+        public async Task<ActionResult> HentBaat(int id, string Startpunkt)
         {
-            string Båtnavn = await _db.HentBåt(id, Startpunkt);
-            if (Båtnavn == null)
+            string Baatnavn = await _db.HentBaat(id, Startpunkt);
+            if (Baatnavn == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Båtnavn ble ikke returnert.");
                 return NotFound("Finner ikke båtnavn i repository");
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Vellykket. Båtnavn har blitt returnert.");
-            return Ok(Båtnavn);
+            return Ok(Baatnavn);
         }
 
         public async Task<ActionResult> HentAnkomsthavner(string avgangsHavn)
@@ -58,30 +58,31 @@ namespace Regnbuelinja.Controllers
             return Ok(hentAnkomstHavner);
         }
 
-        //vet ikke om trengs. Kan nok fjernes
         public async Task<ActionResult> HentRuter(string nyttstartpunkt)
         {
             List<Rute> hentruter = await _db.HentRuter(nyttstartpunkt);
             if (hentruter == null)
             {
-                return NotFound("Finner ingen ruter fra avgangshavn" + nyttstartpunkt + " i repository");
+                _log.LogInformation("/Controllers/BestillingController.cs: HentRuter: Rutene har ikke blitt hentet fra databasen.");
+                return NotFound("finner ikke ruter i repository");
             }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentRuter: Vellykket. Rutene har blitt hentet fra databasen.");
             return Ok(hentruter);
         }
 
-        //samme gjelder denne
         public async Task<ActionResult> HentFerder(int ruteid)
         {
             List<Ferd> hentferder = await _db.HentFerder(ruteid);
             if (hentferder == null)
             {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentFerder: Ingen ferder har blitt hentet fra databasen.");
                 return NotFound("finner ikke ferder i repository");
             }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentFerder: Vellykket. Ferdene har blitt hentet fra databasen.");
             return Ok(hentferder);
         }
 
-        //BestillingInput, i stedetfor Bestilling og FromBody fordi vi vil sende inn et JSON-objekt
-        public async Task<ActionResult> LagreBestilling(BestillingInput nyBestilling)
+        public async Task<ActionResult> LagreBestilling(Bestilling nyBestilling)
         {
             if (ModelState.IsValid)
             {
@@ -100,7 +101,7 @@ namespace Regnbuelinja.Controllers
 
         public async Task<ActionResult> HentBestilling(int id)
         {
-            BestillingInput hentBestilling = await _db.HentBestilling(id);
+            Bestilling hentBestilling = await _db.HentBestilling(id);
             if (hentBestilling == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet.");

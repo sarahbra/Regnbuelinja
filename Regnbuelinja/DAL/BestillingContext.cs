@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Regnbuelinja.DAL
 {
@@ -23,22 +21,24 @@ namespace Regnbuelinja.DAL
         public virtual Ferd Ferd { get; set; }
         public bool Voksen { get; set; }
     }
+
     public class Ferd
     {
         [Key]
         public int FId { get; set; }
-        public virtual Båt Båt { get; set; }
+        public virtual Baat Baat { get; set; }
         public virtual Rute Rute { get; set; }
         public DateTime AvreiseTid{ get; set; }
-
         public DateTime AnkomstTid { get; set; }
     }
-    public class Båt
+
+    public class Baat
     {
         [Key]
         public int BId { get; set; }
         public string Navn { get; set; }
     }
+
     public class Rute
     {
         [Key]
@@ -48,6 +48,8 @@ namespace Regnbuelinja.DAL
         public double Pris { get; set; }
         
     }
+
+    //Trenger ikke kundeklasse i denne innleveringen
     //public class Kunde
     //{
     //    [Key]
@@ -65,6 +67,8 @@ namespace Regnbuelinja.DAL
     //    public string Postnr { get; set; }
     //    public string Poststed { get; set; }
     //}
+
+
     public class BestillingContext : DbContext
     {
         public BestillingContext(DbContextOptions<BestillingContext> options) : base(options)
@@ -76,7 +80,7 @@ namespace Regnbuelinja.DAL
         //public DbSet<Kunde> Kunder { get; set; }
         public DbSet<Rute> Ruter { get; set; }
         public DbSet<Ferd> Ferder { get; set; }
-        public DbSet<Båt> Båter { get; set; }
+        public DbSet<Baat> Baater { get; set; }
         public DbSet<Bestillinger> Bestillinger { get; set; }
         public DbSet<Billett> Billetter { get; set; }
 

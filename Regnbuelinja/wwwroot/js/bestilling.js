@@ -1,24 +1,23 @@
 ﻿$(function () {
     const url = "Bestilling/HentBestilling?" + hentId();
-    $.get(url, function (bestillingInput) {
-        console.log(bestillingInput)
-        formaterSide(bestillingInput);
+    $.get(url, function (bestilling) {
+        formaterSide(bestilling);
     });
 })
 
 
-function formaterSide(bestillingInput) {
-    let url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.startpunkt;
+function formaterSide(bestilling) {
+    let url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestilling.startpunkt;
     $.get(url, function (ankomstTidSerialized) {
-        if (bestillingInput.hjemreiseTid) {
-            url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.endepunkt;
+        if (bestilling.hjemreiseTid) {
+            url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestilling.endepunkt;
             $.get(url, function (ankomstTidReturSerialized) {
-                formaterBestilling(bestillingInput, ankomstTidReturSerialized, true);
+                formaterBestilling(bestilling, ankomstTidReturSerialized, true);
             });   
         }
-        formaterBestilling(bestillingInput, ankomstTidSerialized, false);
+        formaterBestilling(bestilling, ankomstTidSerialized, false);
     });
-    formaterKjøpsInfo(bestillingInput);
+    formaterKjøpsInfo(bestilling);
 }
 
 function hentId() {
@@ -26,60 +25,61 @@ function hentId() {
     return url;
 }
 
-// TODO - Add båtnavn
-function formaterBestilling(bestillingInput, ankomstTidSerialized, retur) {
 
-    let startpunkt = bestillingInput.startpunkt;
-    let endepunkt = bestillingInput.endepunkt;
-    let avreiseSerialized = bestillingInput.avreiseTid;
+function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
 
-    var container = $("#utreise");
+    let startpunkt = bestilling.startpunkt;
+    let endepunkt = bestilling.endepunkt;
+    let avreiseSerialized = bestilling.avreiseTid;
+
+    let container = $("#utreise");
     if (retur) {
-        startpunkt = bestillingInput.endepunkt;
-        endepunkt = bestillingInput.startpunkt;
-        avreiseSerialized = bestillingInput.hjemreiseTid;
+        startpunkt = bestilling.endepunkt;
+        endepunkt = bestilling.startpunkt;
+        avreiseSerialized = bestilling.hjemreiseTid;
         container = $("#returreise");
     }
 
     const avreiseDate = new Date(avreiseSerialized);
     const ankomstDate = new Date(ankomstTidSerialized);
 
-    const url = "Bestilling/HentBåt?" + hentId() + "&startpunkt=" + startpunkt;
-    $.get(url, function (båtnavn) {
+    const url = "Bestilling/HentBaat?" + hentId() + "&startpunkt=" + startpunkt;
+    $.get(url, function (baatnavn) {
         let ut = "";
         ut += "<li class='list-group-item'><label for='avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + " - " + avreiseDate.toLocaleTimeString() + "</li>" +
             "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + " - " + ankomstDate.toLocaleTimeString() + "</li>" +
-            "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + båtnavn + "</li>" +
+            "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + baatnavn + "</li>" +
             "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
         container.html(ut);
     })
 }
 
 
-function formaterKjøpsInfo(bestillingInput) {
+function formaterKjøpsInfo(bestilling) {
     const url = "Bestilling/HentPris?" + hentId();
     $.get(url, function (totalpris) {
         let ut = "<table class='table'><thead><tr>";
-        ut += "<th>#</th><th>Produkt</th><th>Produktbeskrivelse</th>" +
+        ut += "<th>#</th><th>Strekning</th><th>Billettype</th>" +
             "<th>Antall</th></tr></thead>" +
             "<tbody>" +
             "<tr><th>1</th>" +
-            "<td>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</td>" +
+            "<td>" + bestilling.startpunkt + " - " + bestilling.endepunkt + "</td>" +
             "<td>Økonomibillett</td> " +
-            "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
-            "</tr>"; //TODO: reisePris ikke i kontroller
+            "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
+            "</tr>";
 
-        if (bestillingInput.hjemreiseTid) {
+        if (bestilling.hjemreiseTid) {
             ut += "<tr><th>2</th>" +
-                "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
+                "<td>" + bestilling.endepunkt + " - " + bestilling.startpunkt + "</td>" +
                 "<td>Økonomibillett</td>" +
-                "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
-                "</tr>"; //TODO: reisePris ikke i kontroller
+                "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
+                "</tr>"; 
         }
-        //Kan eventuelt legge totalpris i nytt table under(?) Ser nok bedre ut
-        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + "</td>";
+      
+        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + " NOK </td>";
         ut += "</tbody</table>";
         $("#kjøpsInfo").html(ut);
     });
-    
+
+ 
 }
