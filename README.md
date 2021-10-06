@@ -2,10 +2,10 @@
 
 ## Studenter:
 
-s346419
-s356546
-s317473
-s311596
+- s346419
+- s356546
+- s317473
+- s311596
 
 ## Funksjonalitet/informasjon vi ønsker å fremheve:
 
