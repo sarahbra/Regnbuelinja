@@ -34,9 +34,10 @@ function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
 
     let container = $("#utreise");
     if (retur) {
-        startpunkt = bestilling.endepunkt;
-        endepunkt = bestilling.startpunkt;
-        avreiseSerialized = bestilling.hjemreiseTid;
+        $("#returBilde").removeClass("hidden");
+        startpunkt = bestillingInput.endepunkt;
+        endepunkt = bestillingInput.startpunkt;
+        avreiseSerialized = bestillingInput.hjemreiseTid;
         container = $("#returreise");
     }
 
