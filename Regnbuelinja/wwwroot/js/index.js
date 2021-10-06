@@ -133,7 +133,6 @@ $("#AvreiseDato").change(function () {
 });
 
 //Henter tilgjengelige hjemreisedatoer basert på avreisedato
-
 function hentTilgjengeligeFerdDatoerHjemreise() {
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();

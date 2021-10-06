@@ -1,24 +1,23 @@
 ﻿$(function () {
     const url = "Bestilling/HentBestilling?" + hentId();
-    $.get(url, function (bestillingInput) {
-        console.log(bestillingInput)
-        formaterSide(bestillingInput);
+    $.get(url, function (bestilling) {
+        formaterSide(bestilling);
     });
 })
 
 
-function formaterSide(bestillingInput) {
-    let url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.startpunkt;
+function formaterSide(bestilling) {
+    let url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestilling.startpunkt;
     $.get(url, function (ankomstTidSerialized) {
-        if (bestillingInput.hjemreiseTid) {
-            url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.endepunkt;
+        if (bestilling.hjemreiseTid) {
+            url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestilling.endepunkt;
             $.get(url, function (ankomstTidReturSerialized) {
-                formaterBestilling(bestillingInput, ankomstTidReturSerialized, true);
+                formaterBestilling(bestilling, ankomstTidReturSerialized, true);
             });   
         }
-        formaterBestilling(bestillingInput, ankomstTidSerialized, false);
+        formaterBestilling(bestilling, ankomstTidSerialized, false);
     });
-    formaterKjøpsInfo(bestillingInput);
+    formaterKjøpsInfo(bestilling);
 }
 
 function hentId() {
@@ -27,17 +26,17 @@ function hentId() {
 }
 
 
-function formaterBestilling(bestillingInput, ankomstTidSerialized, retur) {
+function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
 
-    let startpunkt = bestillingInput.startpunkt;
-    let endepunkt = bestillingInput.endepunkt;
-    let avreiseSerialized = bestillingInput.avreiseTid;
+    let startpunkt = bestilling.startpunkt;
+    let endepunkt = bestilling.endepunkt;
+    let avreiseSerialized = bestilling.avreiseTid;
 
     var container = $("#utreise");
     if (retur) {
-        startpunkt = bestillingInput.endepunkt;
-        endepunkt = bestillingInput.startpunkt;
-        avreiseSerialized = bestillingInput.hjemreiseTid;
+        startpunkt = bestilling.endepunkt;
+        endepunkt = bestilling.startpunkt;
+        avreiseSerialized = bestilling.hjemreiseTid;
         container = $("#returreise");
     }
 
@@ -56,7 +55,7 @@ function formaterBestilling(bestillingInput, ankomstTidSerialized, retur) {
 }
 
 
-function formaterKjøpsInfo(bestillingInput) {
+function formaterKjøpsInfo(bestilling) {
     const url = "Bestilling/HentPris?" + hentId();
     $.get(url, function (totalpris) {
         let ut = "<table class='table'><thead><tr>";
@@ -64,17 +63,17 @@ function formaterKjøpsInfo(bestillingInput) {
             "<th>Antall</th></tr></thead>" +
             "<tbody>" +
             "<tr><th>1</th>" +
-            "<td>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</td>" +
+            "<td>" + bestilling.startpunkt + " - " + bestilling.endepunkt + "</td>" +
             "<td>Økonomibillett</td> " +
-            "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
-            "</tr>"; //TODO: reisePris ikke i kontroller
+            "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
+            "</tr>";
 
-        if (bestillingInput.hjemreiseTid) {
+        if (bestilling.hjemreiseTid) {
             ut += "<tr><th>2</th>" +
-                "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
+                "<td>" + bestilling.endepunkt + " - " + bestilling.startpunkt + "</td>" +
                 "<td>Økonomibillett</td>" +
-                "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
-                "</tr>"; //TODO: reisePris ikke i kontroller
+                "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
+                "</tr>"; 
         }
       
         ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + " NOK </td>";

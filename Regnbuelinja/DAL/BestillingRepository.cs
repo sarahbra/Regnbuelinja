@@ -46,33 +46,45 @@ namespace Regnbuelinja.DAL
         public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
         {
             List<Rute> ruter = await _db.Ruter.Where(r => r.Startpunkt.Equals(nyttStartPunkt)).ToListAsync();
+            if (ruter == null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentRuter: Ingen ruter ble returnert fra databasen.");
+                return ruter;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentRuter: Vellykket. Rutene ble returnert fra databasen.");
             return ruter;
         }
 
         public async Task<List<Ferd>> HentFerder(int ruteId)
         {
             List<Ferd> ferder = await _db.Ferder.Where(f => f.Rute.RId == ruteId).ToListAsync();
+            if (ferder == null)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentFerder: Ingen ferder ble returnert fra databasen.");
+                return ferder;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentFerder: Vellykket. Ferdene ble returnert fra databasen.");
             return ferder;
         }
 
-        public async Task<string> LagreBestilling(BestillingInput nyBestilling)
+        public async Task<string> LagreBestilling(Bestilling nyBestilling)
         {
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
-            
-            //System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
             DateTime AvreiseTid = parseDatoLocal(nyBestilling.AvreiseTid);
             
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(AvreiseTid.Date) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
+            // Hvis HjemreiseTid-parameteren er definert, blir det antatt at bestillingen er en tur/retur bestilling.
             if (nyBestilling.HjemreiseTid != null)
             {
                 DateTime HjemreiseTid = parseDatoLocal(nyBestilling.HjemreiseTid);
                 ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(HjemreiseTid.Date) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
+                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: ferdRetur variablen har blitt definert.");
             }
             else
             {
@@ -93,6 +105,7 @@ namespace Regnbuelinja.DAL
                     billettListe.Add(nyBillett);
                     totalPris += ferd.Rute.Pris;
 
+                    // Hvis fer
                     if (ferdRetur != null)
                     {
                         Billett returBillett = new Billett()
@@ -128,6 +141,7 @@ namespace Regnbuelinja.DAL
                     }
 
                 }
+
                 //Oppretter bestillingen
                 Bestillinger bestilling = new Bestillinger()
                 {
@@ -147,9 +161,9 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<BestillingInput> HentBestilling(int id)
+        public async Task<Bestilling> HentBestilling(int id)
         {
-            BestillingInput bestilling = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => new BestillingInput
+            Bestilling bestilling = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => new Bestilling
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
@@ -168,12 +182,19 @@ namespace Regnbuelinja.DAL
             return bestilling;
         }
 
+
         public async Task<double> HentPris(int id)
         {
             double pris = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
+            if (pris == 0)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentPris: Pris er lik 0. Dette kan bety at ingen pris ble hentet fra databasen");
+            }
             return pris;
         }
 
+        // Henter alle tilgjengelige datoer fra databasen. Hvis AvreiseTid-parameteren er definert, skal det kun returneres datoer minst 2 dager etter
+        // datoen fra den angitte variabelen.
         public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid)
         {
             List<DateTime> Datoer;
