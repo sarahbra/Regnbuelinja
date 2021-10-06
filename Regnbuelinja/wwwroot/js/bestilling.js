@@ -66,14 +66,14 @@ function formaterKjøpsInfo(bestillingInput) {
             "<tr><th>1</th>" +
             "<td>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</td>" +
             "<td>Økonomibillett</td> " +
-            "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
+            "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
             "<td></td></tr>"; //TODO: reisePris ikke i kontroller
 
         if (bestillingInput.hjemreiseTid) {
             ut += "<tr><th>2</th>" +
                 "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
                 "<td>Økonomibillett</td>" +
-                "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
+                "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
                 "<td></td></tr>"; //TODO: reisePris ikke i kontroller
         }
 
