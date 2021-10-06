@@ -26,7 +26,7 @@ function hentId() {
     return url;
 }
 
-// TODO - Add båtnavn
+
 function formaterBestilling(bestillingInput, ankomstTidSerialized, retur) {
 
     let startpunkt = bestillingInput.startpunkt;
@@ -60,7 +60,7 @@ function formaterKjøpsInfo(bestillingInput) {
     const url = "Bestilling/HentPris?" + hentId();
     $.get(url, function (totalpris) {
         let ut = "<table class='table'><thead><tr>";
-        ut += "<th>#</th><th>Produkt</th><th>Produktbeskrivelse</th>" +
+        ut += "<th>#</th><th>Strekning</th><th>Billettype</th>" +
             "<th>Antall</th></tr></thead>" +
             "<tbody>" +
             "<tr><th>1</th>" +
@@ -76,10 +76,11 @@ function formaterKjøpsInfo(bestillingInput) {
                 "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn</td>" +
                 "</tr>"; //TODO: reisePris ikke i kontroller
         }
-        //Kan eventuelt legge totalpris i nytt table under(?) Ser nok bedre ut
-        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + "</td>";
+      
+        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + " NOK </td>";
         ut += "</tbody</table>";
         $("#kjøpsInfo").html(ut);
     });
-    
+
+ 
 }

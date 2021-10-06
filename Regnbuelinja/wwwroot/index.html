@@ -25,48 +25,54 @@
 <body>
     <div id="header"></div>
 
-    <div class="page container">
+    <div class="page container" >
         <div class="row justify-content-md-center">
             <div class="col">
                 <h1 class="mb-5">Bestill din reise</h1>
-                <form id="orderForm" class="row needs-validation p-2" novalidate>
-                    <div class="mb-3">
+                <form id="orderForm" class="row needs-validation p-3" novalidate>
+                    <div class="mb-3 p-0">
                         <label for="Startpunkt">Hvor vil du reise fra?</label>
-                        <select name="Startpunkt" class="form-control" id="Startpunkt"></select>
+                        <select name="Startpunkt" class="form-control" id="Startpunkt" required></select>
+                        <div class="invalid-feedback">
+                            Du må velge avreisehavn
+                        </div>
                     </div>
-                    <div class="mb-3" id="EndepunktDiv" style="display: none;">
+                    <div class="mb-3 p-0 hidden" id="EndepunktDiv">
                         <label for="Endepunkt">Hvor vil du reise til?</label>
                         <select name="Endepunkt" class="form-control" id="Endepunkt"></select>
+                        <div class="invalid-feedback">
+                            Du må velge ankomsthavn
+                        </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 p-0">
                         <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" autocomplete="off"
                                checked />
                         <label class="btn btn-outline-secondary" for="TurReturFalse">Én vei</label>
                         <input type="radio" class="btn-check" name="TurRetur" id="TurReturTrue" value="true" autocomplete="off" />
                         <label class="btn btn-outline-secondary" for="TurReturTrue">Tur/retur</label>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 p-0">
                         <label for="Dato">Når vil du reise?</label>
                         <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" autocomplete="off" required />
                         <div class="invalid-feedback">
                             Du må velge en avreisedato
                         </div>
                     </div>
-                    <div class="mb-3 hidden" id="TilbakeContainer">
+                    <div class="mb-3 hidden p-0" id="TilbakeContainer">
                         <label for="Dato">Når vil du reise tilbake?</label>
                         <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYY" type="text" autocomplete="off" />
                         <div class="invalid-feedback">
                             Du må velge en hjemreisedato
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 p-0">
                         <label for="AntallVoksne">Antall voksne</label>
                         <input class="form-control" id="AntallVoksne" name="AntallVoksne" type="number" min="1" value="1" required />
                         <div class="invalid-feedback">
                             Du må velge minst én voksen
                         </div>
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-4 p-0">
                         <label for="AntallBarn">Antall barn</label>
                         <input class="form-control" id="AntallBarn" name="AntallBarn" type="number" min="0" placeholder="Velg antall passasjerer under 18 år" />
                     </div>
