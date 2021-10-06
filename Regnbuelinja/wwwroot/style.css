@@ -28,7 +28,7 @@ h1 {
     background-position: center center;
     background-color: #eff0f5;
     margin-bottom: 4rem;
-    border: 10px solid;
+    border-bottom: 10px solid;
     border-image-slice: 1;
     border-width: 2px;
     border-image-source: linear-gradient(to left, #563e7c, blue, green, yellow, orange, red);
