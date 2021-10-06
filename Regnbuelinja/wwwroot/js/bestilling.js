@@ -32,7 +32,7 @@ function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
     let endepunkt = bestilling.endepunkt;
     let avreiseSerialized = bestilling.avreiseTid;
 
-    var container = $("#utreise");
+    let container = $("#utreise");
     if (retur) {
         startpunkt = bestilling.endepunkt;
         endepunkt = bestilling.startpunkt;

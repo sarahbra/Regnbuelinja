@@ -36,6 +36,8 @@ namespace Regnbuelinja.DAL
 
 
                 var ferd1 = new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
+                
+
 
                 //avreisedatoer for rute1
                 for (int i = 1; i < 31; i += 1)

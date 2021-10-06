@@ -1,8 +1,8 @@
 ﻿
 
 $("input[type=radio][name=TurRetur]").change(function () {
-    var hjemreiseDato = $("#HjemreiseDato");
-    var tilbakeContainer = $("#TilbakeContainer");
+    const hjemreiseDato = $("#HjemreiseDato");
+    const tilbakeContainer = $("#TilbakeContainer");
     if (this.value === "true") {
         tilbakeContainer.removeClass("hidden");
         hjemreiseDato.attr("required", true);
@@ -15,8 +15,8 @@ $("input[type=radio][name=TurRetur]").change(function () {
 
 $("#orderForm").submit(function (event) {
     event.preventDefault();
-    var form = event.target;
-    var valid = form.checkValidity();
+    const form = event.target;
+    const valid = form.checkValidity();
     $(form).addClass("was-validated");
     if (!valid) {
         return false;
@@ -134,6 +134,8 @@ $("#AvreiseDato").change(function () {
 
 //Henter tilgjengelige hjemreisedatoer basert på avreisedato
 function hentTilgjengeligeFerdDatoerHjemreise() {
+    //Hvis tur/retur = true så vil startpunkt og endepunkt være motsatt ved hjemreise
+
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
     const avreiseFormatert = $("#AvreiseDato").val();
