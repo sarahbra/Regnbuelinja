@@ -42,7 +42,7 @@ namespace Regnbuelinja.DAL
                 {
                     if (i % 2 == 0)
                     {
-                        context.Ferder.Add(new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 13, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 18, 0, 0) });
+                        context.Ferder.Add(new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 13, 25, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 18, 0, 0) });
                     }
                     else
                     {
