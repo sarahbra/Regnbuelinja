@@ -43,12 +43,14 @@ namespace Regnbuelinja.DAL
             return havner;
         }
 
+        //Brukes ikke(?) Slette(?)
         public async Task<List<Rute>> HentRuter(string nyttStartPunkt)
         {
             List<Rute> ruter = await _db.Ruter.Where(r => r.Startpunkt.Equals(nyttStartPunkt)).ToListAsync();
             return ruter;
         }
 
+        //Brukes ikke(?) Slette(?)
         public async Task<List<Ferd>> HentFerder(int ruteId)
         {
             List<Ferd> ferder = await _db.Ferder.Where(f => f.Rute.RId == ruteId).ToListAsync();
@@ -163,7 +165,7 @@ namespace Regnbuelinja.DAL
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
-            if (bestilling != null)
+            if (bestilling != default(BestillingInput))
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentBestilling: Vellykket. Et BestillingInput objekt blir returnert.");
                 return bestilling;
@@ -175,6 +177,12 @@ namespace Regnbuelinja.DAL
         public async Task<double> HentPris(int id)
         {
             double pris = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
+            if (pris == default)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentPris: TotalPris ikke funnet for bestilling med id " + id);
+                return pris;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentPris: Vellykket. Totalpris for bestilling med id " + id +" har blitt funnet i databasen.");
             return pris;
         }
 
@@ -190,7 +198,7 @@ namespace Regnbuelinja.DAL
                 Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)) && f.AvreiseTid.CompareTo(AnkomstTid) > 0)).Select(f => f.AvreiseTid).ToListAsync();
             }
             Datoer.Sort();
-            if (Datoer == null)
+            if (Datoer == null || !Datoer.Any())
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med Startpunkt '" + Startpunkt + "' og Endepunkt '"+ Endepunkt +"' har blitt funnet i databasen.");
                 return Datoer;
@@ -199,15 +207,28 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
+        //Tror denne kan returnere DateTime i stedet. Teste senere
         public async Task<string> HentAnkomstTid(int id, string Startpunkt)
         {
             DateTime AnkomstTid = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.AnkomstTid).FirstOrDefaultAsync();
+            if(AnkomstTid.Equals(default))
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomstTid: Ingen ankomsttid har blitt funnet i databasen for bestilling med id " + id +" og avreisehavn " + Startpunkt + ".");
+                return AnkomstTid.ToString("o");
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomstTid: Vellykket. Ankomsttid " + AnkomstTid + " har blitt funnet i databasen for bestilling med id " + id + " og avreisehavn " + Startpunkt + ".");
             return AnkomstTid.ToString("o");
         }
 
         public async Task<string> HentBåt(int id, string Startpunkt)
         {
             string Båtnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Båt.Navn).FirstOrDefaultAsync();
+            if (Båtnavn.Equals(default))
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentBåt: Ingen båt har blitt funnet i databasen for bestilling med id " + id + " og avreisehavn " + Startpunkt + ".");
+                return Båtnavn;
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomstTid: Vellykket. Båt med navn " + Båtnavn + " har blitt funnet i databasen for bestilling med id " + id + " og avreisehavn " + Startpunkt + ".");
             return Båtnavn;
         }
 
