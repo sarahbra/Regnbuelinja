@@ -25,9 +25,9 @@ $("#orderForm").submit(function (event) {
     params.set("Startpunkt", $("#Startpunkt").val());
     params.set("Endepunkt", $("#Endepunkt").val());
     params.set("TurRetur", $("#TurRetur").val());
-    params.set("AvreiseDato", formaterKalenderDato($("#AvreiseDato").val()).toISOString());
+    params.set("AvreiseTid", formaterKalenderDato($("#AvreiseDato").val()).toISOString());
     if ($("#TurReturTrue").is(":checked")) {
-        params.set("HjemreiseDato", formaterKalenderDato($("#HjemreiseDato").val()).toISOString());
+        params.set("HjemreiseTid", formaterKalenderDato($("#HjemreiseDato").val()).toISOString());
     }
     params.set("AntallVoksne", $("#AntallVoksne").val());
     const antallBarn = ($("#AntallBarn").val() || "").trim();
@@ -100,10 +100,9 @@ function visKalender(kalender, datoer) {
     });
 }
 
-//Flytte denne til formaterDato.js
 function formaterKalenderDato(str) {
     const deler = str.split("/");
-    return new Date(parseInt(deler[2]), parseInt(deler[1]) - 1, parseInt(deler[0]));
+    return new Date(parseInt(deler[2]), (parseInt(deler[1])-1), parseInt(deler[0]));
 }
 
 function hentTilgjengeligeFerdDatoerAvreise() {
@@ -113,7 +112,7 @@ function hentTilgjengeligeFerdDatoerAvreise() {
     const params = {
         Startpunkt: startPunkt,
         Endepunkt: endePunkt,
-        AvreiseDato: null,
+        AvreiseTid: null,
     };
 
     $.get("Bestilling/HentDatoer", params, function (datoer) {
@@ -135,20 +134,17 @@ $("#AvreiseDato").change(function () {
 function hentTilgjengeligeFerdDatoerHjemreise() {
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
-    const avreiseDatoStr = ($("#AvreiseDato").val() || "").trim();
-    if (avreiseDatoStr.length === 0) {
+    const avreiseFormatert = $("#AvreiseDato").val();
+    if (avreiseFormatert === null) {
         return;
     }
-
-    const avreiseDato = formaterKalenderDato(avreiseDatoStr);
-
-    const dato = new Date(avreiseDato);
+    const avreiseDato = formaterKalenderDato(avreiseFormatert);
     const avreiseDatoISOStr = avreiseDato.toISOString();
 
     const params = {
         Startpunkt: startPunkt,
         Endepunkt: endePunkt,
-        AvreiseDato: avreiseDatoISOStr,
+        AvreiseTid: avreiseDatoISOStr,
     };
 
     $.get("Bestilling/HentDatoer", params, function (datoer) {

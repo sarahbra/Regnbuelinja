@@ -98,10 +98,28 @@ namespace Regnbuelinja.Controllers
             return Ok(hentBestilling);
         }
 
-        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid)
         {
-            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseDato);
+            List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseTid);
             return Ok(Datoer);
+        }
+
+        public async Task<ActionResult> HentPris(int id)
+        {
+            double TotalPris = await _db.HentPris(id);
+            return Ok(TotalPris);
+        }
+
+        public async Task<ActionResult> HentAnkomstTid(int id, string Startpunkt)
+        {
+            string AnkomstTid = await _db.HentAnkomstTid(id, Startpunkt);
+            if (AnkomstTid == null)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomsttid funnet for bestilling " + id + " fra startpunktet Startpunkt");
+                return BadRequest("Ingen ankomsttid funnet for bestilling " + id + " for startpunktet " + Startpunkt);
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet for bestilling " + id + " fra startpunkt " + Startpunkt);
+            return Ok(AnkomstTid);
         }
     }
 }

@@ -60,14 +60,22 @@ namespace Regnbuelinja.DAL
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
-            System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseDato);
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.AvreiseDato) &&
+            System.Diagnostics.Debug.WriteLine(nyBestilling.Startpunkt);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.Endepunkt);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AvreiseTid);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.HjemreiseTid);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AntallVoksne);
+            System.Diagnostics.Debug.WriteLine(nyBestilling.AntallBarn);
+            DateTime AvreiseTid = parseDatoLocal(nyBestilling.AvreiseTid);
+            
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(AvreiseTid.Date) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
-            if (nyBestilling.HjemreiseDato != null)
+            if (nyBestilling.HjemreiseTid != null)
             {
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.Dato.Equals(nyBestilling.HjemreiseDato) &&
+                DateTime HjemreiseTid = parseDatoLocal(nyBestilling.HjemreiseTid);
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(HjemreiseTid.Date) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
             }
             else
@@ -135,7 +143,6 @@ namespace Regnbuelinja.DAL
                 _db.Bestillinger.Add(bestilling);
                 await _db.SaveChangesAsync();
                 return bestilling.BeId + "";
-
             }
             else
             {
@@ -150,10 +157,10 @@ namespace Regnbuelinja.DAL
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
-                AvreiseDato = b.Billetter.First().Ferd.Dato,
-                HjemreiseDato = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.Dato,
-                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == true).Count(),
-                AntallBarn = b.Billetter.Where(bi => bi.Ferd.Dato.Equals(b.Billetter.First().Ferd.Dato) && bi.Voksen == false).Count()
+                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString("o"),
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid.ToString("o"),
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
             if (bestilling != null)
@@ -171,24 +178,44 @@ namespace Regnbuelinja.DAL
             return pris;
         }
 
-        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, DateTime AvreiseDato)
+        public async Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid)
         {
             List<DateTime> Datoer;
-            if(AvreiseDato == null)
+            if(AvreiseTid == null)
             {
-                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.Dato).ToListAsync();
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.AvreiseTid).ToListAsync();
             } else
             {
-                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt))) && f.Dato.CompareTo(AvreiseDato) > 0).Select(f => f.Dato).ToListAsync();
+                Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)) && f.AnkomstTid.CompareTo(parseDatoLocal(AvreiseTid)) > 0)).Select(f => f.AvreiseTid).ToListAsync();
             }
             Datoer.Sort();
             if (Datoer == null)
             {
-                _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med Startpunkt '" + Startpunkt + "' og Endepunkt '"+Endepunkt+"' har blitt funnet i databasen.");
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med Startpunkt '" + Startpunkt + "' og Endepunkt '"+ Endepunkt +"' har blitt funnet i databasen.");
                 return Datoer;
             }
             _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Vellykket. Ferd med Startpunkt '" + Startpunkt + "' og Endepunkt '" + Endepunkt + "' har blitt funnet i databasen.");
             return Datoer;
+        }
+
+        public async Task<string> HentAnkomstTid(int id, string Startpunkt)
+        {
+            List<Billett> billetter = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).ToListAsync();
+            string AnkomstTid = null;
+            foreach(Billett b in billetter)
+            {
+                if(b.Ferd.Rute.Startpunkt.Equals(Startpunkt))
+                {
+                    AnkomstTid = b.Ferd.AnkomstTid.ToString("O");
+                }
+            }
+            return AnkomstTid;
+        }
+
+        private DateTime parseDatoLocal(string dato_tid)
+        {
+            DateTime dato = DateTime.Parse(dato_tid, null, System.Globalization.DateTimeStyles.AssumeLocal);
+            return dato; 
         }
     }
 }

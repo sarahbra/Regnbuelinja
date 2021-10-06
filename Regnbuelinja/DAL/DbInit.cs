@@ -14,7 +14,7 @@ namespace Regnbuelinja.DAL
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<BestillingContext>();
-                
+
                 context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
 
@@ -22,40 +22,40 @@ namespace Regnbuelinja.DAL
                 var rute1 = new Rute { Startpunkt = "Oslo", Endepunkt = "København", Pris = 799 };
                 var rute2 = new Rute { Startpunkt = "København", Endepunkt = "Oslo", Pris = 799 };
 
-                // Oslo - Bergen
-                var rute3 = new Rute { Startpunkt = "Oslo", Endepunkt = "Bergen", Pris = 399 };
-                var rute4 = new Rute { Startpunkt = "Bergen", Endepunkt = "Oslo", Pris = 399 };
+                // Oslo - Kiel
+                var rute3 = new Rute { Startpunkt = "Oslo", Endepunkt = "Kiel", Pris = 399 };
+                var rute4 = new Rute { Startpunkt = "Kiel", Endepunkt = "Oslo", Pris = 399 };
 
 
-                var båt1 = new Båt { Navn = "Båtten Anna"};
+                var båt1 = new Båt { Navn = "Båtten Anna" };
                 var båt2 = new Båt { Navn = "Unicorn" };
 
 
-                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, Dato = new DateTime(2021, 12, 1, 0, 0, 0) };
-                
+                var ferd1 = new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
+
                 //avreisedatoer for rute1
-                for (int i = 2; i< 32; i+=2)
+                for (int i = 2; i < 31; i+=2)
                 {
-                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, Dato = new DateTime(2021, 12, i, 0, 0, 0) });
+                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+1, 0, 0, 0) });
                 }
 
                 //avreisedatoer for rute2
-                for (int i = 1; i < 32; i++)
+                for (int i = 1; i < 31; i++)
                 {
-                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute2, Dato = new DateTime(2021, 12, i, 0, 0, 0) });
+                    context.Ferder.Add(new Ferd { Båt = båt1, Rute = rute2, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+1, 0, 0, 0) });
                 }
 
                 //avreisedatoer for rute 3
-                for (int i = 1; i < 32;i++)
+                for (int i = 1; i < 30; i++)
                 {
                     
-                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute3, Dato = new DateTime(2021, 12, i, 0, 0, 0)});
+                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute3, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+2, 0, 0, 0)});
                 }
 
                 //avreisedatoer for rute 4
-                for (int i = 1; i < 32;i++)
+                for (int i = 1; i < 30; i++)
                 {
-                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute4, Dato = new DateTime(2021, 12, i, 0, 0, 0) });
+                    context.Ferder.Add(new Ferd { Båt = båt2, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 0, 0, 0), AnkomstTid = new DateTime(2021, 12, i+2, 0, 0, 0)});
                 }
 
                 //Kun bestilling og billett til ferd1 foreløpig, kun 1 bestilling men 2 ruter, 2 båter og to mulige ferder
@@ -68,11 +68,10 @@ namespace Regnbuelinja.DAL
                 billetter.Add(billett2);
 
                 //Hardkodet totalpris
-                var bestilling1 = new Bestillinger { Billetter = billetter, TotalPris= 798};
+                var bestilling1 = new Bestillinger { Billetter = billetter, TotalPris = 798 };
                 context.Bestillinger.Add(bestilling1);
                 context.SaveChanges();
             }
-
         }
     }
 }

@@ -1,17 +1,27 @@
 ﻿$(function () {
     const url = "Bestilling/HentBestilling?" + hentId();
     $.get(url, function (bestillingInput) {
+        console.log(bestillingInput)
         formaterSide(bestillingInput);
     });
 })
 
+
 function formaterSide(bestillingInput) {
-    formaterBestilling(bestillingInput);
-    if (bestillingInput.hjemreiseDato) {
-        formaterReturBestilling(bestillingInput);
-    } else {
-        formaterKjøpsInfo(bestillingInput);
-    }
+    let url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.startpunkt;
+    $.get(url, function (ankomstTidSerialized) {
+        url = "Bestilling/HentPris?" + hentId();
+        $.get(url, function (totalPris) {
+            if (bestillingInput.hjemreiseTid) {
+                url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestillingInput.endepunkt;
+                $.get(url, function (ankomstTidReturSerialized) {
+                    formaterBestilling(bestillingInput, ankomstTidReturSerialized, "Båtten Anna", true);
+                });
+            }
+            formaterKjøpsInfo(bestillingInput, totalPris);
+        });
+        formaterBestilling(bestillingInput, ankomstTidSerialized, "Kjærleiksbåten", false);
+    });
 }
 
 function hentId() {
@@ -20,43 +30,39 @@ function hentId() {
 }
 
 // TODO - Add båtnavn
-function formaterBestilling(bestillingInput) {
-    $("#utreiseHeader").html("Utreise fra " + bestillingInput.startpunkt);
+function formaterBestilling(bestillingInput, ankomstTidSerialized, skip, retur) {
+
+    let startpunkt = bestillingInput.startpunkt;
+    let endepunkt = bestillingInput.endepunkt;
+    let avreiseSerialized = bestillingInput.avreiseTid;
+
+    var container = $("#utreise");
+    if (retur) {
+        startpunkt = bestillingInput.endepunkt;
+        endepunkt = bestillingInput.startpunkt;
+        avreiseSerialized = bestillingInput.hjemreiseTid;
+        container = $("#returreise");
+    }
+
+    const avreiseDate = new Date(avreiseSerialized);
+    console.log(avreiseDate.toDateString())
+    const ankomstDate = new Date(ankomstTidSerialized);
+    console.log(ankomstDate.toDateString())
+
     let ut = "";
-    ut += "<li class='list-group-item'><label for='dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.avreiseDato.toString() + "</li>" +
-          "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>08:30</li>" +
-          "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>20:00</li>" +
-        "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
-        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.startpunkt + " - " + bestillingInput.endepunkt + "</li>";
-    $("#utreise").html(ut);
-}
-
-function hentPris() {
-    let prisen = 0.0;
-    const url = "Bestilling/HentPris?" + hentId();
-    $.get(url, function (pris) {
-        prisen = pris;
-    });
-    return prisen;
+    ut += "<li class='list-group-item'><label for='dato_avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + "</li>" +
+        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + avreiseDate.toLocaleTimeString() + "</li>" +
+        "<li class='list-group-item'><label for='dato_ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + "</li>" +
+        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Klokkeslett</label>" + ankomstDate.toLocaleTimeString() + "</li>" +
+        "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + skip + "</li>" +
+        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
+    container.html(ut);
 }
 
 
-function formaterReturBestilling(bestillingInput) {
-    $("#returreiseHeader").html("Hjemreise fra " + bestillingInput.endepunkt);
-    let ut = "";
-    ut += "<li class='list-group-item'><label for='retur_dato' class='col-12 col-sm-3 fw-bold'>Dato</label>" + bestillingInput.hjemreiseDato.toString() + "</li>" +
-        "<li class='list-group-item'><label for='avgang' class='col-12 col-sm-3 fw-bold'>Avgang</label>14:00</li>" +
-        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>23:00</li>" +
-        "<li class='list-group-item'><label for='retur_skip' class='col-12 col-sm-3 fw-bold'>Skip</label>Båtten Anna</li>" +
-        "<li class='list-group-item'><label for='retur_strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</li>";
-    $("#returreise").html(ut);
-    formaterKjøpsInfo(bestillingInput);
-}
-
-
-function formaterKjøpsInfo(bestillingInput) {
+function formaterKjøpsInfo(bestillingInput, pris) {
     let ut = "<table class='table'><thead><tr>";
-    ut += "<th>#</th><th>Produkt</th><th>Produkt beskrivelse</th>" +
+    ut += "<th>#</th><th>Produkt</th><th>Produktbeskrivelse</th>" +
         "<th>Antall</th><th>Pris</th></tr></thead>" +
         "<tbody>" +
         "<tr><th>1</th>" +
@@ -65,7 +71,7 @@ function formaterKjøpsInfo(bestillingInput) {
         "<td>" + bestillingInput.antallVoksne + " voksne + " + bestillingInput.antallBarn + " barn. </td>" +
         "<td></td></tr>"; //TODO: reisePris ikke i kontroller
 
-    if (bestillingInput.hjemreiseDato) {
+    if (bestillingInput.hjemreiseTid) {
         ut += "<tr><th>2</th>" +
             "<td>" + bestillingInput.endepunkt + " - " + bestillingInput.startpunkt + "</td>" +
             "<td>Økonomibillett</td>" +
@@ -73,7 +79,7 @@ function formaterKjøpsInfo(bestillingInput) {
             "<td></td></tr>"; //TODO: reisePris ikke i kontroller
     }
 
-    ut += "<tr><td></td><td></td><th></th><td>Totalpris</td><td>" + hentPris() + "</td>";
+    ut += "<tr><td></td><td></td><th></th><th>Totalpris</th><td>" + pris + "</td>";
     ut += "</tbody</table>";
     $("#kjøpsInfo").html(ut);
 }
