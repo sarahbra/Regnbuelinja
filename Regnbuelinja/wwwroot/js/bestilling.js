@@ -33,13 +33,17 @@ function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
     let avreiseSerialized = bestilling.avreiseTid;
 
     let container = $("#utreise");
+    let tittel = $("#utreiseHeader");
     if (retur) {
         $("#returBilde").removeClass("hidden");
-        startpunkt = bestillingInput.endepunkt;
-        endepunkt = bestillingInput.startpunkt;
-        avreiseSerialized = bestillingInput.hjemreiseTid;
+        startpunkt = bestilling.endepunkt;
+        endepunkt = bestilling.startpunkt;
+        avreiseSerialized = bestilling.hjemreiseTid;
         container = $("#returreise");
+        tittel = $("#returreiseHeader");
     }
+
+    tittel.html("Avgang fra " + startpunkt);
 
     const avreiseDate = new Date(avreiseSerialized);
     const ankomstDate = new Date(ankomstTidSerialized);
