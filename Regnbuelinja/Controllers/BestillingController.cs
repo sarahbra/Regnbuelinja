@@ -114,7 +114,7 @@ namespace Regnbuelinja.Controllers
         public async Task<ActionResult> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid)
         {
             List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseTid);
-            if (Datoer == default)
+            if (Datoer == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentDatoer: Ingen returdatoer funnet for avreisedato " + AvreiseTid + " med avreisehavn " + Startpunkt + " og ankomsthavn " + Endepunkt);
                 return BadRequest("Ingen returdato med avreisedato " + AvreiseTid + " fra " + Startpunkt + " til " + Endepunkt + " funnet.");
