@@ -88,6 +88,7 @@ function formaterKjøpsInfo(bestilling) {
                 "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
                 "<td>" + parseFloat(strekningsPris).toFixed(2) + " NOK</td>" +
                 "</tr>";
+            console.log(bestilling.hjemreiseTid);
             if (bestilling.hjemreiseTid) {
                 url = "Bestilling/HentStrekningsPris?" + id + "&startpunkt=" + bestilling.endepunkt + "&retur=" + true;
                 $.get(url, function (strekningsPrisRetur) {
@@ -97,15 +98,17 @@ function formaterKjøpsInfo(bestilling) {
                         "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
                         "<td>" + parseFloat(strekningsPrisRetur).toFixed(2) + " NOK</td>" +
                         "</tr>";
+                    ut += "<tr><td></td><td></td><td></td><th>Totalpris</th><td>" + parseFloat(totalpris).toFixed(2) + " NOK </td>";
+                    ut += "</tbody</table>";
+                    $("#kjøpsInfo").html(ut);
                 }).fail(function (request) {
                     $("#feil").html(request.responseText);
                 });
-            }
-
-            ut += "<tr><td></td><td></td><td></td><th>Totalpris</th><td>" + parseFloat(totalpris).toFixed(2) + " NOK </td>";
-            ut += "</tbody</table>";
-            $("#kjøpsInfo").html(ut);
-
+            } else {
+                ut += "<tr><td></td><td></td><td></td><th>Totalpris</th><td>" + parseFloat(totalpris).toFixed(2) + " NOK </td>";
+                ut += "</tbody</table>";
+                $("#kjøpsInfo").html(ut);
+            }  
         }).fail(function (request) {
             $("#feil").html(request.responseText);
         });

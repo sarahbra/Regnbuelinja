@@ -231,7 +231,6 @@ namespace Regnbuelinja.DAL
             return Datoer;
         }
 
-        //Tror denne kan returnere DateTime i stedet. Teste senere
         public async Task<string> HentAnkomstTid(int id, string Startpunkt)
         {
             DateTime AnkomstTid = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.AnkomstTid).FirstOrDefaultAsync();
@@ -260,7 +259,8 @@ namespace Regnbuelinja.DAL
         {
             double strekningsPris = 0.0;
             List<Billett> billetter = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).ToListAsync();
-            if(!billetter.Any())
+            
+            if (!billetter.Any())
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentStrekningsPris: Enten ingen billetter med startpunkt " + Startpunkt + " eller ingen bestilling med ID " + id + " har blitt funnet i databasen.");
                 return 0.00;
@@ -269,7 +269,7 @@ namespace Regnbuelinja.DAL
                 int antBarn = billetter.Count(b => !b.Voksen);
                 int antVoksne = billetter.Count(b => b.Voksen);
                 double prisPerBillett = billetter.First().Ferd.Rute.Pris;
-                strekningsPris = (antBarn * 0.5 * prisPerBillett) + (antVoksne * prisPerBillett);
+                strekningsPris += (antBarn * 0.5 * prisPerBillett) + (antVoksne * prisPerBillett);
                 if (retur)
                 {
                     strekningsPris *= 0.75;
