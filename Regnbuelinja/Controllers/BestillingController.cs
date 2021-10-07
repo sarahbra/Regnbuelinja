@@ -150,9 +150,9 @@ namespace Regnbuelinja.Controllers
             return Ok(AnkomstTid);
         }
 
-        public async Task<ActionResult> HentStrekningsPris(int id, string Startpunkt, bool retur)
+        public async Task<ActionResult> HentStrekningsPris(int id, string Startpunkt)
         {
-            double StrekningsPris = await _db.HentStrekningsPris(id, Startpunkt, retur);
+            double StrekningsPris = await _db.HentStrekningsPris(id, Startpunkt);
             if(StrekningsPris == 0.00)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentStrekningsPris: Ingen strekningspris funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
