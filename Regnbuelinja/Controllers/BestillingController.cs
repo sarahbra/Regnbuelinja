@@ -117,7 +117,7 @@ namespace Regnbuelinja.Controllers
             if (Datoer == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentDatoer: Ingen returdatoer funnet for avreisedato " + AvreiseTid + " med avreisehavn " + Startpunkt + " og ankomsthavn " + Endepunkt);
-                return BadRequest("Ingen returdato med avreisedato " + AvreiseTid + " fra " + Startpunkt + " til " + Endepunkt + " funnet.");
+                return BadRequest("Ingen returdato med gitt avreisedato fra " + Startpunkt + " til " + Endepunkt + " funnet. Velg en tidligere avreisedato.");
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Returdatoer for avreisedato " + AvreiseTid + " fra " + Startpunkt + " til " + Endepunkt + " har blitt funnet.");
             return Ok(Datoer);

@@ -3,10 +3,12 @@
 $("input[type=radio][name=TurRetur]").change(function () {
     const hjemreiseDato = $("#HjemreiseDato");
     const tilbakeContainer = $("#TilbakeContainer");
-    if (this.value === "true") {
+    if (this.value === "true" && $("#Startpunkt").val() && $("#Endepunkt").val()) {
         tilbakeContainer.removeClass("hidden");
         hjemreiseDato.attr("required", true);
-        hentTilgjengeligeFerdDatoerHjemreise();
+        if ($("#AvreiseDato").val()) {
+            hentTilgjengeligeFerdDatoerHjemreise();
+        }
     } else if (this.value === "false") {
         tilbakeContainer.addClass("hidden");
         hjemreiseDato.attr("required", false);
@@ -130,6 +132,7 @@ function hentTilgjengeligeFerdDatoerAvreise() {
 
 $("#AvreiseDato").change(function () {
     if ($("#TurReturTrue").is(":checked")) {
+        nullstillKalender($("#HjemreiseDato"));
         hentTilgjengeligeFerdDatoerHjemreise();
     }
 });
@@ -159,5 +162,10 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
         visKalender($("#HjemreiseDato"), datoer.map(function (d) {
             return new Date(d);
         }));
+    }).fail(function (jqXHR) {
+        const json = $.parseJSON(jqXHR.responseText);
+        $("#feil").html(json.message);
+        nullstillKalender($("#AvreiseDato, #HjemreiseDato"));
+        return;
     });
 }

@@ -217,7 +217,7 @@ namespace Regnbuelinja.DAL
             }
             
             Datoer.Sort();
-            if (!Datoer.Any())
+            if (!Datoer.Any() || Datoer == null)
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med Startpunkt '" + Startpunkt + "' og Endepunkt '"+ Endepunkt +"' med returdato etter avreisetid " + AvreiseTid + " har blitt funnet i databasen.");
                 return null;
