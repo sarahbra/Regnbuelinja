@@ -149,5 +149,17 @@ namespace Regnbuelinja.Controllers
             _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
             return Ok(AnkomstTid);
         }
+
+        public async Task<ActionResult> HentStrekningsPris(int id, string Startpunkt)
+        {
+            double StrekningsPris = await _db.HentStrekningsPris(id, Startpunkt);
+            if(StrekningsPris == 0.00)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentStrekningsPris: Ingen strekningspris funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
+                return BadRequest("Ingen ankomsttid funnet for bestilling " + id + " for avreisehavn " + Startpunkt);
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentStrekningsPris: Vellykket. Strekningspris har blitt funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
+            return Ok(StrekningsPris);
+        }
     }
 }
