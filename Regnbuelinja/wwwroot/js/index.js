@@ -56,6 +56,8 @@ $("#Startpunkt").change(function () {
 $("#Endepunkt").change(function () {
     nullstillKalender($("#AvreiseDato,#HjemreiseDato"));
     hentTilgjengeligeFerdDatoerAvreise();
+    const avreiseContainer = $("#AvreiseContainer");
+    avreiseContainer.removeClass("hidden");
 });
 
 function hentAnkomstHavner() {
