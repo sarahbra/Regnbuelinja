@@ -21,8 +21,8 @@
     <div class="container mb-5">
         <h1 class="mb-5 p-2">Din bestilling</h1>
         <div class="row">
-            <div class="col-lg-4 mb-5">
-                <img src="./img/cruise1.jpeg" class="img-fluid" id="utreiseBilde" />
+            <div class="col-lg-4 mb-5" id="utreiseBilde">
+                <img src="./img/cruise1.jpeg" class="img-fluid rounded shadow-lg" />
             </div>
             <div class="col-lg-6 mb-5">
                 <h3 id="utreiseHeader"></h3>
@@ -30,15 +30,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-4 mb-5">
-                <img src="./img/cruise3.png" class="img-fluid hidden" id="returBilde" />
+            <div class="col-lg-4 mb-5 hidden" id="returBilde">
+                <img src="./img/cruise3.png" class="img-fluid rounded shadow-lg" />
             </div>
             <div class="col-lg-6 mb-5">
                 <h3 id="returreiseHeader"></h3>
                 <ul class="list-group list-group-flush" id="returreise"></ul>
             </div>
-        </div>    
-            
+        </div>
+
         <div id="kjøpsInfo" class='table container mt-5'></div>
         <a href="/index.html" class="btn btn-lg btn-primary col-lg-5 mb-6 mt-5" id="tilbakeKnapp" rel="button" style="background-color: #563e7c">
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 20 16">
@@ -47,7 +47,7 @@
             Tilbake til bestilling
         </a>
     </div>
-   
+
     <script src="./js/bestilling.js"></script>
 </body>
 </html> 
