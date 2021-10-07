@@ -31,3 +31,7 @@
 
 - _Rute:_
   Ved å skille rute fra ferd kan fastpris på en strekning enklere oppdateres. En pris trenger ikke å være tilknyttet en spesifikk båt og spesifikke datoer, men kun avreisehavn og ankomsthavn. Dermed kan man gi rabatterte priser på en ferd basert på fastpris ved behov men likvel ha en referanse til opprinnelig pris på en rute.
+
+### DBinit:
+
+Vi har kun lagt inn avreise- og hjemreisedatoer for desember måned 2021. Dersom man velger avreisedato på en av de siste dagene i desember er det ikke mulig å velge returdato når reisen tar 2-3 dager (avhengig av om det er til Kødenhavn eller Kiel). I praksis ville man hatt flere tilgjengelige avreisemåneder men vi har gjort det sånn nå for enkelthetensskyld. Vi viser feilmelding til bruker i klienten om at man man må velge en tidligere avreisedato dersom hjemreisedato ikke er tilgjengelig (dersom tur/retur er valgt).

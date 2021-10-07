@@ -19,6 +19,10 @@ h1 {
     color: #563e7c;
 }
 
+h3 {
+    padding-left: 20px;
+}
+
 #header {
     height: 200px;
     width: 100%;

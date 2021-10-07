@@ -3,13 +3,16 @@
 $("input[type=radio][name=TurRetur]").change(function () {
     const hjemreiseDato = $("#HjemreiseDato");
     const tilbakeContainer = $("#TilbakeContainer");
-    if (this.value === "true") {
+    if (this.value === "true" && $("#Startpunkt").val() && $("#Endepunkt").val()) {
         tilbakeContainer.removeClass("hidden");
         hjemreiseDato.attr("required", true);
-        hentTilgjengeligeFerdDatoerHjemreise();
+        if ($("#AvreiseDato").val()) {
+            hentTilgjengeligeFerdDatoerHjemreise();
+        }
     } else if (this.value === "false") {
         tilbakeContainer.addClass("hidden");
         hjemreiseDato.attr("required", false);
+        $("#returDatoFinnesIkke").html("");
     }
 });
 
@@ -41,8 +44,7 @@ $("#orderForm").submit(function (event) {
 
         window.location.assign("/bestilling.html?id=" + id);
     }).fail(function (jqXHR) {
-        const json = $.parseJSON(jqXHR.responseText);
-        $("#feil").html("Feil på server - prøv igjen senere: " + json.message);
+        $("#feil").html("Feil på server - prøv igjen senere: " + jqXHR.responseText);
         return false;
     });
 });
@@ -50,6 +52,8 @@ $("#orderForm").submit(function (event) {
 
 $("#Startpunkt").change(function () {
     nullstillKalender($("#AvreiseDato,#HjemreiseDato"));
+    $("#TilbakeContainer").addClass("hidden");
+    $("#AvreiseContainer").addClass("hidden");
     hentAnkomstHavner();
 });
 
@@ -111,6 +115,7 @@ function formaterKalenderDato(str) {
 }
 
 function hentTilgjengeligeFerdDatoerAvreise() {
+    
     const startPunkt = $("#Startpunkt").val();
     const endePunkt = $("#Endepunkt").val();
 
@@ -124,19 +129,30 @@ function hentTilgjengeligeFerdDatoerAvreise() {
         visKalender($("#AvreiseDato"), datoer.map(function (d) {
             return new Date(d);
         }));
+    }).fail(function (jqXHR) {
+        const json = $.parseJSON(jqXHR.responseText);
+        $("#feil").html(json.message);
+        nullstillKalender($("#AvreiseDato, #HjemreiseDato"));
+        return;
     });
 }
 
 
 $("#AvreiseDato").change(function () {
     if ($("#TurReturTrue").is(":checked")) {
+        nullstillKalender($("#HjemreiseDato"));
+        $("#feil").html("");
         hentTilgjengeligeFerdDatoerHjemreise();
     }
 });
 
 //Henter tilgjengelige hjemreisedatoer basert på avreisedato
+
 function hentTilgjengeligeFerdDatoerHjemreise() {
     //Hvis tur/retur = true så vil startpunkt og endepunkt være motsatt ved hjemreise
+    $("#TilbakeContainer").removeClass("hidden");
+    $("#HjemreiseDato").attr("required", true);
+    $("#returDatoFinnesIkke").html("");
 
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
@@ -159,5 +175,12 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
         visKalender($("#HjemreiseDato"), datoer.map(function (d) {
             return new Date(d);
         }));
+    }).fail(function (request) {
+        $("#returDatoFinnesIkke").html(request.responseText);
+        nullstillKalender($("#AvreiseDato, #HjemreiseDato"));
+        $("#TilbakeContainer").addClass("hidden");
+        $("#hjemreiseDato").attr("required", false);
+        hentTilgjengeligeFerdDatoerAvreise();
+        return;
     });
 }

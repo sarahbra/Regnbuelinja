@@ -40,7 +40,7 @@ namespace Regnbuelinja.Controllers
             if (Baatnavn == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Båtnavn ble ikke returnert.");
-                return NotFound("Finner ikke båtnavn i repository");
+                return NotFound("Finner ikke båtnavn i repository for bestilling med id " + id);
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Vellykket. Båtnavn har blitt returnert.");
             return Ok(Baatnavn);
@@ -105,7 +105,7 @@ namespace Regnbuelinja.Controllers
             if (hentBestilling == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet.");
-                return BadRequest("Ingen bestilling med ID " + id + " har blitt funnet.");           
+                return BadRequest("Ingen bestilling med ID " + id + " har blitt funnet i databasen.");
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Bestilling med ID " + id + " har blitt funnet.");
             return Ok(hentBestilling);
@@ -116,20 +116,25 @@ namespace Regnbuelinja.Controllers
             List<DateTime> Datoer = await _db.HentDatoer(Startpunkt, Endepunkt, AvreiseTid);
             if (Datoer == null)
             {
-                _log.LogInformation("/Controllers/BestillingController.cs: HentDatoer: Ingen datoer har blitt hentet fra databasen.");
-                return BadRequest("Ingen datoer har blitt funnet.");
+                DateTime AvreiseDatoTid = DateTime.Parse(AvreiseTid);
+                var AvreiseDato = AvreiseDatoTid.ToString("dd/MM/yyyy");
+
+                _log.LogInformation("/Controllers/BestillingController.cs: HentDatoer: Ingen returdatoer funnet for avreisedato " + AvreiseTid + " med avreisehavn " + Startpunkt + " og ankomsthavn " + Endepunkt);
+                return BadRequest("Ingen returdato med avreisedato " + AvreiseDato + " fra " + Startpunkt + " til " + Endepunkt + " funnet. Velg en tidligere avreisedato.");
             }
-            _log.LogInformation("/Controllers/BestillingController.cs: HentDatoer: Vellykket. Datoene har blitt hentet fra databasen.");
+            _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Returdatoer for avreisedato " + AvreiseTid + " fra " + Startpunkt + " til " + Endepunkt + " har blitt funnet.");
             return Ok(Datoer);
         }
 
         public async Task<ActionResult> HentPris(int id)
         {
             double TotalPris = await _db.HentPris(id);
-            if (TotalPris == 0)
+            if (TotalPris == default)
             {
-                _log.LogInformation("/Controllers/BestillingController.cs: HentPris: TotalPris er lik 0. Dette kan bety at ingen pris har blitt hentet fra databasen.");
+                _log.LogInformation("/Controllers/BestillingController.cs: HentPris: Ingen totalpris funnet for bestilling med id " + id);
+                return BadRequest("Bestilling med id " + id + " er ikke registrert med totalpris eller finnes ikke i databasen");
             }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentPris: Vellykket. Totalpris for bestilling med id " + id + " har blitt funnet.");
             return Ok(TotalPris);
         }
 
@@ -138,10 +143,10 @@ namespace Regnbuelinja.Controllers
             string AnkomstTid = await _db.HentAnkomstTid(id, Startpunkt);
             if (AnkomstTid == null)
             {
-                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomsttid funnet for bestilling " + id + " fra startpunktet Startpunkt");
-                return BadRequest("Ingen ankomsttid funnet for bestilling " + id + " for startpunktet " + Startpunkt);
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomsttid funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
+                return BadRequest("Ingen ankomsttid funnet for bestilling " + id + " for avreisehavn " + Startpunkt);
             }
-            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet for bestilling " + id + " fra startpunkt " + Startpunkt);
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
             return Ok(AnkomstTid);
         }
     }
