@@ -52,6 +52,8 @@ $("#orderForm").submit(function (event) {
 
 $("#Startpunkt").change(function () {
     nullstillKalender($("#AvreiseDato,#HjemreiseDato"));
+    $("#TilbakeContainer").addClass("hidden");
+    $("#AvreiseContainer").addClass("hidden");
     hentAnkomstHavner();
 });
 
