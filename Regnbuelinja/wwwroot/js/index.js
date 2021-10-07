@@ -43,8 +43,7 @@ $("#orderForm").submit(function (event) {
 
         window.location.assign("/bestilling.html?id=" + id);
     }).fail(function (jqXHR) {
-        const json = $.parseJSON(jqXHR.responseText);
-        $("#feil").html("Feil på server - prøv igjen senere: " + json.message);
+        $("#feil").html("Feil på server - prøv igjen senere: " + jqXHR.responseText);
         return false;
     });
 });
@@ -113,6 +112,7 @@ function formaterKalenderDato(str) {
 }
 
 function hentTilgjengeligeFerdDatoerAvreise() {
+    
     const startPunkt = $("#Startpunkt").val();
     const endePunkt = $("#Endepunkt").val();
 
@@ -126,6 +126,11 @@ function hentTilgjengeligeFerdDatoerAvreise() {
         visKalender($("#AvreiseDato"), datoer.map(function (d) {
             return new Date(d);
         }));
+    }).fail(function (jqXHR) {
+        const json = $.parseJSON(jqXHR.responseText);
+        $("#feil").html(json.message);
+        nullstillKalender($("#AvreiseDato, #HjemreiseDato"));
+        return;
     });
 }
 
@@ -133,6 +138,7 @@ function hentTilgjengeligeFerdDatoerAvreise() {
 $("#AvreiseDato").change(function () {
     if ($("#TurReturTrue").is(":checked")) {
         nullstillKalender($("#HjemreiseDato"));
+        $("#feil").html("");
         hentTilgjengeligeFerdDatoerHjemreise();
     }
 });
@@ -140,6 +146,8 @@ $("#AvreiseDato").change(function () {
 //Henter tilgjengelige hjemreisedatoer basert på avreisedato
 function hentTilgjengeligeFerdDatoerHjemreise() {
     //Hvis tur/retur = true så vil startpunkt og endepunkt være motsatt ved hjemreise
+    $("#TilbakeContainer").removeClass("hidden");
+    $("#HjemreiseDato").attr("required", true);
 
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
@@ -162,10 +170,12 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
         visKalender($("#HjemreiseDato"), datoer.map(function (d) {
             return new Date(d);
         }));
-    }).fail(function (jqXHR) {
-        const json = $.parseJSON(jqXHR.responseText);
-        $("#feil").html(json.message);
+    }).fail(function (request) {
+        $("#feil").html(request.responseText);
         nullstillKalender($("#AvreiseDato, #HjemreiseDato"));
+        $("#TilbakeContainer").addClass("hidden");
+        $("#hjemreiseDato").attr("required", false);
+        hentTilgjengeligeFerdDatoerAvreise();
         return;
     });
 }
