@@ -34,4 +34,4 @@
 
 ### DBinit:
 
-Vi har kun lagt inn avreise- og hjemreisedatoer for desember måned 2021. Dersom man velger avreisedato på en av de siste dagene i desember er det ikke mulig å velge returdato når reisen tar 2-3 dager (avhengig av om det er til Kødenhavn eller Kiel). I praksis ville man hatt flere tilgjengelige avreisemåneder men vi har gjort det sånn nå for enkelthetensskyld. Vi viser feilmelding til bruker i klienten om at man man må velge en tidligere avreisedato dersom hjemreisedato ikke er tilgjengelig (dersom tur/retur er valgt).
+Vi har kun lagt inn avreise- og hjemreisedatoer for desember måned 2021. Dersom man velger avreisedato på en av de siste dagene i desember er det ikke mulig å velge returdato når reisen tar 2-3 dager (avhengig av rute). I praksis ville man hatt flere tilgjengelige avreisemåneder men vi har gjort det sånn nå for enkelthetensskyld. Vi viser feilmelding til bruker i klienten om at man man må velge en tidligere avreisedato dersom hjemreisedato ikke er tilgjengelig (kun dersom tur/retur er valgt).
