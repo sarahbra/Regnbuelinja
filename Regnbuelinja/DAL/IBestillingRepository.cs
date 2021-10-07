@@ -17,6 +17,7 @@ namespace Regnbuelinja.DAL
         Task<string> LagreBestilling(Bestilling nyBestilling);
         Task<Bestilling> HentBestilling(int id);
         Task<string> HentAnkomstTid(int id, string Startpunkt);
+        Task<double> HentStrekningsPris(int id, string Startpunkt, bool retur);
 
     }
 }

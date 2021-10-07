@@ -93,12 +93,11 @@ function formaterKjøpsInfo(bestilling) {
                 "</tr>";
         }
 
-        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + " NOK </td>";
+        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + parseFloat(totalpris).toFixed(2) + " NOK </td>";
         ut += "</tbody</table>";
         $("#kjøpsInfo").html(ut);
     }).fail(function (request) {
         $("#feil").html(request.responseText);
     });
-
  
 }
