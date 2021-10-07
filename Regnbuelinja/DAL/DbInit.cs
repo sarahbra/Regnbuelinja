@@ -102,7 +102,7 @@ namespace Regnbuelinja.DAL
                 billetter.Add(billett2);
 
                 //Hardkodet totalpris
-                var bestilling1 = new Bestillinger { Billetter = billetter, TotalPris = 798 };
+                var bestilling1 = new Bestillinger { Billetter = billetter, TotalPris = (ferd1.Rute.Pris + 0.5* ferd1.Rute.Pris) };
                 context.Bestillinger.Add(bestilling1);
                 context.SaveChanges();
             }

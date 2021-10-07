@@ -93,6 +93,7 @@ namespace Regnbuelinja.DAL
                 ferdRetur = null;
             }
 
+            // Oppretter billetter for alle barn og voksne, tur retur med halv pris på barnebilletter og 25% rabatt på returbilletter.
             if (ferd != null)
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme start- og endepunktene har blitt funnet i databasen.");
@@ -116,7 +117,7 @@ namespace Regnbuelinja.DAL
                             Voksen = true
                         };
                         billettListe.Add(returBillett);
-                        totalPris += ferdRetur.Rute.Pris;
+                        totalPris += ferdRetur.Rute.Pris * 0.75;
                     }
                 }
 
@@ -139,7 +140,7 @@ namespace Regnbuelinja.DAL
                             Voksen = true
                         };
                         billettListe.Add(returBillett);
-                        totalPris += ferdRetur.Rute.Pris * 0.5;
+                        totalPris += ferdRetur.Rute.Pris * 0.5 * 0.75;
                     }
 
                 }
