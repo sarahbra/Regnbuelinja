@@ -266,10 +266,10 @@ namespace Regnbuelinja.DAL
                 return 0.00;
             } else
             {
-                int antBarn = billetter.Count(b => (!b.Voksen));
-                int antVoksne = billetter.Count(b => (b.Voksen));
+                int antBarn = billetter.Count(b => !b.Voksen);
+                int antVoksne = billetter.Count(b => b.Voksen);
                 double prisPerBillett = billetter.First().Ferd.Rute.Pris;
-                strekningsPris = (antBarn * 0.5 * prisPerBillett) + (antVoksne * 0.5 * prisPerBillett);
+                strekningsPris = (antBarn * 0.5 * prisPerBillett) + (antVoksne * prisPerBillett);
                 if (retur)
                 {
                     strekningsPris *= 0.75;

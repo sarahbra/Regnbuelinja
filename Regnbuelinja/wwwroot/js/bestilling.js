@@ -73,31 +73,43 @@ function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
 
 
 function formaterKjøpsInfo(bestilling) {
-    const url = "Bestilling/HentPris?" + hentId();
+    const id = hentId();
+    let url = "Bestilling/HentPris?" + id;
     $.get(url, function (totalpris) {
-        let ut = "<table class='table'><thead><tr>";
-        ut += "<th>#</th><th>Strekning</th><th>Billettype</th>" +
-            "<th>Antall</th></tr></thead>" +
-            "<tbody>" +
-            "<tr><th>1</th>" +
-            "<td>" + bestilling.startpunkt + " - " + bestilling.endepunkt + "</td>" +
-            "<td>Økonomibillett</td> " +
-            "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
-            "</tr>";
-
-        if (bestilling.hjemreiseTid) {
-            ut += "<tr><th>2</th>" +
-                "<td>" + bestilling.endepunkt + " - " + bestilling.startpunkt + "</td>" +
-                "<td>Økonomibillett</td>" +
+        url = "Bestilling/HentStrekningsPris?" + id + "&startpunkt=" + bestilling.startpunkt + "&retur=" + false;
+        $.get(url, function (strekningsPris) {
+            let ut = "<table class='table'><thead><tr>";
+            ut += "<th>#</th><th>Strekning</th><th>Billettype</th>" +
+                "<th>Antall</th><th>Pris</th></tr></thead>" +
+                "<tbody>" +
+                "<tr><th>1</th>" +
+                "<td>" + bestilling.startpunkt + " - " + bestilling.endepunkt + "</td>" +
+                "<td>Økonomibillett</td> " +
                 "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
+                "<td>" + parseFloat(strekningsPris).toFixed(2) + " NOK</td>" +
                 "</tr>";
-        }
+            if (bestilling.hjemreiseTid) {
+                url = "Bestilling/HentStrekningsPris?" + id + "&startpunkt=" + bestilling.endepunkt + "&retur=" + true;
+                $.get(url, function (strekningsPrisRetur) {
+                    ut += "<tr><th>2</th>" +
+                        "<td>" + bestilling.endepunkt + " - " + bestilling.startpunkt + "</td>" +
+                        "<td>Økonomibillett</td>" +
+                        "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
+                        "<td>" + parseFloat(strekningsPrisRetur).toFixed(2) + " NOK</td>" +
+                        "</tr>";
+                }).fail(function (request) {
+                    $("#feil").html(request.responseText);
+                });
+            }
 
-        ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + parseFloat(totalpris).toFixed(2) + " NOK </td>";
-        ut += "</tbody</table>";
-        $("#kjøpsInfo").html(ut);
+            ut += "<tr><td></td><td></td><td></td><th>Totalpris</th><td>" + parseFloat(totalpris).toFixed(2) + " NOK </td>";
+            ut += "</tbody</table>";
+            $("#kjøpsInfo").html(ut);
+
+        }).fail(function (request) {
+            $("#feil").html(request.responseText);
+        });
     }).fail(function (request) {
         $("#feil").html(request.responseText);
     });
- 
 }
