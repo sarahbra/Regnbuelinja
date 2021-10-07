@@ -12,6 +12,7 @@ $("input[type=radio][name=TurRetur]").change(function () {
     } else if (this.value === "false") {
         tilbakeContainer.addClass("hidden");
         hjemreiseDato.attr("required", false);
+        $("#returDatoFinnesIkke").html("");
     }
 });
 
@@ -144,10 +145,12 @@ $("#AvreiseDato").change(function () {
 });
 
 //Henter tilgjengelige hjemreisedatoer basert på avreisedato
+
 function hentTilgjengeligeFerdDatoerHjemreise() {
     //Hvis tur/retur = true så vil startpunkt og endepunkt være motsatt ved hjemreise
     $("#TilbakeContainer").removeClass("hidden");
     $("#HjemreiseDato").attr("required", true);
+    $("#returDatoFinnesIkke").html("");
 
     const startPunkt = $("#Endepunkt").val();
     const endePunkt = $("#Startpunkt").val();
@@ -171,7 +174,7 @@ function hentTilgjengeligeFerdDatoerHjemreise() {
             return new Date(d);
         }));
     }).fail(function (request) {
-        $("#feil").html(request.responseText);
+        $("#returDatoFinnesIkke").html(request.responseText);
         nullstillKalender($("#AvreiseDato, #HjemreiseDato"));
         $("#TilbakeContainer").addClass("hidden");
         $("#hjemreiseDato").attr("required", false);
