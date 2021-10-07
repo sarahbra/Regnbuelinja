@@ -2,8 +2,10 @@
     const url = "Bestilling/HentBestilling?" + hentId();
     $.get(url, function (bestilling) {
         formaterSide(bestilling);
+    }).fail(function (request) {
+        $("#feil").html(request.responseText);
     });
-})
+});
 
 
 function formaterSide(bestilling) {
@@ -13,9 +15,13 @@ function formaterSide(bestilling) {
             url = "Bestilling/HentAnkomstTid?" + hentId() + "&startpunkt=" + bestilling.endepunkt;
             $.get(url, function (ankomstTidReturSerialized) {
                 formaterBestilling(bestilling, ankomstTidReturSerialized, true);
-            });   
+            }).fail(function (request) {
+                $("#feil").html(request.responseText);
+            });
         }
         formaterBestilling(bestilling, ankomstTidSerialized, false);
+    }).fail(function (request) {
+        $("#feil").html(request.responseText);
     });
     formaterKjøpsInfo(bestilling);
 }
@@ -41,6 +47,9 @@ function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
         avreiseSerialized = bestilling.hjemreiseTid;
         container = $("#returreise");
         tittel = $("#returreiseHeader");
+       
+    } else {
+        $("#utreiseBilde").removeClass("hidden");
     }
 
     tittel.html("Avgang fra " + startpunkt);
@@ -48,15 +57,18 @@ function formaterBestilling(bestilling, ankomstTidSerialized, retur) {
     const avreiseDate = new Date(avreiseSerialized);
     const ankomstDate = new Date(ankomstTidSerialized);
 
+    let ut = "";
+    ut += "<li class='list-group-item'><label for='avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + " - " + avreiseDate.toLocaleTimeString() + "</li>" +
+        "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + " - " + ankomstDate.toLocaleTimeString() + "</li>" +
+        "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
+    container.html(ut);
+
     const url = "Bestilling/HentBaat?" + hentId() + "&startpunkt=" + startpunkt;
     $.get(url, function (baatnavn) {
-        let ut = "";
-        ut += "<li class='list-group-item'><label for='avreise' class='col-12 col-sm-3 fw-bold'>Avreise</label>" + avreiseDate.toDateString() + " - " + avreiseDate.toLocaleTimeString() + "</li>" +
-            "<li class='list-group-item'><label for='ankomst' class='col-12 col-sm-3 fw-bold'>Ankomst</label>" + ankomstDate.toDateString() + " - " + ankomstDate.toLocaleTimeString() + "</li>" +
-            "<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + baatnavn + "</li>" +
-            "<li class='list-group-item'><label for='strekning' class='col-12 col-sm-3 fw-bold'>Strekning</label>" + startpunkt + " - " + endepunkt + "</li>";
-        container.html(ut);
-    })
+        container.append("<li class='list-group-item'><label for='skip' class='col-12 col-sm-3 fw-bold'>Skip</label>" + baatnavn + "</li>");
+    }).fail(function (request) {
+        $("#feil").html(request.responseText);
+    });
 }
 
 
@@ -78,12 +90,14 @@ function formaterKjøpsInfo(bestilling) {
                 "<td>" + bestilling.endepunkt + " - " + bestilling.startpunkt + "</td>" +
                 "<td>Økonomibillett</td>" +
                 "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
-                "</tr>"; 
+                "</tr>";
         }
-      
+
         ut += "<tr><td></td><td></td><th>Totalpris</th><td>" + totalpris + " NOK </td>";
         ut += "</tbody</table>";
         $("#kjøpsInfo").html(ut);
+    }).fail(function (request) {
+        $("#feil").html(request.responseText);
     });
 
  

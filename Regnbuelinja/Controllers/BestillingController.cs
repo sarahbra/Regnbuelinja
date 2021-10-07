@@ -40,7 +40,7 @@ namespace Regnbuelinja.Controllers
             if (Baatnavn == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Båtnavn ble ikke returnert.");
-                return NotFound("Finner ikke båtnavn i repository");
+                return NotFound("Finner ikke båtnavn i repository for bestilling med id " + id);
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBåt: Vellykket. Båtnavn har blitt returnert.");
             return Ok(Baatnavn);
@@ -105,7 +105,7 @@ namespace Regnbuelinja.Controllers
             if (hentBestilling == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet.");
-                return BadRequest("Ingen bestilling med ID " + id + " har blitt funnet.");           
+                return BadRequest("Ingen bestilling med ID " + id + " har blitt funnet i databasen.");           
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Bestilling med ID " + id + " har blitt funnet.");
             return Ok(hentBestilling);
