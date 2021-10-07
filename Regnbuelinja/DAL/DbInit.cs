@@ -21,8 +21,16 @@ namespace Regnbuelinja.DAL
                 var rute2 = new Rute { Startpunkt = "København", Endepunkt = "Oslo", Pris = 799 };
 
                 // Oslo - Kiel
-                var rute3 = new Rute { Startpunkt = "Oslo", Endepunkt = "Kiel", Pris = 399 };
-                var rute4 = new Rute { Startpunkt = "Kiel", Endepunkt = "Oslo", Pris = 399 };
+                var rute3 = new Rute { Startpunkt = "Oslo", Endepunkt = "Kiel", Pris = 899 };
+                var rute4 = new Rute { Startpunkt = "Kiel", Endepunkt = "Oslo", Pris = 899 };
+
+                // Bergen - København
+                var rute5 = new Rute { Startpunkt = "Bergen", Endepunkt = "København", Pris = 799 };
+                var rute6 = new Rute { Startpunkt = "København", Endepunkt = "Bergen", Pris = 799 };
+
+                // Oslo - Stavanger
+                var rute7 = new Rute { Startpunkt = "Oslo", Endepunkt = "Stavanger", Pris = 399 };
+                var rute8 = new Rute { Startpunkt = "Stavanger", Endepunkt = "Oslo", Pris = 399 };
 
 
                 var baat1 = new Baat { Navn = "Båtten Anna" };
@@ -35,8 +43,9 @@ namespace Regnbuelinja.DAL
                 var baat8 = new Baat { Navn = "The Queen" };
 
 
-                var ferd1 = new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
-                
+                var ferd1 = new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0), AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0) };
+
+
 
 
                 //avreisedatoer for rute1
@@ -89,6 +98,61 @@ namespace Regnbuelinja.DAL
                     else
                     {
                         context.Ferder.Add(new Ferd { Baat = baat8, Rute = rute4, AvreiseTid = new DateTime(2021, 12, i, 9, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 2, 21, 0, 0) });
+                    }
+                }
+
+                //avreisedatoer for rute5
+                for (int i = 1; i < 31; i += 1)
+                {
+                    if (i % 2 == 0)
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat1, Rute = rute5, AvreiseTid = new DateTime(2021, 12, i, 13, 25, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 18, 0, 0) });
+                    }
+                    else
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat4, Rute = rute5, AvreiseTid = new DateTime(2021, 12, i, 9, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 17, 0, 0) });
+                    }
+                }
+
+
+                //avreisedatoer for rute6
+                for (int i = 1; i < 31; i += 1)
+                {
+                    if (i % 2 == 0)
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat7, Rute = rute6, AvreiseTid = new DateTime(2021, 12, i, 11, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 12, 0, 0) });
+                    }
+                    else
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat8, Rute = rute6, AvreiseTid = new DateTime(2021, 12, i, 10, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 15, 30, 0) });
+                    }
+                }
+
+
+                //avreisedatoer for rute7
+                for (int i = 1; i < 31; i += 1)
+                {
+                    if (i % 2 == 0)
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat2, Rute = rute7, AvreiseTid = new DateTime(2021, 12, i, 8, 0, 0), AnkomstTid = new DateTime(2021, 12, i, 16, 0, 0) });
+                    }
+                    else
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat6, Rute = rute7, AvreiseTid = new DateTime(2021, 12, i, 14, 0, 0), AnkomstTid = new DateTime(2021, 12, i, 22, 0, 0) });
+                    }
+                }
+
+
+                //avreisedatoer for rute8
+                for (int i = 1; i < 31; i += 1)
+                {
+                    if (i % 2 == 0)
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat3, Rute = rute8, AvreiseTid = new DateTime(2021, 12, i, 23, 0, 0), AnkomstTid = new DateTime(2021, 12, i + 1, 8, 0, 0) });
+                    }
+                    else
+                    {
+                        context.Ferder.Add(new Ferd { Baat = baat1, Rute = rute8, AvreiseTid = new DateTime(2021, 12, i, 17, 0, 0), AnkomstTid = new DateTime(2021, 12, i, 23, 0, 0) });
                     }
                 }
 
