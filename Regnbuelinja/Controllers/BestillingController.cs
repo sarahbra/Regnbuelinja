@@ -105,7 +105,7 @@ namespace Regnbuelinja.Controllers
             if (hentBestilling == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet.");
-                return BadRequest("Ingen bestilling med ID " + id + " har blitt funnet i databasen.");
+                return NotFound("Ingen bestilling med ID " + id + " har blitt funnet i databasen.");
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Bestilling med ID " + id + " har blitt funnet.");
             return Ok(hentBestilling);
@@ -120,7 +120,7 @@ namespace Regnbuelinja.Controllers
                 var AvreiseDato = AvreiseDatoTid.ToString("dd/MM/yyyy");
 
                 _log.LogInformation("/Controllers/BestillingController.cs: HentDatoer: Ingen returdatoer funnet for avreisedato " + AvreiseTid + " med avreisehavn " + Startpunkt + " og ankomsthavn " + Endepunkt);
-                return BadRequest("Ingen returdato med avreisedato " + AvreiseDato + " fra " + Startpunkt + " til " + Endepunkt + " funnet. Velg en tidligere avreisedato.");
+                return NotFound("Ingen returdato med avreisedato " + AvreiseDato + " fra " + Startpunkt + " til " + Endepunkt + " funnet. Velg en tidligere avreisedato.");
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Vellykket. Returdatoer for avreisedato " + AvreiseTid + " fra " + Startpunkt + " til " + Endepunkt + " har blitt funnet.");
             return Ok(Datoer);
@@ -132,7 +132,7 @@ namespace Regnbuelinja.Controllers
             if (TotalPris == default)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentPris: Ingen totalpris funnet for bestilling med id " + id);
-                return BadRequest("Bestilling med id " + id + " er ikke registrert med totalpris eller finnes ikke i databasen");
+                return NotFound("Bestilling med id " + id + " er ikke registrert med totalpris eller finnes ikke i databasen");
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentPris: Vellykket. Totalpris for bestilling med id " + id + " har blitt funnet.");
             return Ok(TotalPris);
@@ -144,7 +144,7 @@ namespace Regnbuelinja.Controllers
             if (AnkomstTid == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Ingen ankomsttid funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
-                return BadRequest("Ingen ankomsttid funnet for bestilling " + id + " for avreisehavn " + Startpunkt);
+                return NotFound("Ingen ankomsttid funnet for bestilling " + id + " for avreisehavn " + Startpunkt);
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentAnkomstTid: Vellykket. Amkosttid(er) har blitt funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
             return Ok(AnkomstTid);
@@ -156,7 +156,7 @@ namespace Regnbuelinja.Controllers
             if(StrekningsPris == 0.00)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentStrekningsPris: Ingen strekningspris funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
-                return BadRequest("Ingen ankomsttid funnet for bestilling " + id + " for avreisehavn " + Startpunkt);
+                return NotFound("Ingen ankomsttid funnet for bestilling " + id + " for avreisehavn " + Startpunkt);
             }
             _log.LogInformation("/Controllers/BestillingController.cs: HentStrekningsPris: Vellykket. Strekningspris har blitt funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
             return Ok(StrekningsPris);
