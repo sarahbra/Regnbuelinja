@@ -28,44 +28,87 @@ namespace Regnbuelinja.Controllers
         [HttpPost("/ruter")]
         public async Task<ActionResult> LagreRute(Ruter rute)
         {
-            if(ModelState.IsValid)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            if (ModelState.IsValid)
             {
                 bool lagret = await _db.LagreRute(rute);
                 if(lagret)
                 {
-                    _log.LogInformation("AdminController.cs: Admin / LagreRute: Vellyket! Rute lagret");
+                    _log.LogInformation("AdminController.cs: LagreRute: Vellykket! Rute lagret");
                     return Ok("Vellykket! Rute lagret i databasen");
                 } else
                 {
-                    _log.LogInformation("AdminController.cs: Admin / LagreRute: Databasefeil. Rute ikke lagret");
-                    return Ok("Databasefeil. Prøv på nytt");
+                    _log.LogInformation("AdminController.cs: LagreRute: Databasefeil. Rute ikke lagret");
+                    return Ok("feil i databasen. Prøv på nytt");
                 }
             }
-            _log.LogInformation("AdminController.cs: Admin/LagreRute: Feil i inputvalideringen.");
+            _log.LogInformation("AdminController.cs: LagreRute: Feil i inputvalideringen.");
             return BadRequest("Feil i inputvalideringen.");
         }
 
         [HttpGet("/ruter")]
         public async Task<ActionResult> HentAlleRuter()
         {
-            //List<Rute> ruter = await _db.HentAlleRuter();
-            return null;
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            List<Rute> ruter = await _db.HentAlleRuter();
+            if(ruter != null)
+            {
+                if(!ruter.Any())
+                {
+                    _log.LogInformation("AdminController.cs: HentAlleRuter: Vellykket. Ingen ruter i databasen");
+                    return NotFound("Ingen ruter funnet");
+                } else
+                {
+                    _log.LogInformation("AdminController.cs: HentAlleRuter: Ingen ruter i databasen");
+                    return Ok(ruter);
+                }
+            } else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleRuter: Feil i databasen. Ingen ruter hentet.");
+                return Ok("Feil i databasen. Ingen ruter hentet. Prøv igjen!");
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {
-            if(ModelState.IsValid)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
-                bool brukerOpprettet = await _db.LagreBruker(bruker);
-                return Ok(brukerOpprettet);
-                
+                return Unauthorized("Ikke logget inn");
+            }
+
+            if (ModelState.IsValid)
+            {
+                int brukerOpprettet = await _db.LagreBruker(bruker);
+                if(brukerOpprettet!=0)
+                {
+                    _log.LogInformation("AdminController.cs: LagreBruker: Bruker lagret vellykket");
+                    return Ok(brukerOpprettet);
+                } else
+                {
+                    _log.LogInformation("AdminController.cs: LagreBruker: Databasefeil. Bruker ikke opprettet.");
+                    return Ok("Feil i databasen. Bruker ikke opprettet.");
+                }
             }
             return BadRequest("Feil i inputvalidering på server");
         }
 
+        [HttpGet]
         public async Task<ActionResult> LoggInn(Bruker bruker)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
             if (ModelState.IsValid)
             {
                 bool loggetInn = await _db.LoggInn(bruker);
@@ -78,7 +121,7 @@ namespace Regnbuelinja.Controllers
                 {
                     _log.LogInformation("AdminController.cs: LoggInn: Brukernavn eller passord feil. Ikke logget inn");
                     HttpContext.Session.SetString(_loggetInn, "");
-                    return Ok(loggetInn);
+                    return NotFound(loggetInn);
                 }
             } else
             {

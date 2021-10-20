@@ -63,7 +63,30 @@ namespace Regnbuelinja.DAL
             
         }
 
-        public async Task<bool> LagreBruker(Bruker bruker)
+        public async Task<List<Rute>> HentAlleRuter()
+        {
+            try
+            {
+                List<Rute> alleRutene = await _db.Ruter.ToListAsync();
+                if (!alleRutene.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ingen ruter i databasen");
+                    return alleRutene;
+                }
+                else
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ruter hentet");
+                    return alleRutene;
+                }
+            } catch
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil. Ruter ikke hentet.");
+                return null;
+            }
+            
+        }
+
+        public async Task<int> LagreBruker(Bruker bruker)
         {
             try
             {
@@ -82,41 +105,34 @@ namespace Regnbuelinja.DAL
                 _db.Brukere.Add(nyBruker);
                 await _db.SaveChangesAsync();
                 _log.LogInformation("BestillingRepository.cs: LagreBruker: Ny bruker generert");
-                return true;
+                return nyBruker.Id;
             } catch(Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: LagreBruker: Bruker ikke lagret. Databasefeil: " + e);
-                return false;
+                return 0;
             }
         }
 
         public async Task<bool> LoggInn(Bruker bruker)
         {
-            try
+            Brukere brukerIDB = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
+            if (brukerIDB == default(Brukere))
             {
-                Brukere brukerIDB = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
-                if (brukerIDB == default(Brukere))
+                _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
+                return false;
+            }
+            else
+            {
+                byte[] hash = LagEnHash(bruker.Passord, brukerIDB.Salt);
+                bool OK = hash.SequenceEqual(brukerIDB.Passord);
+                if (OK)
                 {
-                    _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
-                    return false;
+                    return true;
                 }
                 else
                 {
-                    byte[] hash = LagEnHash(bruker.Passord, brukerIDB.Salt);
-                    bool OK = hash.SequenceEqual(brukerIDB.Passord);
-                    if (OK)
-                    {
-                        return true;
-                    } else
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-            }
-            catch (Exception e)
-            {
-                _log.LogInformation("BestillingRepository.cs: LoggInn: Feil i databasen. " + e);
-                return false;
             }
         }
 
