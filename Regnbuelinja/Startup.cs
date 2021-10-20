@@ -17,7 +17,13 @@ namespace Regnbuelinja
             services.AddControllers();
             services.AddDbContext<BestillingContext>(options => options.UseSqlite("Data source=Bestilling.db"));
             services.AddScoped<IBestillingRepository, BestillingRepository>();
+            services.AddDistributedMemoryCache();
+            services.AddSession(options => {
+                //Kan være inaktiv i 20 min
+                options.IdleTimeout = System.TimeSpan.FromMinutes(20);
+            });
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
@@ -30,6 +36,8 @@ namespace Regnbuelinja
             }
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseStaticFiles();
 

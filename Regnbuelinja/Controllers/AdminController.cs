@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Regnbuelinja.Controllers
 {
     [ApiController]
-    [Route("api/admin/[controller]")]
+    [Route("/api/admin")]
     public class AdminController : ControllerBase
     {
         private readonly IBestillingRepository _db;
@@ -114,7 +114,7 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server");
         }
 
-        [HttpPost]
+        [HttpPost("logg_inn")]
         public async Task<ActionResult> LoggInn(Bruker bruker)
         {
             if (ModelState.IsValid)

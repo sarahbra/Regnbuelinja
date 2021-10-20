@@ -139,6 +139,7 @@ namespace Regnbuelinja.DAL
                 byte[] salt = BestillingRepository.LagEtSalt();
                 byte[] hash = BestillingRepository.LagEnHash(passord, salt);
 
+                nyBruker.Brukernavn = Bruker.Brukernavn;
                 nyBruker.Passord = hash;
                 nyBruker.Salt = salt;
 
