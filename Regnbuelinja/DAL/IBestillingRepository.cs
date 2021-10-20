@@ -10,7 +10,7 @@ namespace Regnbuelinja.DAL
         Task<bool> LagreRute(Ruter rute);
         Task<List<Rute>> HentAlleRuter();
         Task<Rute> HentEnRute(int id);
-        Task<int> LagreBruker(Bruker bruker);
+        Task<bool> LagreBruker(Bruker bruker);
         Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();
         Task<double> HentPris(int id);

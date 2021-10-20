@@ -47,7 +47,7 @@ namespace Regnbuelinja.Controllers
                 }
             }
             _log.LogInformation("AdminController.cs: LagreRute: Feil i inputvalideringen.");
-            return BadRequest("Feil i inputvalideringen.");
+            return BadRequest("Feil i inputvalidering på server.");
         }
 
         [HttpGet("ruter")]
@@ -86,7 +86,7 @@ namespace Regnbuelinja.Controllers
             else
             {
                 _log.LogInformation("AdminController.cs: HentEnRute: Ingen rute funnet i databasen");
-                return NotFound("Ingen ruter funnet");
+                return NotFound("Ingen rute funnet");
             }
         }
 
@@ -100,8 +100,8 @@ namespace Regnbuelinja.Controllers
 
             if (ModelState.IsValid)
             {
-                int brukerOpprettet = await _db.LagreBruker(bruker);
-                if(brukerOpprettet!=0)
+                bool brukerOpprettet = await _db.LagreBruker(bruker);
+                if(brukerOpprettet)
                 {
                     _log.LogInformation("AdminController.cs: LagreBruker: Bruker lagret vellykket");
                     return Ok(brukerOpprettet);

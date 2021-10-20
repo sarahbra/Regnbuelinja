@@ -77,7 +77,7 @@ namespace Regnbuelinja.DAL
             
         }
 
-        public async Task<int> LagreBruker(Bruker bruker)
+        public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
             {
@@ -96,11 +96,11 @@ namespace Regnbuelinja.DAL
                 _db.Brukere.Add(nyBruker);
                 await _db.SaveChangesAsync();
                 _log.LogInformation("BestillingRepository.cs: LagreBruker: Ny bruker generert");
-                return nyBruker.Id;
+                return true;
             } catch(Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: LagreBruker: Bruker ikke lagret. Databasefeil: " + e);
-                return 0;
+                return false;
             }
         }
 
