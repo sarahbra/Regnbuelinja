@@ -14,12 +14,12 @@ namespace Regnbuelinja.Controllers
     [Route("api/admin/[controller]")]
     public class AdminController : ControllerBase
     {
-        private IBestillingRepository _db;
+        private readonly IBestillingRepository _db;
 
-        private ILogger<BestillingController> _log;
+        private readonly ILogger<AdminController> _log;
         private const string _loggetInn = "loggetInn";
 
-        public AdminController(IBestillingRepository db, ILogger<BestillingController> log)
+        public AdminController(IBestillingRepository db, ILogger<AdminController> log)
         {
             _db = db;
             _log = log;
@@ -73,7 +73,6 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
                 return BadRequest("Feil i inputvalideringen");
             }
-    }
         }
     }
 }
