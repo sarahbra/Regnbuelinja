@@ -115,24 +115,24 @@ namespace Regnbuelinja.DAL
 
         public async Task<bool> LoggInn(Bruker bruker)
         {
-            Brukere brukerIDB = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
-            if (brukerIDB == default(Brukere))
+            try
             {
-                _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
-                return false;
-            }
-            else
-            {
+                Brukere brukerIDB = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
+                if (brukerIDB == default(Brukere))
+                {
+                    _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
+                    return false;
+                }
                 byte[] hash = LagEnHash(bruker.Passord, brukerIDB.Salt);
                 bool OK = hash.SequenceEqual(brukerIDB.Passord);
                 if (OK)
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
+
+            } catch (Exception e) {
+                return false;
             }
         }
 

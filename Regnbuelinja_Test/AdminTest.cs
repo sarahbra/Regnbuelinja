@@ -42,5 +42,46 @@ namespace Regnbuelinja_Test
             Assert.True((bool)resultat.Value);
         }
 
+        [Fact]
+        public async Task LoggInnFeilBrukerinput()
+        {
+            //Arrange
+            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(true);
+
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            adminController.ModelState.AddModelError("Brukernavn", "Feil i inputvalidering på server");
+
+            //Act
+            var resultat = await adminController.LoggInn(It.IsAny<Bruker>()) as BadRequestObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.BadRequest, resultat.StatusCode);
+            Assert.Equal("Feil i inputvalideringen på server", resultat.Value);
+        }
+
+        [Fact]
+        public async Task LoggInnFeilBrukernavnEllerPassord()
+        {
+            //Arrange
+            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(false);
+
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.LoggInn(It.IsAny<Bruker>()) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.False((bool)resultat.Value);
+        }
     }
 }

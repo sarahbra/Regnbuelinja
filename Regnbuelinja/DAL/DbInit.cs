@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using Regnbuelinja.Models;
 
 namespace Regnbuelinja.DAL
 {
@@ -124,6 +125,25 @@ namespace Regnbuelinja.DAL
                 List<Billett> billetter = new List<Billett>();
                 billetter.Add(billett1);
                 billetter.Add(billett2);
+
+
+                // Adminbruker
+                var Bruker = new Bruker() {
+                    Brukernavn = "admin",
+                    Passord = "Test1234"
+                };
+
+                var nyBruker = new Brukere();
+
+                string passord = Bruker.Passord;
+                byte[] salt = BestillingRepository.LagEtSalt();
+                byte[] hash = BestillingRepository.LagEnHash(passord, salt);
+
+                nyBruker.Passord = hash;
+                nyBruker.Salt = salt;
+
+                context.Brukere.Add(nyBruker);
+
 
                 //Hardkodet totalpris
                 var bestilling1 = new Bestillinger { Billetter = billetter, TotalPris = (ferd1.Rute.Pris + 0.5* ferd1.Rute.Pris) };

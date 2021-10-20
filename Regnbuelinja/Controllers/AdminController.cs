@@ -101,33 +101,33 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server");
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult> LoggInn(Bruker bruker)
         {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
-            {
-                return Unauthorized("Ikke logget inn");
-            }
-
             if (ModelState.IsValid)
             {
                 bool loggetInn = await _db.LoggInn(bruker);
                 if(loggetInn)
                 {
-                    _log.LogInformation("AdminController.cs: LoggInn: Bruker " + bruker.Brukernavn + " logget inn vellykket.");
+                    _log.LogInformation("AdminController.cs: LoggInn: Bruker logget inn vellykket.");
                     HttpContext.Session.SetString(_loggetInn, "loggetInn");
                     return Ok(loggetInn);
                 } else
                 {
-                    _log.LogInformation("AdminController.cs: LoggInn: Brukernavn eller passord feil. Ikke logget inn");
+                    _log.LogInformation("AdminController.cs: LoggInn: Feil brukernavn eller passord. Ikke logget inn");
                     HttpContext.Session.SetString(_loggetInn, "");
-                    return NotFound(loggetInn);
+                    return Ok(loggetInn);
                 }
             } else
             {
                 _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
-                return BadRequest("Feil i inputvalideringen");
+                return BadRequest("Feil i inputvalideringen på server");
             }
+        }
+
+        public void LoggUt()
+        {
+            HttpContext.Session.SetString(_loggetInn, "");
         }
     }
 }
