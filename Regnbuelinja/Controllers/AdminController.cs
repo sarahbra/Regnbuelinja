@@ -43,7 +43,7 @@ namespace Regnbuelinja.Controllers
                 } else
                 {
                     _log.LogInformation("AdminController.cs: LagreRute: Databasefeil. Rute ikke lagret");
-                    return Ok("feil i databasen. Prøv på nytt");
+                    return Ok("Feil i databasen. Prøv på nytt");
                 }
             }
             _log.LogInformation("AdminController.cs: LagreRute: Feil i inputvalideringen.");
@@ -61,19 +61,11 @@ namespace Regnbuelinja.Controllers
             List<Rute> ruter = await _db.HentAlleRuter();
             if(ruter != null)
             {
-                if(!ruter.Any())
-                {
-                    _log.LogInformation("AdminController.cs: HentAlleRuter: Vellykket. Ingen ruter i databasen");
-                    return NotFound("Ingen ruter funnet");
-                } else
-                {
-                    _log.LogInformation("AdminController.cs: HentAlleRuter: Ingen ruter i databasen");
-                    return Ok(ruter);
-                }
-            } else
-            {
-                _log.LogInformation("AdminController.cs: HentAlleRuter: Feil i databasen. Ingen ruter hentet.");
-                return Ok("Feil i databasen. Ingen ruter hentet. Prøv igjen!");
+                _log.LogInformation("AdminController.cs: HentAlleRuter: Vellykket. Ruter hentet");
+                return Ok(ruter);
+            } else { 
+                _log.LogInformation("AdminController.cs: HentAlleRuter: Feil i databasen eller ingen ruter lagret");
+                return Ok("Feil i databasen. Ingen ruter hentet.");
             }
         }
 
@@ -93,7 +85,7 @@ namespace Regnbuelinja.Controllers
             }
             else
             {
-                _log.LogInformation("AdminController.cs: HentAlleRuter: Vellykket. Ingen ruter i databasen");
+                _log.LogInformation("AdminController.cs: HentEnRute: Ingen rute funnet i databasen");
                 return NotFound("Ingen ruter funnet");
             }
         }

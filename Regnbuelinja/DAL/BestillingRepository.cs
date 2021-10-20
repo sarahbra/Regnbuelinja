@@ -67,16 +67,8 @@ namespace Regnbuelinja.DAL
             try
             {
                 List<Rute> alleRutene = await _db.Ruter.ToListAsync();
-                if (!alleRutene.Any())
-                {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ingen ruter i databasen");
-                    return alleRutene;
-                }
-                else
-                {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ruter hentet");
-                    return alleRutene;
-                }
+                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Vellykket databasekall");
+                return alleRutene;
             } catch
             {
                 _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil. Ruter ikke hentet.");
