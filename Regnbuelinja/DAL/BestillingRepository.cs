@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Regnbuelinja.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Regnbuelinja.DAL
@@ -18,6 +20,77 @@ namespace Regnbuelinja.DAL
         {
             _db = db;
             _log = log;
+        }
+
+        public static byte[] LagEnHash(string passord, byte[] salt)
+        {
+            return KeyDerivation.Pbkdf2(
+                password: passord,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA512,
+                iterationCount: 1000,
+                numBytesRequested: 32);
+        }
+
+        public static byte[] LagEtSalt()
+        {
+            var csp = new RNGCryptoServiceProvider();
+            var salt = new byte[24];
+            csp.GetBytes(salt);
+            return salt;
+        }
+
+        public async Task<bool> LagreRute(Ruter rute)
+        {
+            try
+            {
+                Rute lagretRute = new Rute()
+                {
+                    Startpunkt = rute.Avreisehavn,
+                    Endepunkt = rute.Ankomsthavn,
+                    Pris = Convert.ToDouble(rute.Pris)
+                };
+
+                _db.Ruter.Add(lagretRute);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: LagreRute: Rute lagret vellykket");
+                return true;
+            } catch
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreRute: Feil i databasen. Rute ikke lagret");
+                return false;
+            }
+            
+        }
+
+        public async Task<bool> LoggInn(Bruker bruker)
+        {
+            try
+            {
+                Brukere brukerIDB = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
+                if (brukerIDB == default(Brukere))
+                {
+                    _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
+                    return false;
+                }
+                else
+                {
+                    byte[] hash = LagEnHash(bruker.Passord, brukerIDB.Salt);
+                    bool OK = hash.SequenceEqual(brukerIDB.Passord);
+                    if (OK)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LoggInn: Feil i databasen. " + e);
+                return false;
+            }
         }
 
         public async Task<List<string>> HentAvgangshavner()
@@ -287,5 +360,6 @@ namespace Regnbuelinja.DAL
         {
             return new DateTime(dato.Year, dato.Month, dato.Day, 0, 0 ,0); 
         }
+
     }
 }

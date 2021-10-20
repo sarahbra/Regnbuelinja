@@ -39,6 +39,14 @@ namespace Regnbuelinja.DAL
         public string Navn { get; set; }
     }
 
+    public class Brukere
+    {
+        public int Id { get; set; }
+        public string Brukernavn { get; set; }
+        public byte[] Passord { get; set; }
+        public byte[] Salt { get; set; }
+    }
+
     public class Rute
     {
         [Key]
@@ -78,6 +86,7 @@ namespace Regnbuelinja.DAL
 
         //public DbSet<Poststeder> Poststeder { get; set; }
         //public DbSet<Kunde> Kunder { get; set; }
+        public DbSet<Brukere> Brukere { get; set; }
         public DbSet<Rute> Ruter { get; set; }
         public DbSet<Ferd> Ferder { get; set; }
         public DbSet<Baat> Baater { get; set; }

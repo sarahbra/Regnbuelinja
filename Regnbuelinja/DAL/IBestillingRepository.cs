@@ -7,6 +7,8 @@ namespace Regnbuelinja.DAL
 {
     public interface IBestillingRepository
     {
+        Task<bool> LagreRute(Ruter rute);
+        Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();
         Task<double> HentPris(int id);
         Task<List<DateTime>> HentDatoer(string Startpunkt, string Endepunkt, string AvreiseTid);
