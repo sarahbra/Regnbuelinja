@@ -77,7 +77,28 @@ namespace Regnbuelinja.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpGet("rute/{id}")]
+        public async Task<ActionResult> HentEnRute(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Rute hentetRute = await _db.HentEnRute(id);
+            if (hentetRute != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnRute: Vellykket. Rute hentet");
+                return Ok(hentetRute);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleRuter: Vellykket. Ingen ruter i databasen");
+                return NotFound("Ingen ruter funnet");
+            }
+        }
+
+        [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))

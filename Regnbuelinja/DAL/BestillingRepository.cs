@@ -22,24 +22,6 @@ namespace Regnbuelinja.DAL
             _log = log;
         }
 
-        public static byte[] LagEnHash(string passord, byte[] salt)
-        {
-            return KeyDerivation.Pbkdf2(
-                password: passord,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA512,
-                iterationCount: 1000,
-                numBytesRequested: 32);
-        }
-
-        public static byte[] LagEtSalt()
-        {
-            var csp = new RNGCryptoServiceProvider();
-            var salt = new byte[24];
-            csp.GetBytes(salt);
-            return salt;
-        }
-
         public async Task<bool> LagreRute(Ruter rute)
         {
             try
@@ -61,6 +43,23 @@ namespace Regnbuelinja.DAL
                 return false;
             }
             
+        }
+
+        public async Task<Rute> HentEnRute(int id)
+        {
+            try
+            {
+                Rute hentetRute = await _db.Ruter.FirstOrDefaultAsync(r => r.RId == id);
+                if(hentetRute == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentEnRute: Rute ikke funnet i databasen");
+                }
+                return hentetRute;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepisotory.cs: HentEnRute: Feil i databasen på serveren");
+                return null;
+            }
         }
 
         public async Task<List<Rute>> HentAlleRuter()
@@ -402,6 +401,24 @@ namespace Regnbuelinja.DAL
         private DateTime utenTimer(DateTime dato)
         {
             return new DateTime(dato.Year, dato.Month, dato.Day, 0, 0 ,0); 
+        }
+
+        public static byte[] LagEnHash(string passord, byte[] salt)
+        {
+            return KeyDerivation.Pbkdf2(
+                password: passord,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA512,
+                iterationCount: 1000,
+                numBytesRequested: 32);
+        }
+
+        public static byte[] LagEtSalt()
+        {
+            var csp = new RNGCryptoServiceProvider();
+            var salt = new byte[24];
+            csp.GetBytes(salt);
+            return salt;
         }
 
     }
