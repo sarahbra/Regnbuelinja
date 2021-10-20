@@ -63,6 +63,33 @@ namespace Regnbuelinja.DAL
             
         }
 
+        public async Task<bool> LagreBruker(Bruker bruker)
+        {
+            try
+            {
+                var nyBruker = new Brukere
+                {
+                    Brukernavn = bruker.Brukernavn
+                };
+                
+                string passord = bruker.Passord;
+                byte[] salt = LagEtSalt();
+                byte[] hash = LagEnHash(passord, salt);
+
+                nyBruker.Passord = hash;
+                nyBruker.Salt = salt;
+
+                _db.Brukere.Add(nyBruker);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: LagreBruker: Ny bruker generert");
+                return true;
+            } catch(Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreBruker: Bruker ikke lagret. Databasefeil: " + e);
+                return false;
+            }
+        }
+
         public async Task<bool> LoggInn(Bruker bruker)
         {
             try

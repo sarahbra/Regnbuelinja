@@ -25,7 +25,7 @@ namespace Regnbuelinja.Controllers
             _log = log;
         }
 
-        [HttpPost]
+        [HttpPost("/ruter")]
         public async Task<ActionResult> LagreRute(Ruter rute)
         {
             if(ModelState.IsValid)
@@ -45,11 +45,23 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalideringen.");
         }
 
-        [HttpGet]
+        [HttpGet("/ruter")]
         public async Task<ActionResult> HentAlleRuter()
         {
             //List<Rute> ruter = await _db.HentAlleRuter();
             return null;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> LagreBruker(Bruker bruker)
+        {
+            if(ModelState.IsValid)
+            {
+                bool brukerOpprettet = await _db.LagreBruker(bruker);
+                return Ok(brukerOpprettet);
+                
+            }
+            return BadRequest("Feil i inputvalidering på server");
         }
 
         public async Task<ActionResult> LoggInn(Bruker bruker)
