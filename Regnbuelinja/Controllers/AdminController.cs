@@ -25,7 +25,7 @@ namespace Regnbuelinja.Controllers
             _log = log;
         }
 
-        [HttpPost("/ruter")]
+        [HttpPost("ruter")]
         public async Task<ActionResult> LagreRute(Ruter rute)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
@@ -50,7 +50,7 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalideringen.");
         }
 
-        [HttpGet("/ruter")]
+        [HttpGet("ruter")]
         public async Task<ActionResult> HentAlleRuter()
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
