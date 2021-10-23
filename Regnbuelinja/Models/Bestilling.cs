@@ -9,9 +9,9 @@ namespace Regnbuelinja.Models
         public string Startpunkt { get; set; }
         [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string Endepunkt { get; set; }
-        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
+        //Finn riktig: [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string AvreiseTid { get; set; }
-        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
+        //Finn riktig: [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string HjemreiseTid { get; set; }
         [RegularExpression(@"[1-9]{1,}")]
         public int AntallVoksne { get; set; }
