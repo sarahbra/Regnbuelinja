@@ -45,6 +45,37 @@ namespace Regnbuelinja.DAL
             
         }
 
+        // Denne sletter alle relaterte ferder når en rute slettes. Kan eventuelt lage en metode som sjekker om ruten har ferd hvis vi får tid og det er noe man
+        // vil implememtere med modal i klient ("er du sikker? Denne ruten er med i ferder: ...")
+        public async Task<bool> SlettRute(int id)
+        {
+            try
+            {
+                Rute fjerneRute = await _db.Ruter.FindAsync(id);
+                if(!(fjerneRute == default))
+                {
+                    List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.RId == id).ToListAsync();
+                    foreach (Ferd ferd in AlleRelaterteFerder)
+                    {
+                        _db.Ferder.Remove(ferd);
+                    }
+                    
+                    _db.Ruter.Remove(fjerneRute);
+                    await _db.SaveChangesAsync();
+                    return true;
+
+                } else
+                {
+                    _log.LogInformation("BestillingRepository.cs: SlettRute: Rute finnes ikke i databasen");
+                    return false;
+                }
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettRute: Feil i databasen. Rute ikke slettet");
+                return false;
+            }
+        }
+
         public async Task<Rute> HentEnRute(int id)
         {
             try

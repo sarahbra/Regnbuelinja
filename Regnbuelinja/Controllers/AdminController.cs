@@ -90,6 +90,27 @@ namespace Regnbuelinja.Controllers
             }
         }
 
+        [HttpDelete("rute{id}")]
+        public async Task<ActionResult> SlettRute(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            bool slettet = await _db.SlettRute(id);
+            if(slettet)
+            {
+                _log.LogInformation("AdminController.cs: SlettRute: Rute slettet.");
+                return Ok("Rute slettet");
+            } else
+            {
+                _log.LogInformation("AdminController.cs: SlettRute: Rute finnes ikke eller databasefeil");
+                return BadRequest("Feil i databasen. Rute ikke slettet");
+            }
+            
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {
