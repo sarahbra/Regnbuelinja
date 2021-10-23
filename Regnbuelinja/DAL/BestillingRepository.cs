@@ -49,7 +49,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Rute hentetRute = await _db.Ruter.FirstOrDefaultAsync(r => r.RId == id);
+                Rute hentetRute = await _db.Ruter.FirstOrDefaultAsync(r => r.Id == id);
                 if(hentetRute == default)
                 {
                     _log.LogInformation("BestillingRepository.cs: HentEnRute: Rute ikke funnet i databasen");
@@ -75,6 +75,23 @@ namespace Regnbuelinja.DAL
                 return null;
             }
             
+        }
+
+        public async Task<bool> SlettRute(int id)
+        {
+            try
+            {
+                Rute rute = await _db.Ruter.FindAsync(id);
+                _db.Ruter.Remove(rute);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: SlettRute: Rute slettet");
+                return true;
+            }
+            catch
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettRute: Mislykket. Det kan finnes ferder som bruker ruten med id = "+ id);
+                return false;
+            }
         }
 
         public async Task<bool> LagreBruker(Bruker bruker)
@@ -166,7 +183,8 @@ namespace Regnbuelinja.DAL
         //Brukes ikke(?) Slette(?)
         public async Task<List<Ferd>> HentFerder(int ruteId)
         {
-            List<Ferd> ferder = await _db.Ferder.Where(f => f.Rute.RId == ruteId).ToListAsync();
+            List<Ferd> ferder = await _db.Ferder.Where(f => f.Rute.Id == ruteId).ToListAsync();
+            System.Diagnostics.Debug.WriteLine(ferder.Count);
             if (!ferder.Any())
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentFerder: Ingen ferder ble returnert fra databasen.");
@@ -278,7 +296,7 @@ namespace Regnbuelinja.DAL
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
                 AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString("o"),
-                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.FId != b.Billetter.First().Ferd.FId).Ferd.AvreiseTid.ToString("o"),
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.Id != b.Billetter.First().Ferd.Id).Ferd.AvreiseTid.ToString("o"),
                 AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();

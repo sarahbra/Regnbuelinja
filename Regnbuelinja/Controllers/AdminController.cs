@@ -90,6 +90,48 @@ namespace Regnbuelinja.Controllers
             }
         }
 
+        [HttpGet("ferder/{ruteid}")]
+        public async Task<ActionResult> HentFerder(int ruteid)
+        {
+            List<Ferd> hentferder = await _db.HentFerder(ruteid);
+            System.Diagnostics.Debug.WriteLine(hentferder.Count);
+            if (hentferder == null)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentFerder: Ingen ferder har blitt hentet fra databasen.");
+                return NotFound("finner ikke ferder i repository");
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentFerder: Vellykket. Ferdene har blitt hentet fra databasen.");
+            return Ok(hentferder);
+        }
+
+        [HttpDelete("rute/slett/{id}")]
+        public async Task<ActionResult> SlettRute(int id)
+        {
+            if (id.GetType() == typeof(int))
+            {
+                if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+                {
+                    return Unauthorized("Ikke logget inn");
+                }
+                bool rutenSlettet = await _db.SlettRute(id);
+                if (rutenSlettet)
+                {
+                    _log.LogInformation("AdminController.cs: SlettRute: Sletting av ruten med id " + id + "vellykket");
+                    return Ok(rutenSlettet);
+                }
+                else
+                {
+                    _log.LogInformation("AdminController.cs: SlettRute: Databasefeil. Ruten ble ikke slettet.");
+                    return Ok("Feil i databasen. Rute ikke slettet.");
+                }
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: SlettRute: Ugyldig URI parameter.");
+                return Ok("Ugyldig URI parameter");
+            }
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {

@@ -89,8 +89,8 @@ namespace Regnbuelinja_Test
         public async Task HentAlleRuterLoggetInnOK()
         {
             //Arrange
-            var rute1 = new Rute { RId = 1, Startpunkt = "Haiti", Endepunkt = "Oslo", Pris = 9999.99};
-            var rute2 = new Rute { RId = 2, Startpunkt = "Stockholm", Endepunkt = "Fredrikshavn", Pris = 499.99 };
+            var rute1 = new Rute { Id = 1, Startpunkt = "Haiti", Endepunkt = "Oslo", Pris = 9999.99};
+            var rute2 = new Rute { Id = 2, Startpunkt = "Stockholm", Endepunkt = "Fredrikshavn", Pris = 499.99 };
 
             var ruteListe = new List<Rute>();
             ruteListe.Add(rute1);
@@ -153,7 +153,7 @@ namespace Regnbuelinja_Test
             //Arrange
             var rute = new Rute
             {
-                RId = 1,
+                Id = 1,
                 Startpunkt = "Stockholm",
                 Endepunkt = "Oslo",
                 Pris = 798.99

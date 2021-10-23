@@ -25,7 +25,7 @@ namespace Regnbuelinja.DAL
     public class Ferd
     {
         [Key]
-        public int FId { get; set; }
+        public int Id { get; set; }
         public virtual Baat Baat { get; set; }
         public virtual Rute Rute { get; set; }
         public DateTime AvreiseTid{ get; set; }
@@ -50,7 +50,7 @@ namespace Regnbuelinja.DAL
     public class Rute
     {
         [Key]
-        public int RId { get; set; }
+        public int Id { get; set; }
         public string Startpunkt { get; set; }
         public string Endepunkt { get; set; }
         public double Pris { get; set; }
