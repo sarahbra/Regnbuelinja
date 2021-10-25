@@ -139,6 +139,28 @@ namespace Regnbuelinja.Controllers
             
         }
 
+        [HttpPost("baater")]
+        public async Task<ActionResult> LagreBåt(Baater båt)
+        {
+            if(ModelState.IsValid)
+            {
+                bool lagretBåt = await _db.LagreBåt(båt);
+                if(lagretBåt)
+                {
+                    _log.LogInformation("AdminController.cs: LagreBåt: Båt lagret i databasen");
+                    return Ok("Båt lagret i databasen");
+                } else
+                {
+                    _log.LogInformation("AdminController.cs: LagreBåt: Databasefeil. Båt kunne ikke lagres");
+                    return Ok("Databasefeil. Båt ikke lagret");
+                }
+            } else
+            {
+                _log.LogInformation("AdminController.cs: LagreBåt: Feil i inputvalideringen. Båt ikke lagret");
+                return BadRequest("Feil i inputvalideringen");
+            }
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {

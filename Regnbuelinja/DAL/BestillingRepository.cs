@@ -158,6 +158,24 @@ namespace Regnbuelinja.DAL
             
         }
 
+        public async Task<bool> LagreBåt(Baater båt) {
+            try
+            {
+                Baat nyBaat = new Baat();
+                nyBaat.Navn = båt.Båtnavn;
+
+                _db.Baater.Add(nyBaat);
+                _log.LogInformation("BestillingRepository.cs: LagreBåt: Vellykket! Båt lagret i databasen");
+                await _db.SaveChangesAsync();
+                return true;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen. Båt ikke lagret");
+                return false;
+            }
+            
+        }
+
         public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
