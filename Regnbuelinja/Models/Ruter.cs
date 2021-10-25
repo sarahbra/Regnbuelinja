@@ -8,6 +8,7 @@ namespace Regnbuelinja.Models
 {
     public class Ruter
     {
+        public int Id { get; set; }
         [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string Avreisehavn { get; set; }
         [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]

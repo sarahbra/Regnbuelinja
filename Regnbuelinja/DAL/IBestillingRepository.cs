@@ -7,6 +7,7 @@ namespace Regnbuelinja.DAL
 {
     public interface IBestillingRepository
     {
+        Task<bool> EndreRute(Ruter rute);
         Task<bool> LagreRute(Ruter rute);
         Task<List<Rute>> HentAlleRuter();
         Task<Rute> HentEnRute(int id);

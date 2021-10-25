@@ -50,6 +50,34 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server.");
         }
 
+        [HttpPut("rute/{id}")]
+        public async Task<ActionResult> EndreRute(Ruter rute)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if(ModelState.IsValid)
+            {
+                bool kundeEndret = await _db.EndreRute(rute);
+                if (kundeEndret)
+                {
+                    _log.LogInformation("AdminController.cs: EndreRute: Vellykket! Rute endret");
+                    return Ok("Vellykket! Rute endret i databasen");
+                }
+                else
+                {
+                    _log.LogInformation("AdminController.cs: EndreRute: Databasefeil. Rute ikke endret");
+                    return Ok("Feil i databasen. Prøv på nytt");
+                }
+            } else
+            {
+                _log.LogInformation("AdminController.cs: EndreRute: Feil i inputvalideringen.");
+                return BadRequest("Feil i inputvalidering på server.");
+            }
+            
+        }
+
         [HttpGet("ruter")]
         public async Task<ActionResult> HentAlleRuter()
         {

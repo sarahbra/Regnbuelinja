@@ -45,6 +45,49 @@ namespace Regnbuelinja.DAL
             
         }
 
+        public async Task<bool> endreRute(Ruter endreRute)
+        {
+            try
+            {
+                Rute somSkalEndres = await _db.Ruter.FindAsync(endreRute.Id);
+                if (!(endreRute == default))
+                {
+                    List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.RId == endreRute.Id).ToListAsync();
+                    foreach (Ferd ferd in AlleRelaterteFerder)
+                    {
+                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
+                        foreach (Billett billett in AlleBilletter)
+                        {
+                            if (billett.Ferd.FId == ferd.FId)
+                            {
+                                _log.LogInformation("BestillingRepository.cs: endreRute: Rute med i en bestillt ferd. Kan ikke endres");
+                                return false;
+                            }
+                        }
+                    }
+
+                    somSkalEndres.Startpunkt = endreRute.Avreisehavn;
+                    somSkalEndres.Endepunkt = endreRute.Ankomsthavn;
+                    somSkalEndres.Pris = endreRute.Pris;
+
+                    await _db.SaveChangesAsync();
+                    return true;
+
+                }
+                else
+                {
+                    _log.LogInformation("BestillingRepository.cs: endreRute: Rute finnes ikke i databasen");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettRute: Feil i databasen. Rute ikke endret. " + e);
+                return false;
+            }
+
+        }
+
         public async Task<bool> SlettRute(int id)
         {
             try
