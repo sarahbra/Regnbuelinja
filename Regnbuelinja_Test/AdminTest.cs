@@ -20,7 +20,6 @@ namespace Regnbuelinja_Test
 
         private readonly Mock<IBestillingRepository> mockRep = new Mock<IBestillingRepository>();
         private readonly Mock<ILogger<AdminController>> mockLog = new Mock<ILogger<AdminController>>();
-
         private readonly Mock<HttpContext> mockHttpContext = new Mock<HttpContext>();
         private readonly MockHttpSession mockSession = new MockHttpSession();
 
