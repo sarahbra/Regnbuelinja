@@ -43,7 +43,7 @@ namespace Regnbuelinja.Controllers
                 } else
                 {
                     _log.LogInformation("AdminController.cs: LagreRute: Databasefeil. Rute ikke lagret");
-                    return Ok("Feil i databasen. Prøv på nytt");
+                    return BadRequest("Feil i databasen. Prøv på nytt");
                 }
             }
             _log.LogInformation("AdminController.cs: LagreRute: Feil i inputvalideringen.");
@@ -68,7 +68,7 @@ namespace Regnbuelinja.Controllers
                 else
                 {
                     _log.LogInformation("AdminController.cs: EndreRute: Databasefeil. Rute ikke endret");
-                    return Ok("Feil i databasen. Prøv på nytt");
+                    return BadRequest("Feil i databasen. Prøv på nytt");
                 }
             } else
             {
@@ -93,7 +93,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(ruter);
             } else { 
                 _log.LogInformation("AdminController.cs: HentAlleRuter: Feil i databasen eller ingen ruter lagret");
-                return Ok("Feil i databasen. Ingen ruter hentet.");
+                return BadRequest("Feil i databasen. Ingen ruter hentet.");
             }
         }
 
@@ -156,7 +156,7 @@ namespace Regnbuelinja.Controllers
                 } else
                 {
                     _log.LogInformation("AdminController.cs: LagreBåt: Databasefeil. Båt kunne ikke lagres");
-                    return Ok("Databasefeil. Båt ikke lagret");
+                    return BadRequest("Databasefeil. Båt ikke lagret");
                 }
             } else
             {
@@ -183,7 +183,7 @@ namespace Regnbuelinja.Controllers
                 else
                 {
                     _log.LogInformation("AdminController.cs: EndreBåt: Databasefeil. Båt kunne ikke endres");
-                    return NotFound("Båt ikke funnet i databasen");
+                    return NotFound("Båt ikke funnet i databasen eller databasefeil");
                 }
             }
             else
@@ -211,7 +211,7 @@ namespace Regnbuelinja.Controllers
                 } else
                 {
                     _log.LogInformation("AdminController.cs: LagreBruker: Databasefeil. Bruker ikke opprettet.");
-                    return Ok("Feil i databasen. Bruker ikke opprettet.");
+                    return BadRequest("Feil i databasen. Bruker ikke opprettet.");
                 }
             }
             return BadRequest("Feil i inputvalidering på server");

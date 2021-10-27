@@ -195,6 +195,24 @@ namespace Regnbuelinja.DAL
             
         }
 
+        public async Task<bool> SlettBåt(int id)
+        {
+            try
+            {
+                Baat somSkalSlettes = await _db.Baater.FirstOrDefaultAsync(b => b.Id == id);
+                if(somSkalSlettes != default)
+                {
+
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: SlettBåt: Fant ikke båten i databasen");
+                return false;
+            } catch (Exception e)
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
