@@ -278,6 +278,47 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server");
         }
 
+        [HttpGet("ferd/{id}")]
+        public async Task<ActionResult> HentEnFerd(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Ferder hentetFerd = await _db.HentEnFerd(id);
+            if (hentetFerd != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnFerd: Vellykket. Ferd hentet");
+                return Ok(hentetFerd);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentEnFerd: Ingen ferd funnet i databasen med gitt id");
+                return NotFound("Ingen ferd funnet");
+            }
+        }
+
+        [HttpGet("ferder")]
+        public async Task<ActionResult> HentAlleFerder()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Ferder> alleFerder = await _db.HentAlleFerder();
+            if (alleFerder.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentAlleFerder: Vellykket! Ferder hentet");
+                return Ok(alleFerder);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleFerder: Databasefeil eller ingen ferder i databasen");
+                return NotFound("Ingen ferder funnet i databasen");
+            }
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {
