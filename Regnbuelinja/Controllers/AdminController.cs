@@ -142,7 +142,11 @@ namespace Regnbuelinja.Controllers
         [HttpPost("baater")]
         public async Task<ActionResult> LagreBåt(Baater båt)
         {
-            if(ModelState.IsValid)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
             {
                 bool lagretBåt = await _db.LagreBåt(båt);
                 if(lagretBåt)
@@ -164,7 +168,11 @@ namespace Regnbuelinja.Controllers
         [HttpPut("baater/{id}")]
         public async Task<ActionResult> EndreBåt(Baater båt)
         {
-            if(ModelState.IsValid)
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
             {
                 bool endretBåt = await _db.EndreBåt(båt);
                 if (endretBåt)
