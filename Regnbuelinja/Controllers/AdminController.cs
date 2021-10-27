@@ -59,8 +59,8 @@ namespace Regnbuelinja.Controllers
             }
             if(ModelState.IsValid)
             {
-                bool kundeEndret = await _db.EndreRute(rute);
-                if (kundeEndret)
+                bool RuteEndret = await _db.EndreRute(rute);
+                if (RuteEndret)
                 {
                     _log.LogInformation("AdminController.cs: EndreRute: Vellykket! Rute endret");
                     return Ok("Vellykket! Rute endret i databasen");
@@ -93,7 +93,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(ruter);
             } else { 
                 _log.LogInformation("AdminController.cs: HentAlleRuter: Feil i databasen eller ingen ruter lagret");
-                return BadRequest("Feil i databasen. Ingen ruter hentet.");
+                return NotFound("Ingen ruter funnet i databasen.");
             }
         }
 
@@ -118,7 +118,7 @@ namespace Regnbuelinja.Controllers
             }
         }
 
-        [HttpDelete("rute{id}")]
+        [HttpDelete("rute/{id}")]
         public async Task<ActionResult> SlettRute(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
@@ -130,7 +130,7 @@ namespace Regnbuelinja.Controllers
             if(slettet)
             {
                 _log.LogInformation("AdminController.cs: SlettRute: Rute slettet.");
-                return Ok("Rute slettet");
+                return Ok(slettet);
             } else
             {
                 _log.LogInformation("AdminController.cs: SlettRute: Rute finnes ikke eller databasefeil");
@@ -152,7 +152,7 @@ namespace Regnbuelinja.Controllers
                 if(lagretBåt)
                 {
                     _log.LogInformation("AdminController.cs: LagreBåt: Båt lagret i databasen");
-                    return Ok("Båt lagret i databasen");
+                    return Ok(lagretBåt);
                 } else
                 {
                     _log.LogInformation("AdminController.cs: LagreBåt: Databasefeil. Båt kunne ikke lagres");
@@ -178,7 +178,7 @@ namespace Regnbuelinja.Controllers
                 if (endretBåt)
                 {
                     _log.LogInformation("AdminController.cs: EndreBåt: Båt endret i databasen");
-                    return Ok("Båt endret i databasen");
+                    return Ok("Vellykket! Båt endret i databasen");
                 }
                 else
                 {
@@ -204,13 +204,169 @@ namespace Regnbuelinja.Controllers
             if (slettetBåt)
             {
                 _log.LogInformation("AdminController.cs: SlettBåt: Båt slettet fra databasen");
-                return Ok("Båt (og relaterte ferder) slettet");
+                return Ok("Vellykket! Båt slettet");
             }
             else
             {
                 _log.LogInformation("AdminController.cs: SlettBåt: Databasefeil. Båt kunne ikke endres");
                 return NotFound("Båt ikke funnet i databasen eller båt med i eksisterende bestilling(er).");
             }
+        }
+
+        [HttpGet("baater")]
+        public async Task<ActionResult> HentAlleBåter()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Baat> alleBåter = await _db.HentAlleBåter();
+            if (alleBåter.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentAlleBaater: Vellykket! Båter hentet");
+                return Ok(alleBåter);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleBaater: Databasefeil eller ingen båter i databasen");
+                return NotFound("Ingen båter funnet i databasen");
+            }
+        }
+
+        [HttpGet("baat/{id}")]
+        public async Task<ActionResult> HentEnBåt(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Baat hentetBåt = await _db.HentEnBåt(id);
+            if (hentetBåt != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnBåt: Vellykket. Båt hentet");
+                return Ok(hentetBåt);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentEnBåt: Ingen båt funnet i databasen med gitt id");
+                return NotFound("Ingen båt funnet");
+            }
+        }
+
+        [HttpPost("ferder")]
+        public async Task<ActionResult> LagreFerd(Ferder ferd)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if(ModelState.IsValid)
+            {
+                bool FerdLagret = await _db.LagreFerd(ferd);
+                if (FerdLagret)
+                {
+                    _log.LogInformation("AdminController.cs: LagreFerd: Ferd lagret vellykket");
+                    return Ok("Vellykket! Ferd lagret i databasen.");
+                }
+                else
+                {
+                    _log.LogInformation("AdminController.cs: LagreFerd: Databasefeil eller feil rute/båt-id. Bruker ikke opprettet.");
+                    return NotFound("Rute eller båt ikke funnet eller databasefeil");
+                }
+            }
+            return BadRequest("Feil i inputvalidering på server");
+        }
+
+        [HttpGet("ferd/{id}")]
+        public async Task<ActionResult> HentEnFerd(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Ferder hentetFerd = await _db.HentEnFerd(id);
+            if (hentetFerd != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnFerd: Vellykket. Ferd hentet");
+                return Ok(hentetFerd);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentEnFerd: Ingen ferd funnet i databasen med gitt id");
+                return NotFound("Ingen ferd funnet");
+            }
+        }
+
+        [HttpGet("ferder")]
+        public async Task<ActionResult> HentAlleFerder()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Ferder> alleFerder = await _db.HentAlleFerder();
+            if (alleFerder.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentAlleFerder: Vellykket! Ferder hentet");
+                return Ok(alleFerder);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleFerder: Databasefeil eller ingen ferder i databasen");
+                return NotFound("Ingen ferder funnet i databasen");
+            }
+        }
+
+        [HttpPut("ferd/{id}")]
+        public async Task<ActionResult> EndreFerd(Ferder ferd)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
+            {
+                bool EndretFerd = await _db.EndreFerd(ferd);
+                if (EndretFerd)
+                {
+                    _log.LogInformation("AdminController.cs: EndreFerd: Vellykket! Ferd endret");
+                    return Ok("Vellykket! Ferd endret i databasen");
+                }
+                else
+                {
+                    _log.LogInformation("AdminController.cs: EndreFerd: Databasefeil. Ferd ikke endret");
+                    return NotFound("Ferd, rute eller båt ikke funnet, ferd med i eksisterende bestilling(er) eller databasefeil");
+                }
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: EndreFerd: Feil i inputvalideringen.");
+                return BadRequest("Feil i inputvalidering på server.");
+            }
+        }
+
+        [HttpDelete("ferd/{id}")]
+        public async Task<ActionResult> SlettFerd(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            bool slettet = await _db.SlettFerd(id);
+            if (slettet)
+            {
+                _log.LogInformation("AdminController.cs: SlettFerd: Ferd slettet.");
+                return Ok(slettet);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
+                return NotFound("Ferd ikke funnet eller i eksisterende bestilling(er).");
+            }
+
         }
 
         [HttpPost("brukere")]
