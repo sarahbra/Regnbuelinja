@@ -12,6 +12,7 @@ namespace Regnbuelinja.DAL
         //public virtual Kunde Kunde { get; set; }
         public double TotalPris { get; set; }
         public virtual List<Billett> Billetter { get; set; }
+        public bool Betalt { get; set; } = false;
     } 
 
     public class Billett

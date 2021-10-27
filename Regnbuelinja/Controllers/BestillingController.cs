@@ -161,5 +161,17 @@ namespace Regnbuelinja.Controllers
             _log.LogInformation("/Controllers/BestillingController.cs: HentStrekningsPris: Vellykket. Strekningspris har blitt funnet for bestilling " + id + " fra avreisehavn " + Startpunkt);
             return Ok(StrekningsPris);
         }
+
+        public async Task<ActionResult> Betal(int id)
+        {
+            bool betalt = await _db.Betal(id);
+            if(betalt)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: Betal: Vellykket. Bestillingen er betalt");
+                return Ok(betalt);
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: Betal: Fant ikke bestilling eller databasefeil");
+            return NotFound("Fant ikke bestillingen. Betaling ikke gjennomført");
+        }
     }
 }
