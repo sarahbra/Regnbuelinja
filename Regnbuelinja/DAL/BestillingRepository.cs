@@ -45,7 +45,6 @@ namespace Regnbuelinja.DAL
             
         }
 
-        //TODO: Effektivisere denne. Hvis vi får tid, kan spare tid på å splitte billetter i to + sjekke for if retur. Vil finne de to ulike ferdene.
         public async Task<bool> EndreRute(Ruter endreRute)
         {
             try
@@ -53,21 +52,11 @@ namespace Regnbuelinja.DAL
                 Rute somSkalEndres = await _db.Ruter.FindAsync(endreRute.Id);
                 if (!(endreRute == default))
                 {
-                    List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == endreRute.Id).ToListAsync();
-                    if(AlleRelaterteFerder.Any())
+                    List<Billett> AlleBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == somSkalEndres.Id).ToListAsync();
+                    if (AlleBilletter.Any())
                     {
-                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
-                        foreach (Ferd ferd in AlleRelaterteFerder)
-                        {
-                            foreach (Billett billett in AlleBilletter)
-                            {
-                                if (billett.Ferd.Id == ferd.Id)
-                                {
-                                    _log.LogInformation("BestillingRepository.cs: endreRute: Rute med i en bestillt ferd. Kan ikke endres");
-                                    return false;
-                                }
-                            }
-                        }
+                        _log.LogInformation("BestillingRepository.cs: EndreRute: Rute med i en bestillt ferd. Ikke endret");
+                        return false;
                     }
                     
                     somSkalEndres.Startpunkt = endreRute.Avreisehavn;
@@ -80,13 +69,13 @@ namespace Regnbuelinja.DAL
                 }
                 else
                 {
-                    _log.LogInformation("BestillingRepository.cs: endreRute: Rute finnes ikke i databasen");
+                    _log.LogInformation("BestillingRepository.cs: EndreRute: Rute finnes ikke i databasen");
                     return false;
                 }
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: SlettRute: Feil i databasen. Rute ikke endret. " + e);
+                _log.LogInformation("BestillingRepository.cs: EndreRute: Feil i databasen. Rute ikke endret. " + e);
                 return false;
             }
 
@@ -99,20 +88,18 @@ namespace Regnbuelinja.DAL
                 Rute fjerneRute = await _db.Ruter.FindAsync(id);
                 if(!(fjerneRute == default))
                 {
+                    List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == fjerneRute.Id).ToListAsync();
+                    if(!AlleRelaterteBilletter.Any())
+                    {
+                        _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
+                        return false;
+                    }
                     List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == id).ToListAsync();
                     if(AlleRelaterteFerder.Any())
                     {
-                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
                         foreach (Ferd ferd in AlleRelaterteFerder)
                         {
-                            foreach (Billett billett in AlleBilletter)
-                            {
-                                if (billett.Ferd.Id == ferd.Id)
-                                {
-                                    _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
-                                    return false;
-                                }
-                            }
+                            List<Billett> AlleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == ferd.Id).ToListAsync();
                             _db.Ferder.Remove(ferd);
                         }
                     }
@@ -168,8 +155,10 @@ namespace Regnbuelinja.DAL
         public async Task<bool> LagreBåt(Baater båt) {
             try
             {
-                Baat nyBaat = new Baat();
-                nyBaat.Navn = båt.Båtnavn;
+                Baat nyBaat = new Baat
+                {
+                    Navn = båt.Båtnavn
+                };
 
                 _db.Baater.Add(nyBaat);
                 _log.LogInformation("BestillingRepository.cs: LagreBåt: Vellykket! Båt lagret i databasen");
@@ -178,6 +167,29 @@ namespace Regnbuelinja.DAL
             } catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen: " + e +". Båt ikke lagret");
+                return false;
+            }
+            
+        }
+
+        //Båt i bestilling kan endres, men ikke slettes - må oppdateres hvis vi implementerer kapasitet.
+        public async Task<bool> EndreBåt(Baater båt)
+        {
+            try
+            {
+                Baat somSkalEndres = await _db.Baater.FirstOrDefaultAsync(b => b.Id == båt.Id);
+                if(somSkalEndres!= default)
+                {
+                    somSkalEndres.Navn = båt.Båtnavn;
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: EndreBåt: Vellykket! Båt endret");
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: EndreBåt: Fant ikke båten i databasen");
+                return false;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreBåt: Feil i databasen: " + e + ". Båt ikke endret");
                 return false;
             }
             

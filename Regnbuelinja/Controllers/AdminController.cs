@@ -161,6 +161,30 @@ namespace Regnbuelinja.Controllers
             }
         }
 
+        [HttpPut("baater/{id}")]
+        public async Task<ActionResult> EndreBåt(Baater båt)
+        {
+            if(ModelState.IsValid)
+            {
+                bool endretBåt = await _db.EndreBåt(båt);
+                if (endretBåt)
+                {
+                    _log.LogInformation("AdminController.cs: EndreBåt: Båt endret i databasen");
+                    return Ok("Båt endret i databasen");
+                }
+                else
+                {
+                    _log.LogInformation("AdminController.cs: EndreBåt: Databasefeil. Båt kunne ikke endres");
+                    return NotFound("Båt ikke funnet i databasen");
+                }
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: EndreBåt: Feil i inputvalideringen. Båt ikke endret");
+                return BadRequest("Feil i inputvalideringen");
+            }
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {

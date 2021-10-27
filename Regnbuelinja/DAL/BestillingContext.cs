@@ -35,7 +35,7 @@ namespace Regnbuelinja.DAL
     public class Baat
     {
         [Key]
-        public int BId { get; set; }
+        public int Id { get; set; }
         public string Navn { get; set; }
     }
 
