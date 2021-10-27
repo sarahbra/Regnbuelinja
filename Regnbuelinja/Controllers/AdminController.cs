@@ -59,8 +59,8 @@ namespace Regnbuelinja.Controllers
             }
             if(ModelState.IsValid)
             {
-                bool kundeEndret = await _db.EndreRute(rute);
-                if (kundeEndret)
+                bool RuteEndret = await _db.EndreRute(rute);
+                if (RuteEndret)
                 {
                     _log.LogInformation("AdminController.cs: EndreRute: Vellykket! Rute endret");
                     return Ok("Vellykket! Rute endret i databasen");
@@ -316,6 +316,34 @@ namespace Regnbuelinja.Controllers
             {
                 _log.LogInformation("AdminController.cs: HentAlleFerder: Databasefeil eller ingen ferder i databasen");
                 return NotFound("Ingen ferder funnet i databasen");
+            }
+        }
+
+        [HttpPut("ferd/{id}")]
+        public async Task<ActionResult> EndreFerd(Ferder ferd)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
+            {
+                bool EndretFerd = await _db.EndreFerd(ferd);
+                if (EndretFerd)
+                {
+                    _log.LogInformation("AdminController.cs: EndreFerd: Vellykket! Ferd endret");
+                    return Ok("Vellykket! Ferd endret i databasen");
+                }
+                else
+                {
+                    _log.LogInformation("AdminController.cs: EndreFerd: Databasefeil. Ferd ikke endret");
+                    return NotFound("Ferd ikke funnet, ferd med i eksisterende bestilling(er) eller feil rute/båt-id.");
+                }
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: EndreFerd: Feil i inputvalideringen.");
+                return BadRequest("Feil i inputvalidering på server.");
             }
         }
 

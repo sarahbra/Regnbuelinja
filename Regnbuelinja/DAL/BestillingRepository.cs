@@ -347,6 +347,43 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<bool> EndreFerd(Ferder ferd)
+        {
+            try
+            {
+                Ferd ferdSomEndres = await _db.Ferder.FirstOrDefaultAsync(f => f.Id == ferd.FId);
+                if (!(ferdSomEndres == default))
+                {
+                    List<Billett> AlleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == ferdSomEndres.Id).ToListAsync();
+                    if (AlleBilletter.Any())
+                    {
+                        _log.LogInformation("BestillingRepository.cs: EndreFerd: Ferd med i bestilling(er). Ikke endret");
+                        return false;
+                    }
+                    Rute nyRute = await _db.Ruter.FirstOrDefaultAsync(r => r.Id == ferd.RId);
+                    Baat nyBåt = await _db.Baater.FirstOrDefaultAsync(b => b.Id == ferd.BId);
+                    if(nyRute == default || nyBåt == default)
+                    {
+                        _log.LogInformation("BestillingRepository.cs: EndreFerd: Rute eller båt ikke funnet i database. Kan ikke endre");
+                        return false;
+                    }
+                    ferdSomEndres.Rute = nyRute;
+                    ferdSomEndres.Baat = nyBåt;
+                    ferdSomEndres.AvreiseTid = ParseDatoLocal(ferd.AvreiseTid);
+                    ferdSomEndres.AnkomstTid = ParseDatoLocal(ferd.AnkomstTid);
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: EndreFerd: Vellykket! Ferd endret");
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: EndreFerd: Ferd ikke funnet med gitt id");
+                return false;
+            } catch(Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreFerd: Databasefeil: " + e + ". Ferd ikke endret");
+                return false;
+            }
+        }
+
         public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
