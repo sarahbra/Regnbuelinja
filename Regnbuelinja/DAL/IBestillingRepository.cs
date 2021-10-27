@@ -22,6 +22,9 @@ namespace Regnbuelinja.DAL
         Task<Ferder> HentEnFerd(int id);
         Task<bool> EndreFerd(Ferder ferd);
         Task<bool> SlettFerd(int id);
+        Task<List<Billetter>> HentAlleBilletter();
+        Task<List<Billetter>> HentBilletterForBestilling(int id);
+        Task<List<Billetter>> HentBilletterForFerd(int id);
         Task<bool> LagreBruker(Bruker bruker);
         Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();
@@ -35,6 +38,5 @@ namespace Regnbuelinja.DAL
         Task<Bestilling> HentBestilling(int id);
         Task<string> HentAnkomstTid(int id, string Startpunkt);
         Task<double> HentStrekningsPris(int id, string Startpunkt);
-
     }
 }

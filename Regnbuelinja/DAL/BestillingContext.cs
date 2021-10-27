@@ -8,7 +8,7 @@ namespace Regnbuelinja.DAL
     public class Bestillinger
     {
         [Key]
-        public int BeId { get; set; }
+        public int Id { get; set; }
         //public virtual Kunde Kunde { get; set; }
         public double TotalPris { get; set; }
         public virtual List<Billett> Billetter { get; set; }
@@ -17,7 +17,7 @@ namespace Regnbuelinja.DAL
     public class Billett
     {
         [Key]
-        public int BiId { get; set; }
+        public int Id { get; set; }
         public virtual Ferd Ferd { get; set; }
         public bool Voksen { get; set; }
     }

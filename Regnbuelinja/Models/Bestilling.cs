@@ -13,9 +13,7 @@ namespace Regnbuelinja.Models
         public string AvreiseTid { get; set; }
         //Finn riktig: [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
         public string HjemreiseTid { get; set; }
-        [RegularExpression(@"[1-9]{1,}")]
         public int AntallVoksne { get; set; }
-        [RegularExpression(@"[1-9]{1,}")]
         public int AntallBarn { get; set; }
     }
 }

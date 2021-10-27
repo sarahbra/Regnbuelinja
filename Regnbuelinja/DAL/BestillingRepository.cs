@@ -418,6 +418,75 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<List<Billetter>> HentAlleBilletter()
+        {
+            try
+            {
+                List<Billetter> alleBilletter = await _db.Billetter.Select(b => new Billetter()
+                {
+                    Id = b.Id,
+                    FId = b.Ferd.Id,
+                    Voksen = b.Voksen
+                }).ToListAsync();
+                if (!alleBilletter.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletter: Ingen billetter i databasen");
+                }
+                return alleBilletter;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletter: Feil i databasen: " + e + ". Billetter ikke hentet");
+                return null;
+            }
+        }
+
+        public async Task<List<Billetter>> HentBilletterForBestilling(int id)
+        {
+            try
+            {
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Id == id).Select(b => new Billetter()
+                {
+                    Id = b.Id,
+                    FId = b.Ferd.Id,
+                    Voksen = b.Voksen
+                }).ToListAsync();
+                if(!alleBilletter.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBestilling: Bestilling ikke funnet eller ingen billetter i bestilling");
+                }
+                return alleBilletter;
+            } catch(Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBestilling: Feil i databasen: " +e+". Billetter ikke hentet");
+                return null;
+            }
+        }
+
+        public async Task<List<Billetter>> HentBilletterForFerd(int id)
+        {
+            try
+            {
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => new Billetter()
+                {
+                    Id = b.Id,
+                    FId = b.Ferd.Id,
+                    Voksen = b.Voksen
+                }).ToListAsync();
+                if (!alleBilletter.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Ferd ikke funnet eller ingen billetter for ferd");
+                }
+                return alleBilletter;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Feil i databasen: " + e + ". Billetter ikke hentet");
+                return null;
+            }
+        }
+
+
         public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
@@ -603,7 +672,7 @@ namespace Regnbuelinja.DAL
 
                 _db.Bestillinger.Add(bestilling);
                 await _db.SaveChangesAsync();
-                return bestilling.BeId + "";
+                return bestilling.Id + "";
             }
             else
             {
@@ -614,7 +683,7 @@ namespace Regnbuelinja.DAL
 
         public async Task<Bestilling> HentBestilling(int id)
         {
-            Bestilling bestilling = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => new Bestilling
+            Bestilling bestilling = await _db.Bestillinger.Where(b => b.Id == id).Select(b => new Bestilling
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
@@ -636,7 +705,7 @@ namespace Regnbuelinja.DAL
 
         public async Task<double> HentPris(int id)
         {
-            double pris = await _db.Bestillinger.Where(b => b.BeId == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
+            double pris = await _db.Bestillinger.Where(b => b.Id == id).Select(b => b.TotalPris).FirstOrDefaultAsync();
             if (pris == default)
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentPris: TotalPris ikke funnet for bestilling med id " + id);
@@ -681,7 +750,7 @@ namespace Regnbuelinja.DAL
 
         public async Task<string> HentAnkomstTid(int id, string Startpunkt)
         {
-            DateTime AnkomstTid = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.AnkomstTid).FirstOrDefaultAsync();
+            DateTime AnkomstTid = await _db.Bestillinger.Where(b => b.Id == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.AnkomstTid).FirstOrDefaultAsync();
             if(AnkomstTid == default)
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentAnkomstTid: Ingen ankomsttid har blitt funnet i databasen for bestilling med id " + id +" og avreisehavn " + Startpunkt + ".");
@@ -693,7 +762,7 @@ namespace Regnbuelinja.DAL
 
         public async Task<string> HentBaat(int id, string Startpunkt)
         {
-            string Baatnavn = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Baat.Navn).FirstOrDefaultAsync();
+            string Baatnavn = await _db.Bestillinger.Where(b => b.Id == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).Select(bi => bi.Ferd.Baat.Navn).FirstOrDefaultAsync();
             if (Baatnavn == default)
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentBaat: Enten ingen billett med startpunkt " + Startpunkt + " eller ingen bestilling med ID " + id + " har blitt funnet i databasen");
@@ -706,7 +775,7 @@ namespace Regnbuelinja.DAL
         public async Task<double> HentStrekningsPris(int id, string Startpunkt)
         {
             double strekningsPris = 0.0;
-            List<Billett> billetter = await _db.Bestillinger.Where(b => b.BeId == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).ToListAsync();
+            List<Billett> billetter = await _db.Bestillinger.Where(b => b.Id == id).SelectMany(b => b.Billetter).Where(bi => bi.Ferd.Rute.Startpunkt.Equals(Startpunkt)).ToListAsync();
             
             if (!billetter.Any())
             {
