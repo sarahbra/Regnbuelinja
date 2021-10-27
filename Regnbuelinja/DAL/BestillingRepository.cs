@@ -225,6 +225,7 @@ namespace Regnbuelinja.DAL
                 return false;
             } catch (Exception e)
             {
+                _log.LogInformation("BestillingRepository.cs: Feil i databasen: "+e+". Båt ikke slettet");
                 return false;
             }
         }

@@ -14,6 +14,7 @@ namespace Regnbuelinja.DAL
         Task<bool> SlettRute(int id);
         Task<bool> LagreBåt(Baater båt);
         Task<bool> EndreBåt(Baater båt);
+        Task<bool> SlettBåt(int id);
         Task<bool> LagreBruker(Bruker bruker);
         Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();

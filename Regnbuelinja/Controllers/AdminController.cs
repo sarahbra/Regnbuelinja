@@ -68,7 +68,7 @@ namespace Regnbuelinja.Controllers
                 else
                 {
                     _log.LogInformation("AdminController.cs: EndreRute: Databasefeil. Rute ikke endret");
-                    return BadRequest("Feil i databasen. Prøv på nytt");
+                    return NotFound("Rute ikke funnet eller rute med i eksisterende bestilling(er).");
                 }
             } else
             {
@@ -134,7 +134,7 @@ namespace Regnbuelinja.Controllers
             } else
             {
                 _log.LogInformation("AdminController.cs: SlettRute: Rute finnes ikke eller databasefeil");
-                return BadRequest("Feil i databasen. Rute ikke slettet");
+                return NotFound("Rute ikke funnet eller rute med i eksisterende bestilling(er).");
             }
             
         }
@@ -165,7 +165,7 @@ namespace Regnbuelinja.Controllers
             }
         }
 
-        [HttpPut("baater/{id}")]
+        [HttpPut("baat/{id}")]
         public async Task<ActionResult> EndreBåt(Baater båt)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
@@ -183,13 +183,33 @@ namespace Regnbuelinja.Controllers
                 else
                 {
                     _log.LogInformation("AdminController.cs: EndreBåt: Databasefeil. Båt kunne ikke endres");
-                    return NotFound("Båt ikke funnet i databasen eller databasefeil");
+                    return NotFound("Båt ikke funnet i databasen eller databasefeil.");
                 }
             }
             else
             {
                 _log.LogInformation("AdminController.cs: EndreBåt: Feil i inputvalideringen. Båt ikke endret");
                 return BadRequest("Feil i inputvalideringen");
+            }
+        }
+
+        [HttpDelete("baat/{id}")]
+        public async Task<ActionResult> SlettBåt(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            bool slettetBåt = await _db.SlettBåt(id);
+            if (slettetBåt)
+            {
+                _log.LogInformation("AdminController.cs: SlettBåt: Båt slettet fra databasen");
+                return Ok("Båt (og relaterte ferder) slettet");
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: SlettBåt: Databasefeil. Båt kunne ikke endres");
+                return NotFound("Båt ikke funnet i databasen eller båt med i eksisterende bestilling(er).");
             }
         }
 
