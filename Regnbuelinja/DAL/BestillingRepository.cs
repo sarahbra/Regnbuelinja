@@ -99,7 +99,6 @@ namespace Regnbuelinja.DAL
                     {
                         foreach (Ferd ferd in AlleRelaterteFerder)
                         {
-                            List<Billett> AlleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == ferd.Id).ToListAsync();
                             _db.Ferder.Remove(ferd);
                         }
                     }
@@ -202,7 +201,24 @@ namespace Regnbuelinja.DAL
                 Baat somSkalSlettes = await _db.Baater.FirstOrDefaultAsync(b => b.Id == id);
                 if(somSkalSlettes != default)
                 {
+                    List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == somSkalSlettes.Id).ToListAsync();
+                    if (!AlleRelaterteBilletter.Any())
+                    {
+                        _log.LogInformation("BestillingRepository.cs: SlettBåt: Båt med i en bestillt ferd. Ikke slettet");
+                        return false;
+                    }
+                    List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == id).ToListAsync();
+                    if (AlleRelaterteFerder.Any())
+                    {
+                        foreach (Ferd ferd in AlleRelaterteFerder)
+                        {
+                            _db.Ferder.Remove(ferd);
+                        }
+                    }
 
+                    _db.Baater.Remove(somSkalSlettes);
+                    _log.LogInformation("BestillingRepository.cs: SlettBåt: Vellykket! Båt og relaterte ferder slettet");
+                    await _db.SaveChangesAsync();
                     return true;
                 }
                 _log.LogInformation("BestillingRepository.cs: SlettBåt: Fant ikke båten i databasen");
