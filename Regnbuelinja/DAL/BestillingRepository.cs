@@ -50,7 +50,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 Rute somSkalEndres = await _db.Ruter.FindAsync(endreRute.Id);
-                if (!(endreRute == default))
+                if (!(endreRute == null))
                 {
                     List<Billett> AlleBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == somSkalEndres.Id).ToListAsync();
                     if (AlleBilletter.Any())
@@ -64,6 +64,7 @@ namespace Regnbuelinja.DAL
                     somSkalEndres.Pris = endreRute.Pris;
 
                     await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: EndreRute: Vellykket! Rute endret");
                     return true;
 
                 }
@@ -86,7 +87,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 Rute fjerneRute = await _db.Ruter.FindAsync(id);
-                if(!(fjerneRute == default))
+                if(!(fjerneRute == null))
                 {
                     List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == fjerneRute.Id).ToListAsync();
                     if(!AlleRelaterteBilletter.Any())
@@ -105,6 +106,7 @@ namespace Regnbuelinja.DAL
                     
                     _db.Ruter.Remove(fjerneRute);
                     await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: SlettRute: Vellykket! Rute slettet");
                     return true;
 
                 } else
@@ -380,6 +382,38 @@ namespace Regnbuelinja.DAL
             } catch(Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: EndreFerd: Databasefeil: " + e + ". Ferd ikke endret");
+                return false;
+            }
+        }
+
+        public async Task<bool> SlettFerd(int id)
+        {
+            try
+            {
+                Ferd fjerneFerd = await _db.Ferder.FirstOrDefaultAsync(f => f.Id == id);
+                if (!(fjerneFerd == default))
+                {
+                    List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Id == fjerneFerd.Id).ToListAsync();
+                    if (!AlleRelaterteBilletter.Any())
+                    {
+                        _log.LogInformation("BestillingRepository.cs: SlettFerd: Ferd i bestilling(er). Ikke slettet");
+                        return false;
+                    }
+
+                    _db.Ferder.Remove(fjerneFerd);
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: SlettFerd: Vellykket! Ferd slettet");
+                    return true;
+                }
+                else
+                {
+                    _log.LogInformation("BestillingRepository.cs: SlettFerd: Ferd finnes ikke i databasen");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettFerd: Feil i databasen. Ferd ikke slettet. " + e);
                 return false;
             }
         }

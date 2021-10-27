@@ -118,7 +118,7 @@ namespace Regnbuelinja.Controllers
             }
         }
 
-        [HttpDelete("rute{id}")]
+        [HttpDelete("rute/{id}")]
         public async Task<ActionResult> SlettRute(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
@@ -337,7 +337,7 @@ namespace Regnbuelinja.Controllers
                 else
                 {
                     _log.LogInformation("AdminController.cs: EndreFerd: Databasefeil. Ferd ikke endret");
-                    return NotFound("Ferd ikke funnet, ferd med i eksisterende bestilling(er) eller feil rute/båt-id.");
+                    return NotFound("Ferd, rute eller båt ikke funnet, ferd med i eksisterende bestilling(er) eller databasefeil");
                 }
             }
             else
@@ -345,6 +345,28 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: EndreFerd: Feil i inputvalideringen.");
                 return BadRequest("Feil i inputvalidering på server.");
             }
+        }
+
+        [HttpDelete("ferd/{id}")]
+        public async Task<ActionResult> SlettFerd(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            bool slettet = await _db.SlettFerd(id);
+            if (slettet)
+            {
+                _log.LogInformation("AdminController.cs: SlettFerd: Ferd slettet.");
+                return Ok(slettet);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
+                return NotFound("Ferd ikke funnet eller i eksisterende bestilling(er).");
+            }
+
         }
 
         [HttpPost("brukere")]
