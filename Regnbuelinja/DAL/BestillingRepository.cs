@@ -141,11 +141,11 @@ namespace Regnbuelinja.DAL
             try
             {
                 List<Rute> alleRutene = await _db.Ruter.ToListAsync();
-                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Vellykket databasekall");
+                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Vellykket! Ruter hentet");
                 return alleRutene;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil: " + e +". Rute ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil: " + e +". Ruter ikke hentet");
                 return null;
             }
             
@@ -225,7 +225,74 @@ namespace Regnbuelinja.DAL
                 return false;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: Feil i databasen: "+e+". Båt ikke slettet");
+                _log.LogInformation("BestillingRepository.cs: SlettBåt: Feil i databasen: "+e+". Båt ikke slettet");
+                return false;
+            }
+        }
+
+        public async Task<List<Baat>> HentAlleBåter()
+        {
+            try
+            {
+                List<Baat> alleBåtene = await _db.Baater.ToListAsync();
+                _log.LogInformation("BestillingRepository.cs: HentAlleBåter: Vellykket! Båter hentet");
+                return alleBåtene;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBåter: Databasefeil: " + e + ". Båter ikke hentet");
+                return null;
+            }
+        }
+
+        public async Task<Baat> HentEnBåt(int id)
+        {
+            try
+            {
+                Baat hentetBåt = await _db.Baater.FirstOrDefaultAsync(b => b.Id == id);
+                if(hentetBåt == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentEnBåt: Ingen båt funnet i databasen med gitt id");
+                }
+                _log.LogInformation("BestillingRepository.cs: HentEnBåt: Vellykket! Båt hentet");
+                return hentetBåt;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepisotory.cs: HentEnBaat: Feil i databasen på serveren: " + e);
+                return null;
+            }
+        }
+
+        public async Task<bool> LagreFerd(Ferder ferdSomLagres)
+        {
+            try
+            {
+                Rute rute = await _db.Ruter.FirstOrDefaultAsync(r => r.Id == ferdSomLagres.RId);
+                Baat båt = await _db.Baater.FirstOrDefaultAsync(b => b.Id == ferdSomLagres.BId);
+                if (rute == default || båt == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: Ferd ikke lagret. Rute eller båt ikke i databasen");
+                    return false;
+                }
+                DateTime avreiseTid = ParseDatoLocal(ferdSomLagres.AvreiseTid);
+                DateTime ankomstTid = ParseDatoLocal(ferdSomLagres.AnkomstTid);
+                Ferd nyFerd = new Ferd()
+                {
+                    Rute = rute,
+                    Baat = båt,
+                    AvreiseTid = avreiseTid,
+                    AnkomstTid = ankomstTid
+                };
+
+                _db.Ferder.Add(nyFerd);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: Vellykket! Ferd lagret i databasen");
+                return true;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: Databasefeil: " + e + ". Ferd ikke lagret.");
                 return false;
             }
         }
