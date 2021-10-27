@@ -20,7 +20,6 @@ namespace Regnbuelinja_Test
 
         private readonly Mock<IBestillingRepository> mockRep = new Mock<IBestillingRepository>();
         private readonly Mock<ILogger<AdminController>> mockLog = new Mock<ILogger<AdminController>>();
-
         private readonly Mock<HttpContext> mockHttpContext = new Mock<HttpContext>();
         private readonly MockHttpSession mockSession = new MockHttpSession();
 
@@ -84,6 +83,34 @@ namespace Regnbuelinja_Test
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
             Assert.False((bool)resultat.Value);
         }
+
+        //[Fact]
+        //public async Task SlettRuteLoggetInnOKMedFerdTest()
+        //{
+        //    //Arrange
+        //    var baat = new Baat { BId = 1, Navn = "Kharon" };
+        //    var rute = new Rute { RId = 1, Startpunkt = "Haiti", Endepunkt = "Oslo", Pris = 9999.99 };
+        //    var ferd = new Ferd { FId = 1, AnkomstTid = It.IsAny<DateTime>(), AvreiseTid = It.IsAny<DateTime>(), Baat = baat, Rute = rute };
+
+        //    mockRep.Setup(b => b.LagreFerd(ferd)).ReturnsAsync(true);
+        //    mockRep.Setup(b => b.SlettRute(rute.RId)).ReturnsAsync(true);
+        //    var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+        //    mockSession[_loggetInn] = _loggetInn;
+        //    mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+        //    adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+        //    //Act
+        //    var resultat = await adminController.SlettRute(rute.RId) as OkObjectResult;
+        //    var resultat2 = await adminController.HentEnFerd(ferd.FId) as NotFoundObjectResult;
+
+        //    //Assert
+        //    Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+        //    Assert.True((bool)resultat.Value);
+
+        //    Assert.Equal((int)HttpStatusCode.NotFound, resultat2.StatusCode);
+        //    Assert.Equal("Ingen ferd funnet", resultat2.Value);
+        //}
 
         [Fact]
         public async Task HentAlleRuterLoggetInnOK()

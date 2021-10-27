@@ -45,6 +45,87 @@ namespace Regnbuelinja.DAL
             
         }
 
+        public async Task<bool> EndreRute(Ruter endreRute)
+        {
+            try
+            {
+                Rute somSkalEndres = await _db.Ruter.FindAsync(endreRute.Id);
+                if (!(endreRute == default))
+                {
+                    List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == endreRute.Id).ToListAsync();
+                    foreach (Ferd ferd in AlleRelaterteFerder)
+                    {
+                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
+                        foreach (Billett billett in AlleBilletter)
+                        {
+                            if (billett.Ferd.Id == ferd.Id)
+                            {
+                                _log.LogInformation("BestillingRepository.cs: endreRute: Rute med i en bestillt ferd. Kan ikke endres");
+                                return false;
+                            }
+                        }
+                    }
+
+                    somSkalEndres.Startpunkt = endreRute.Avreisehavn;
+                    somSkalEndres.Endepunkt = endreRute.Ankomsthavn;
+                    somSkalEndres.Pris = endreRute.Pris;
+
+                    await _db.SaveChangesAsync();
+                    return true;
+
+                }
+                else
+                {
+                    _log.LogInformation("BestillingRepository.cs: endreRute: Rute finnes ikke i databasen");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettRute: Feil i databasen. Rute ikke endret. " + e);
+                return false;
+            }
+
+        }
+
+        public async Task<bool> SlettRute(int id)
+        {
+            try
+            {
+                Rute fjerneRute = await _db.Ruter.FindAsync(id);
+                if(!(fjerneRute == default))
+                {
+                    List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == id).ToListAsync();
+                    foreach (Ferd ferd in AlleRelaterteFerder)
+                    {
+                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
+                        foreach(Billett billett in AlleBilletter)
+                        {
+                            if(billett.Ferd.Id == ferd.Id)
+                            {
+                                _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
+                                return false;
+                            }
+                        }
+                        _db.Ferder.Remove(ferd);
+                    }
+                    
+                    _db.Ruter.Remove(fjerneRute);
+                    await _db.SaveChangesAsync();
+                    return true;
+
+                } else
+                {
+                    _log.LogInformation("BestillingRepository.cs: SlettRute: Rute finnes ikke i databasen");
+                    return false;
+                }
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettRute: Feil i databasen. Rute ikke slettet. " + e);
+                return false;
+            }
+        }
+
         public async Task<Rute> HentEnRute(int id)
         {
             try
@@ -77,21 +158,22 @@ namespace Regnbuelinja.DAL
             
         }
 
-        public async Task<bool> SlettRute(int id)
-        {
+        public async Task<bool> LagreBåt(Baater båt) {
             try
             {
-                Rute rute = await _db.Ruter.FindAsync(id);
-                _db.Ruter.Remove(rute);
+                Baat nyBaat = new Baat();
+                nyBaat.Navn = båt.Båtnavn;
+
+                _db.Baater.Add(nyBaat);
+                _log.LogInformation("BestillingRepository.cs: LagreBåt: Vellykket! Båt lagret i databasen");
                 await _db.SaveChangesAsync();
-                _log.LogInformation("BestillingRepository.cs: SlettRute: Rute slettet");
                 return true;
-            }
-            catch
+            } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: SlettRute: Mislykket. Det kan finnes ferder som bruker ruten med id = "+ id);
+                _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen. Båt ikke lagret");
                 return false;
             }
+            
         }
 
         public async Task<bool> LagreBruker(Bruker bruker)

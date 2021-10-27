@@ -7,9 +7,12 @@ namespace Regnbuelinja.DAL
 {
     public interface IBestillingRepository
     {
+        Task<bool> EndreRute(Ruter rute);
         Task<bool> LagreRute(Ruter rute);
         Task<List<Rute>> HentAlleRuter();
         Task<Rute> HentEnRute(int id);
+        Task<bool> SlettRute(int id);
+        Task<bool> LagreBåt(Baater båt);
         Task<bool> LagreBruker(Bruker bruker);
         Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();
@@ -18,7 +21,6 @@ namespace Regnbuelinja.DAL
         Task<string> HentBaat(int id, string Startpunkt);
         Task<List<string>> HentAnkomsthavner(string avgangsHavn);
         Task<List<Rute>> HentRuter(string nyttStartPunkt);
-        Task<bool> SlettRute(int id); //
         Task<List<Ferd>> HentFerder(int ruteId);
         Task<string> LagreBestilling(Bestilling nyBestilling);
         Task<Bestilling> HentBestilling(int id);
