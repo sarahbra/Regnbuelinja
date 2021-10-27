@@ -45,6 +45,7 @@ namespace Regnbuelinja.DAL
             
         }
 
+        //TODO: Effektivisere denne. Hvis vi får tid, kan spare tid på å splitte billetter i to + sjekke for if retur. Vil finne de to ulike ferdene.
         public async Task<bool> EndreRute(Ruter endreRute)
         {
             try
@@ -53,9 +54,9 @@ namespace Regnbuelinja.DAL
                 if (!(endreRute == default))
                 {
                     List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == endreRute.Id).ToListAsync();
+                    List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
                     foreach (Ferd ferd in AlleRelaterteFerder)
                     {
-                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
                         foreach (Billett billett in AlleBilletter)
                         {
                             if (billett.Ferd.Id == ferd.Id)
@@ -96,18 +97,21 @@ namespace Regnbuelinja.DAL
                 if(!(fjerneRute == default))
                 {
                     List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == id).ToListAsync();
-                    foreach (Ferd ferd in AlleRelaterteFerder)
+                    if(AlleRelaterteFerder.Any())
                     {
                         List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
-                        foreach(Billett billett in AlleBilletter)
+                        foreach (Ferd ferd in AlleRelaterteFerder)
                         {
-                            if(billett.Ferd.Id == ferd.Id)
+                            foreach (Billett billett in AlleBilletter)
                             {
-                                _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
-                                return false;
+                                if (billett.Ferd.Id == ferd.Id)
+                                {
+                                    _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
+                                    return false;
+                                }
                             }
+                            _db.Ferder.Remove(ferd);
                         }
-                        _db.Ferder.Remove(ferd);
                     }
                     
                     _db.Ruter.Remove(fjerneRute);
@@ -138,7 +142,7 @@ namespace Regnbuelinja.DAL
                 return hentetRute;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepisotory.cs: HentEnRute: Feil i databasen på serveren");
+                _log.LogInformation("BestillingRepisotory.cs: HentEnRute: Feil i databasen på serveren: "+e);
                 return null;
             }
         }
@@ -150,9 +154,9 @@ namespace Regnbuelinja.DAL
                 List<Rute> alleRutene = await _db.Ruter.ToListAsync();
                 _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Vellykket databasekall");
                 return alleRutene;
-            } catch
+            } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil. Ruter ikke hentet.");
+                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil: " + e +". Rute ikke hentet");
                 return null;
             }
             
@@ -170,7 +174,7 @@ namespace Regnbuelinja.DAL
                 return true;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen. Båt ikke lagret");
+                _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen: " + e +". Båt ikke lagret");
                 return false;
             }
             
@@ -222,6 +226,7 @@ namespace Regnbuelinja.DAL
                 return false;
 
             } catch (Exception e) {
+                _log.LogInformation("BestillingRepository.cs: LoggInn: Ikke logget inn. Feil: " + e);
                 return false;
             }
         }
