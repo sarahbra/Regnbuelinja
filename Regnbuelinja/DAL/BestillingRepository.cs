@@ -54,19 +54,22 @@ namespace Regnbuelinja.DAL
                 if (!(endreRute == default))
                 {
                     List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == endreRute.Id).ToListAsync();
-                    List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
-                    foreach (Ferd ferd in AlleRelaterteFerder)
+                    if(AlleRelaterteFerder.Any())
                     {
-                        foreach (Billett billett in AlleBilletter)
+                        List<Billett> AlleBilletter = await _db.Bestillinger.SelectMany(b => b.Billetter).ToListAsync();
+                        foreach (Ferd ferd in AlleRelaterteFerder)
                         {
-                            if (billett.Ferd.Id == ferd.Id)
+                            foreach (Billett billett in AlleBilletter)
                             {
-                                _log.LogInformation("BestillingRepository.cs: endreRute: Rute med i en bestillt ferd. Kan ikke endres");
-                                return false;
+                                if (billett.Ferd.Id == ferd.Id)
+                                {
+                                    _log.LogInformation("BestillingRepository.cs: endreRute: Rute med i en bestillt ferd. Kan ikke endres");
+                                    return false;
+                                }
                             }
                         }
                     }
-
+                    
                     somSkalEndres.Startpunkt = endreRute.Avreisehavn;
                     somSkalEndres.Endepunkt = endreRute.Ankomsthavn;
                     somSkalEndres.Pris = endreRute.Pris;
@@ -286,17 +289,17 @@ namespace Regnbuelinja.DAL
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
 
-            DateTime AvreiseTid = parseDatoLocal(nyBestilling.AvreiseTid);
+            DateTime AvreiseTid = ParseDatoLocal(nyBestilling.AvreiseTid);
             
-            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(utenTimer(AvreiseTid.Date)) &&
+            Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(UtenTimer(AvreiseTid.Date)) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
             Ferd ferdRetur;
             // Hvis HjemreiseTid-parameteren er definert, blir det antatt at bestillingen er en tur/retur bestilling.
             if (nyBestilling.HjemreiseTid != null)
             {
-                DateTime HjemreiseTid = parseDatoLocal(nyBestilling.HjemreiseTid);
-                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(utenTimer(HjemreiseTid.Date)) &&
+                DateTime HjemreiseTid = ParseDatoLocal(nyBestilling.HjemreiseTid);
+                ferdRetur = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(UtenTimer(HjemreiseTid.Date)) &&
                   f.Rute.Startpunkt.Equals(nyBestilling.Endepunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Startpunkt));
                 _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: ferdRetur variablen har blitt definert.");
             }
@@ -420,7 +423,7 @@ namespace Regnbuelinja.DAL
                 Datoer = await _db.Ferder.Where(f => (f.Rute.Startpunkt.Equals(Startpunkt) && (f.Rute.Endepunkt.Equals(Endepunkt)))).Select(f => f.AvreiseTid).ToListAsync();
             } else
             {
-                DateTime AnkomstTid = await _db.Ferder.Where(f => f.Rute.Startpunkt.Equals(Startpunkt) && f.Rute.Endepunkt.Equals(Endepunkt) && f.AvreiseTid.Date.Equals(parseDatoLocal(AvreiseTid))).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
+                DateTime AnkomstTid = await _db.Ferder.Where(f => f.Rute.Startpunkt.Equals(Startpunkt) && f.Rute.Endepunkt.Equals(Endepunkt) && f.AvreiseTid.Date.Equals(ParseDatoLocal(AvreiseTid))).Select(f => f.AnkomstTid).FirstOrDefaultAsync();
                 if(AnkomstTid == default)
                 {
                     _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Ingen ferder med startpunkt " + Startpunkt + " og endepunkt " + Endepunkt + " med avreisetid " + AvreiseTid + " funnet i databasen.");
@@ -437,7 +440,7 @@ namespace Regnbuelinja.DAL
             }
             // endrer time tallet til 0 får å unngå problemer med Bootstrap sin Javascript kalender
             for (int i = 0; i < Datoer.Count; i++){
-                Datoer[i] = utenTimer(Datoer[i]);
+                Datoer[i] = UtenTimer(Datoer[i]);
             }
             _log.LogInformation("/Controllers/BestillingRepository.cs: HentDatoer: Vellykket. Ferd med Startpunkt '" + Startpunkt + "' og Endepunkt '" + Endepunkt + "' har blitt funnet i databasen.");
             return Datoer;
@@ -489,13 +492,13 @@ namespace Regnbuelinja.DAL
         }
 
         // En lokal metode for å konvertere dato strenger til DateTime objekter
-        private DateTime parseDatoLocal(string dato_tid)
+        private DateTime ParseDatoLocal(string dato_tid)
         {
             DateTime dato = DateTime.Parse(dato_tid, null, System.Globalization.DateTimeStyles.AssumeLocal);
             return dato; 
         }
 
-        private DateTime utenTimer(DateTime dato)
+        private DateTime UtenTimer(DateTime dato)
         {
             return new DateTime(dato.Year, dato.Month, dato.Day, 0, 0 ,0); 
         }
