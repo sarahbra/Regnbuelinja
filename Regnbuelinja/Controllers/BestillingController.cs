@@ -82,7 +82,7 @@ namespace Regnbuelinja.Controllers
             return Ok(hentferder);
         }
 
-        public async Task<ActionResult> LagreBestilling(Bestilling nyBestilling)
+        public async Task<ActionResult> LagreBestilling(BestillingOutput nyBestilling)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +101,7 @@ namespace Regnbuelinja.Controllers
 
         public async Task<ActionResult> HentBestilling(int id)
         {
-            Bestilling hentBestilling = await _db.HentBestilling(id);
+            BestillingOutput hentBestilling = await _db.HentBestilling(id);
             if (hentBestilling == null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet.");

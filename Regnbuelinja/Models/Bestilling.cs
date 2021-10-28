@@ -1,19 +1,14 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Regnbuelinja.Models
 {
     public class Bestilling
     {
-        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
-        public string Startpunkt { get; set; }
-        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
-        public string Endepunkt { get; set; }
-        //Finn riktig: [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
-        public string AvreiseTid { get; set; }
-        //Finn riktig: [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
-        public string HjemreiseTid { get; set; }
-        public int AntallVoksne { get; set; }
-        public int AntallBarn { get; set; }
+        public int Id { get; set; }
+        public int KId { get; set; }
+        public bool Betalt { get; set; }
     }
 }

@@ -409,6 +409,26 @@ namespace Regnbuelinja.Controllers
             }
         }
 
+        [HttpGet("rute/{id}/bestillinger")]
+        public async Task<ActionResult> HentBestillingerForFerd(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Bestilling> alleBestillinger = await _db.HentBestillingerForFerd(id);
+            if (alleBestillinger.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Vellykket! Billetter hentet");
+                return Ok(alleBestillinger);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Databasefeil, ingen billetter i bestilling eller bestilling ikke funnet");
+                return NotFound("Ingen billetter i bestilling eller bestilling ikke funnet");
+            }
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {

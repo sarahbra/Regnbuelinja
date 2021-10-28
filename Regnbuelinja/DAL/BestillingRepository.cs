@@ -418,6 +418,30 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<List<Bestilling>> HentAlleBestillinger()
+        {
+            try
+            {
+                List<Bestilling> alleBestillinger = await _db.Bestillinger.Select(b => new Bestilling()
+                {
+                    Id = b.Id,
+                    KId = b.Kunden.Id,
+                    Betalt = b.Betalt
+                }).ToListAsync();
+                if (!alleBestillinger.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillinger: Ingen bestillinger i databasen");
+                }
+                return alleBestillinger;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBestillinger: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                return null;
+            }
+        }
+
+        //vet ikke om trengs
         public async Task<List<Billetter>> HentAlleBilletter()
         {
             try
@@ -463,25 +487,26 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<List<Billetter>> HentBilletterForFerd(int id)
+        public async Task<List<Bestilling>> HentBestillingerForFerd(int id)
         {
             try
             {
-                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => new Billetter()
+                List<Bestilling> alleBestillinger = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => b.Bestilling).Select(b => new Bestilling() 
                 {
                     Id = b.Id,
-                    FId = b.Ferd.Id,
-                    Voksen = b.Voksen
-                }).ToListAsync();
-                if (!alleBilletter.Any())
+                    KId = b.Kunden.Id,
+                    Betalt = b.Betalt
+                }).Distinct().ToListAsync();
+                
+                if (!alleBestillinger.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Ferd ikke funnet eller ingen billetter for ferd");
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForFerd: Ferd ikke funnet eller ingen bestillinger for ferd");
                 }
-                return alleBilletter;
+                return alleBestillinger;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Feil i databasen: " + e + ". Billetter ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForFerd: Feil i databasen: " + e + ". Bestillinger ikke hentet");
                 return null;
             }
         }
@@ -586,7 +611,7 @@ namespace Regnbuelinja.DAL
             return ferder;
         }
 
-        public async Task<string> LagreBestilling(Bestilling nyBestilling)
+        public async Task<string> LagreBestilling(BestillingOutput nyBestilling)
         {
             double totalPris = 0.00;
             List<Billett> billettListe = new List<Billett>();
@@ -681,9 +706,9 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<Bestilling> HentBestilling(int id)
+        public async Task<BestillingOutput> HentBestilling(int id)
         {
-            Bestilling bestilling = await _db.Bestillinger.Where(b => b.Id == id).Select(b => new Bestilling
+            BestillingOutput bestilling = await _db.Bestillinger.Where(b => b.Id == id).Select(b => new BestillingOutput
             {
                 Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
                 Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
@@ -693,7 +718,7 @@ namespace Regnbuelinja.DAL
                 AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
             }).FirstOrDefaultAsync();
 
-            if (bestilling != default(Bestilling))
+            if (bestilling != default(BestillingOutput))
             {
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentBestilling: Vellykket. Et BestillingInput objekt blir returnert.");
                 return bestilling;
