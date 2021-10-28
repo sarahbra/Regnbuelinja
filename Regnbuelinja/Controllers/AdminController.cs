@@ -429,62 +429,62 @@ namespace Regnbuelinja.Controllers
             }
         }
 
-        [HttpGet("ferd/{id}/bestillinger")]
-        public async Task<ActionResult> HentBestillingerForFerd(int id)
+        [HttpGet("ferd/{id}/billetter")]
+        public async Task<ActionResult> HentBilletterForFerd(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            List<Bestilling> alleBestillinger = await _db.HentBestillingerForFerd(id);
-            if (alleBestillinger.Any())
+            List<Billetter> alleBilletter = await _db.HentBilletterForFerd(id);
+            if (alleBilletter.Any())
             {
-                _log.LogInformation("AdminController.cs: HentBestillingerForFerd: Vellykket! Bestillinger hentet");
-                return Ok(alleBestillinger);
+                _log.LogInformation("AdminController.cs: HentBilletterForFerd: Vellykket! Billetter hentet");
+                return Ok(alleBilletter);
             }
             else
             {
-                _log.LogInformation("AdminController.cs: HentBestillingerForFerd: Databasefeil eller ferd ikke funnet");
+                _log.LogInformation("AdminController.cs: HentBilletterForFerd: Databasefeil eller ferd ikke funnet");
                 return NotFound("Ferd ikke funnet");
             }
         }
 
-        [HttpGet("rute/{id}/bestillinger")]
-        public async Task<ActionResult> HentBestillingerForRute(int id)
+        [HttpGet("rute/{id}/billetter")]
+        public async Task<ActionResult> HentBilletterForRute(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            List<Bestilling> alleBestillinger = await _db.HentBestillingerForRute(id);
-            if (alleBestillinger.Any())
+            List<Billetter> alleBilletter = await _db.HentBilletterForRute(id);
+            if (alleBilletter.Any())
             {
-                _log.LogInformation("AdminController.cs: HentBestillingerForRute: Vellykket! Bestillinger hentet");
-                return Ok(alleBestillinger);
+                _log.LogInformation("AdminController.cs: HentBilletterForRute: Vellykket! Billetter hentet");
+                return Ok(alleBilletter);
             }
             else
             {
-                _log.LogInformation("AdminController.cs: HentBestillingerForRute: Databasefeil eller rute ikke funnet");
+                _log.LogInformation("AdminController.cs: HentBilletterForRute: Databasefeil eller rute ikke funnet");
                 return NotFound("Rute ikke funnet");
             }
         }
 
-        [HttpGet("baat/{id}/bestillinger")]
-        public async Task<ActionResult> HentBestillingerForBåt(int id)
+        [HttpGet("baat/{id}/billetter")]
+        public async Task<ActionResult> HentBilletterForBåt(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            List<Bestilling> alleBestillinger = await _db.HentBestillingerForBåt(id);
-            if (alleBestillinger.Any())
+            List<Billetter> alleBilletter = await _db.HentBilletterForBåt(id);
+            if (alleBilletter.Any())
             {
-                _log.LogInformation("AdminController.cs: HentBestillingerForBåt: Vellykket! Bestillinger hentet");
-                return Ok(alleBestillinger);
+                _log.LogInformation("AdminController.cs: HentBilletterForBåt: Vellykket! Billetter hentet");
+                return Ok(alleBilletter);
             }
             else
             {
-                _log.LogInformation("AdminController.cs: HentBestillingerForBåt: Databasefeil eller båt ikke funnet");
+                _log.LogInformation("AdminController.cs: HentBilletterForBåt: Databasefeil eller båt ikke funnet");
                 return NotFound("Båt ikke funnet");
             }
         }

@@ -450,6 +450,7 @@ namespace Regnbuelinja.DAL
                 {
                     Id = b.Id,
                     FId = b.Ferd.Id,
+                    BId = b.Bestilling.Id,
                     Voksen = b.Voksen
                 }).ToListAsync();
                 if (!alleBilletter.Any())
@@ -473,6 +474,7 @@ namespace Regnbuelinja.DAL
                 {
                     Id = b.Id,
                     FId = b.Ferd.Id,
+                    BId = b.Bestilling.Id,
                     Voksen = b.Voksen
                 }).ToListAsync();
                 if(!alleBilletter.Any())
@@ -487,74 +489,77 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<List<Bestilling>> HentBestillingerForFerd(int id)
+        public async Task<List<Billetter>> HentBilletterForFerd(int id)
         {
             try
             {
-                List<Bestilling> alleBestillinger = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => b.Bestilling).Select(b => new Bestilling() 
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => new Billetter() 
                 {
                     Id = b.Id,
-                    KId = b.Kunden.Id,
-                    Betalt = b.Betalt
+                    FId = b.Ferd.Id,
+                    BId = b.Bestilling.Id,
+                    Voksen = b.Voksen
                 }).Distinct().ToListAsync();
                 
-                if (!alleBestillinger.Any())
+                if (!alleBilletter.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForFerd: Ferd ikke funnet eller ingen bestillinger for ferd");
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Ferd ikke funnet eller ingen billetter for ferd");
                 }
-                return alleBestillinger;
+                return alleBilletter;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForFerd: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Feil i databasen: " + e + ". Billetter ikke hentet");
                 return null;
             }
         }
 
-        public async Task<List<Bestilling>> HentBestillingerForRute(int id)
+        public async Task<List<Billetter>> HentBilletterForRute(int id)
         {
             try
             {
-                List<Bestilling> alleBestillinger = await _db.Billetter.Where(b => b.Ferd.Rute.Id == id).Select(b => b.Bestilling).Select(b => new Bestilling()
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
-                    KId = b.Kunden.Id,
-                    Betalt = b.Betalt
+                    BId = b.Bestilling.Id,
+                    FId = b.Ferd.Id,
+                    Voksen = b.Voksen
                 }).Distinct().ToListAsync();
 
-                if (!alleBestillinger.Any())
+                if (!alleBilletter.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForRute: Rute ikke funnet eller ingen bestillinger for rute");
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForRute: Rute ikke funnet eller ingen billetter for rute");
                 }
-                return alleBestillinger;
+                return alleBilletter;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForRute: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForRute: Feil i databasen: " + e + ". Billetter ikke hentet");
                 return null;
             }
         }
 
-        public async Task<List<Bestilling>> HentBestillingerForBåt(int id)
+        public async Task<List<Billetter>> HentBilletterForBåt(int id)
         {
             try
             {
-                List<Bestilling> alleBestillinger = await _db.Billetter.Where(b => b.Ferd.Baat.Id == id).Select(b => b.Bestilling).Select(b => new Bestilling()
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
-                    KId = b.Kunden.Id,
-                    Betalt = b.Betalt
+                    FId = b.Ferd.Id,
+                    BId = b.Bestilling.Id,
+                    Voksen = b.Voksen
                 }).Distinct().ToListAsync();
 
-                if (!alleBestillinger.Any())
+                if (!alleBilletter.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForBåt: Båt ikke funnet eller ingen bestillinger for båt");
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBåt: Båt ikke funnet eller ingen billetter for båt");
                 }
-                return alleBestillinger;
+                return alleBilletter;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForBåt: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBåt: Feil i databasen: " + e + ". Billetter ikke hentet");
                 return null;
             }
         }
