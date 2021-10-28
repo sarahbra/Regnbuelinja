@@ -65,17 +65,11 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: EndreRute: Vellykket! Rute endret");
                     return Ok("Vellykket. Rute endret");
                 }
-                else
-                {
-                    _log.LogInformation("AdminController.cs: EndreRute: Databasefeil. Rute ikke endret");
-                    return NotFound("Rute ikke funnet eller rute med i eksisterende bestilling(er).");
-                }
-            } else
-            {
-                _log.LogInformation("AdminController.cs: EndreRute: Feil i inputvalideringen.");
-                return BadRequest("Feil i inputvalidering på server.");
+                _log.LogInformation("AdminController.cs: EndreRute: Databasefeil. Rute ikke endret");
+                return NotFound("Rute ikke funnet eller rute med i eksisterende bestilling(er).");
             }
-            
+            _log.LogInformation("AdminController.cs: EndreRute: Feil i inputvalideringen.");
+            return BadRequest("Feil i inputvalidering på server.");
         }
 
         [HttpGet("ruter")]
@@ -153,16 +147,12 @@ namespace Regnbuelinja.Controllers
                 {
                     _log.LogInformation("AdminController.cs: LagreBåt: Båt lagret i databasen");
                     return Ok(lagretBåt);
-                } else
-                {
-                    _log.LogInformation("AdminController.cs: LagreBåt: Databasefeil. Båt kunne ikke lagres");
-                    return BadRequest("Databasefeil. Båt ikke lagret");
                 }
-            } else
-            {
-                _log.LogInformation("AdminController.cs: LagreBåt: Feil i inputvalideringen. Båt ikke lagret");
-                return BadRequest("Feil i inputvalideringen");
+                _log.LogInformation("AdminController.cs: LagreBåt: Databasefeil. Båt kunne ikke lagres");
+                return NotFound("Databasefeil. Båt ikke lagret");
             }
+            _log.LogInformation("AdminController.cs: LagreBåt: Feil i inputvalideringen. Båt ikke lagret");
+            return BadRequest("Feil i inputvalideringen");
         }
 
         [HttpPut("baat/{id}")]
@@ -180,17 +170,11 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: EndreBåt: Båt endret i databasen");
                     return Ok("Vellykket! Båt endret i databasen");
                 }
-                else
-                {
-                    _log.LogInformation("AdminController.cs: EndreBåt: Databasefeil. Båt kunne ikke endres");
-                    return NotFound("Båt ikke funnet i databasen eller databasefeil.");
-                }
+                _log.LogInformation("AdminController.cs: EndreBåt: Databasefeil. Båt kunne ikke endres");
+                return NotFound("Båt ikke funnet i databasen eller databasefeil.");
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: EndreBåt: Feil i inputvalideringen. Båt ikke endret");
-                return BadRequest("Feil i inputvalideringen");
-            }
+            _log.LogInformation("AdminController.cs: EndreBåt: Feil i inputvalideringen. Båt ikke endret");
+            return BadRequest("Feil i inputvalideringen");
         }
 
         [HttpDelete("baat/{id}")]
@@ -206,11 +190,8 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettBåt: Båt slettet fra databasen");
                 return Ok("Vellykket! Båt slettet");
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: SlettBåt: Databasefeil. Båt kunne ikke endres");
-                return NotFound("Båt ikke funnet i databasen eller båt med i eksisterende bestilling(er).");
-            }
+            _log.LogInformation("AdminController.cs: SlettBåt: Databasefeil. Båt kunne ikke endres");
+            return NotFound("Båt ikke funnet i databasen eller båt med i eksisterende bestilling(er).");
         }
 
         [HttpGet("baater")]
@@ -221,16 +202,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Baat> alleBåter = await _db.HentAlleBåter();
-            if (alleBåter.Any())
+            if (alleBåter != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleBaater: Vellykket! Båter hentet");
                 return Ok(alleBåter);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentAlleBaater: Databasefeil eller ingen båter i databasen");
-                return NotFound("Ingen båter funnet i databasen");
-            }
+            _log.LogInformation("AdminController.cs: HentAlleBaater: Databasefeil eller ingen båter i databasen");
+            return NotFound("Databasefeil. Ingen båter funnet");
         }
 
         [HttpGet("baat/{id}")]
@@ -247,11 +225,8 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: HentEnBåt: Vellykket. Båt hentet");
                 return Ok(hentetBåt);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentEnBåt: Ingen båt funnet i databasen med gitt id");
-                return NotFound("Ingen båt funnet");
-            }
+            _log.LogInformation("AdminController.cs: HentEnBåt: Ingen båt funnet i databasen med gitt id");
+            return NotFound("Ingen båt funnet");
         }
 
         [HttpPost("ferder")]
@@ -269,11 +244,8 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: LagreFerd: Ferd lagret vellykket");
                     return Ok("Vellykket! Ferd lagret i databasen.");
                 }
-                else
-                {
-                    _log.LogInformation("AdminController.cs: LagreFerd: Databasefeil eller feil rute/båt-id. Bruker ikke opprettet.");
-                    return NotFound("Rute eller båt ikke funnet eller databasefeil");
-                }
+                _log.LogInformation("AdminController.cs: LagreFerd: Databasefeil eller feil rute/båt-id. Bruker ikke opprettet.");
+                return NotFound("Rute eller båt ikke funnet eller databasefeil");
             }
             return BadRequest("Feil i inputvalidering på server");
         }
@@ -292,11 +264,8 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: HentEnFerd: Vellykket. Ferd hentet");
                 return Ok(hentetFerd);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentEnFerd: Ingen ferd funnet i databasen med gitt id");
-                return NotFound("Ingen ferd funnet");
-            }
+            _log.LogInformation("AdminController.cs: HentEnFerd: Ingen ferd funnet i databasen med gitt id");
+            return NotFound("Ingen ferd funnet");
         }
 
         [HttpGet("ferder")]
@@ -307,16 +276,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Ferder> alleFerder = await _db.HentAlleFerder();
-            if (alleFerder.Any())
+            if (alleFerder != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleFerder: Vellykket! Ferder hentet");
                 return Ok(alleFerder);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentAlleFerder: Databasefeil eller ingen ferder i databasen");
-                return NotFound("Ingen ferder funnet i databasen");
-            }
+            _log.LogInformation("AdminController.cs: HentAlleFerder: Databasefeil eller ingen ferder i databasen");
+            return NotFound("Ingen ferder funnet i databasen");
         }
 
         [HttpPut("ferd/{id}")]
@@ -334,17 +300,11 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: EndreFerd: Vellykket! Ferd endret");
                     return Ok("Vellykket! Ferd endret i databasen");
                 }
-                else
-                {
-                    _log.LogInformation("AdminController.cs: EndreFerd: Databasefeil. Ferd ikke endret");
-                    return NotFound("Ferd, rute eller båt ikke funnet, ferd med i eksisterende bestilling(er) eller databasefeil");
-                }
+                _log.LogInformation("AdminController.cs: EndreFerd: Databasefeil. Ferd ikke endret");
+                return NotFound("Ferd, rute eller båt ikke funnet, ferd med i eksisterende bestilling(er) eller databasefeil");
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: EndreFerd: Feil i inputvalideringen.");
-                return BadRequest("Feil i inputvalidering på server.");
-            }
+            _log.LogInformation("AdminController.cs: EndreFerd: Feil i inputvalideringen.");
+            return BadRequest("Feil i inputvalidering på server.");
         }
 
         [HttpDelete("ferd/{id}")]
@@ -361,12 +321,8 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettFerd: Ferd slettet.");
                 return Ok(slettet);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
-                return NotFound("Ferd ikke funnet eller i eksisterende bestilling(er).");
-            }
-
+            _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
+            return NotFound("Ferd ikke funnet eller i eksisterende bestilling(er).");
         }
 
         [HttpGet("bestillinger")]
@@ -377,16 +333,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Bestilling> alleBestillinger = await _db.HentAlleBestillinger();
-            if (alleBestillinger.Any())
+            if (alleBestillinger != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleBestillinger: Vellykket! Bestillinger hentet");
                 return Ok(alleBestillinger);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentAlleBestillinger: Databasefeil eller ingen bestillinger i databasen");
-                return NotFound("Ingen bestillinger i databasen");
-            }
+            _log.LogInformation("AdminController.cs: HentAlleBestillinger: Databasefeil eller ingen bestillinger i databasen");
+            return NotFound("Databasefeil");
         }
 
         [HttpGet("billetter")]
@@ -397,16 +350,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Billetter> alleBilletter = await _db.HentAlleBilletter();
-            if (alleBilletter.Any())
+            if (alleBilletter != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleBilletter: Vellykket! Billetter hentet");
                 return Ok(alleBilletter);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentAlleBilletter: Databasefeil eller ingen billetter i databasen");
-                return NotFound("Ingen billetter i databasen");
-            }
+            _log.LogInformation("AdminController.cs: HentAlleBilletter: Databasefeil eller ingen billetter i databasen");
+            return NotFound("Ingen billetter i databasen");
         }
 
         [HttpGet("bestilling/{id}/billetter")]
@@ -417,16 +367,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Billetter> alleBilletter = await _db.HentBilletterForBestilling(id);
-            if (alleBilletter.Any())
+            if (alleBilletter != null)
             {
                 _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Vellykket! Billetter hentet");
                 return Ok(alleBilletter);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Databasefeil, ingen billetter i bestilling eller bestilling ikke funnet");
-                return NotFound("Ingen billetter i bestilling eller bestilling ikke funnet");
-            }
+            _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Databasefeil, ingen billetter i bestilling eller bestilling ikke funnet");
+            return NotFound("Ingen billetter i bestilling eller bestilling ikke funnet");
         }
 
         [HttpGet("ferd/{id}/billetter")]
@@ -437,16 +384,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Billetter> alleBilletter = await _db.HentBilletterForFerd(id);
-            if (alleBilletter.Any())
+            if (alleBilletter != null)
             {
                 _log.LogInformation("AdminController.cs: HentBilletterForFerd: Vellykket! Billetter hentet");
                 return Ok(alleBilletter);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentBilletterForFerd: Databasefeil eller ferd ikke funnet");
-                return NotFound("Ferd ikke funnet");
-            }
+            _log.LogInformation("AdminController.cs: HentBilletterForFerd: Databasefeil eller ferd ikke funnet");
+            return NotFound("Ferd ikke funnet");
         }
 
         [HttpGet("rute/{id}/billetter")]
@@ -457,16 +401,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Billetter> alleBilletter = await _db.HentBilletterForRute(id);
-            if (alleBilletter.Any())
+            if (alleBilletter == null)
             {
                 _log.LogInformation("AdminController.cs: HentBilletterForRute: Vellykket! Billetter hentet");
                 return Ok(alleBilletter);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentBilletterForRute: Databasefeil eller rute ikke funnet");
-                return NotFound("Rute ikke funnet");
-            }
+            _log.LogInformation("AdminController.cs: HentBilletterForRute: Databasefeil eller rute ikke funnet");
+            return NotFound("Rute ikke funnet");
         }
 
         [HttpGet("kunde/{id}/bestillinger")]
@@ -477,16 +418,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Bestilling> alleBestillinger = await _db.HentBestillingerForKunde(id);
-            if (alleBestillinger.Any())
+            if (alleBestillinger==null)
             {
                 _log.LogInformation("AdminController.cs: HentBestillingerForKunde: Vellykket! Bestillinger hentet");
                 return Ok(alleBestillinger);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentBestillingerForKunde: Kunde ikke funnet eller har ikke bestillt reise");
-                return NotFound("Kunde ikke funnet eller ingen bestillinger av kunde");
-            }
+            _log.LogInformation("AdminController.cs: HentBestillingerForKunde: Kunde ikke funnet eller har ikke bestillt reise");
+            return NotFound("Kunde ikke funnet eller databasefeil");
         }
 
         [HttpGet("baat/{id}/billetter")]
@@ -497,16 +435,13 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Billetter> alleBilletter = await _db.HentBilletterForBåt(id);
-            if (alleBilletter.Any())
+            if (alleBilletter != null)
             {
                 _log.LogInformation("AdminController.cs: HentBilletterForBåt: Vellykket! Billetter hentet");
                 return Ok(alleBilletter);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentBilletterForBåt: Databasefeil eller båt ikke funnet");
-                return NotFound("Båt ikke funnet");
-            }
+            _log.LogInformation("AdminController.cs: HentBilletterForBåt: Databasefeil eller båt ikke funnet");
+            return NotFound("Båt ikke funnet eller databasefeil");
         }
 
         [HttpGet("kunde/{id}")]
@@ -537,19 +472,53 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
             List<Kunder> alleKunder = await _db.HentAlleKunder();
-            if (alleKunder.Any())
+            if (alleKunder != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleKunder: Vellykket! Kunder hentet");
                 return Ok(alleKunder);
             }
-            else
-            {
-                _log.LogInformation("AdminController.cs: HentAlleKunder: Databasefeil eller ingen kunder funnet");
-                return NotFound("Ingen kunder i databasen");
-            }
+            _log.LogInformation("AdminController.cs: HentAlleKunder: Databasefeil. Prøv igjen!");
+            return NotFound("Databasefeil. Kunne ikke hente kunder");
         }
 
-        //[HttpDelete("")]
+        [HttpPut("kunde/{id}")]
+        public async Task<ActionResult> EndreKunde(Kunder kunde)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
+            {
+                bool endretKunde = await _db.EndreKunde(kunde);
+                if (endretKunde)
+                {
+                    _log.LogInformation("AdminController.cs: EndreKunde: Kunde endret i databasen");
+                    return Ok("Vellykket! Kunde endret i databasen");
+                }
+                _log.LogInformation("AdminController.cs: EndreKunde: Databasefeil eller kunde ikke funnet. Ikke endret");
+                return NotFound("Kunde ikke funnet i databasen eller databasefeil.");
+            }
+            _log.LogInformation("AdminController.cs: EndreKunde: Feil i inputvalideringen. Kunde ikke endret");
+            return BadRequest("Feil i inputvalideringen");
+        }
+
+        [HttpDelete("kunde/{id}")]
+        public async Task<ActionResult> SlettKunde(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            bool slettet = await _db.SlettKunde(id);
+            if (slettet)
+            {
+                _log.LogInformation("AdminController.cs: SlettKunde: Vellykket! Kunde slettet");
+                return Ok(slettet);
+            }
+            _log.LogInformation("AdminController.cs: SlettKunde: Databasefeil, kunde ikke funnet eller ubetalte kundebestillinger i database");
+            return NotFound("Kunde ikke funnet eller ubetalte kundebestillinger i databasen");
+        }
 
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
@@ -566,11 +535,9 @@ namespace Regnbuelinja.Controllers
                 {
                     _log.LogInformation("AdminController.cs: LagreBruker: Bruker lagret vellykket");
                     return Ok(brukerOpprettet);
-                } else
-                {
-                    _log.LogInformation("AdminController.cs: LagreBruker: Databasefeil. Bruker ikke opprettet.");
-                    return BadRequest("Feil i databasen. Bruker ikke opprettet.");
                 }
+                _log.LogInformation("AdminController.cs: LagreBruker: Databasefeil. Bruker ikke opprettet.");
+                return BadRequest("Feil i databasen. Bruker ikke opprettet.");
             }
             return BadRequest("Feil i inputvalidering på server");
         }
@@ -586,17 +553,13 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: LoggInn: Bruker logget inn vellykket.");
                     HttpContext.Session.SetString(_loggetInn, "loggetInn");
                     return Ok(loggetInn);
-                } else
-                {
-                    _log.LogInformation("AdminController.cs: LoggInn: Feil brukernavn eller passord. Ikke logget inn");
-                    HttpContext.Session.SetString(_loggetInn, "");
-                    return Ok(loggetInn);
                 }
-            } else
-            {
-                _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
-                return BadRequest("Feil i inputvalideringen på server");
-            }
+                _log.LogInformation("AdminController.cs: LoggInn: Feil brukernavn eller passord. Ikke logget inn");
+                HttpContext.Session.SetString(_loggetInn, "");
+                return Ok(loggetInn);
+            } 
+            _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
+            return BadRequest("Feil i inputvalideringen på server");
         }
 
         public void LoggUt()

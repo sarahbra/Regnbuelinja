@@ -23,6 +23,12 @@ namespace Regnbuelinja.DAL
         Task<bool> EndreFerd(Ferder ferd);
         Task<bool> SlettFerd(int id);
         Task<List<Bestilling>> HentAlleBestillinger();
+        Task<Bestilling> HentEnBestilling(int id);
+        Task<bool> SlettBestilling(int id);
+        Task<bool> EndreBestilling(Bestilling bestilling);
+        Task<Billetter> HentEnBillett(int id);
+        Task<bool> EndreBillett(int id);
+        Task<bool> SlettBillett(int id);
         Task<List<Billetter>> HentAlleBilletter();
         Task<List<Billetter>> HentBilletterForBestilling(int id);
         Task<List<Billetter>> HentBilletterForFerd(int id);

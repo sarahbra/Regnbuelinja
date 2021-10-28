@@ -442,6 +442,93 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<Bestilling> HentEnBestilling(int id)
+        {
+            try
+            {
+                Bestilling bestilling = await _db.Bestillinger.Select(b => new Bestilling()
+                {
+                    Id = b.Id,
+                    KId = b.Kunde.Id,
+                    Totalpris = b.TotalPris,
+                    Betalt = b.Betalt
+                }).FirstOrDefaultAsync();
+                if (bestilling == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen bestilling med id "+id+" i databasen");
+                }
+                return bestilling;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Feil i databasen: " + e + ". Bestilling ikke hentet");
+                return null;
+            }
+        }
+
+        // En bestilling kan slettes (etter kundeønske) hvis den ikke er betalt enda eller hvis ferden allerede er gjennomført (ankomsttid er tidligere enn dagens dato). 
+        public async Task<bool> SlettBestilling(int id)
+        {
+            try
+            {
+                Bestillinger somSkalSlettes = await _db.Bestillinger.FindAsync(id);
+                if(somSkalSlettes != null)
+                {
+                    if(somSkalSlettes.Betalt == true)
+                    {
+                        _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
+                        _db.Remove(somSkalSlettes);
+                    }
+                    _log.LogInformation("BestillingRepository.cs: SlettBestilling: Bestillingen er ikke betalt enda. Kan ikke slettes");
+                    return false;
+                }
+                _log.LogInformation("BestillingRepository.cs: SlettBestilling: Fant ikke bestillingen i databasen");
+                return false;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettBestilling: Databasefeil: " + e);
+                return false;
+            }
+        }
+
+        // En ubetalt bestilling kan endres (ved kundeønske), mens en betalt bestilling er fastsatt og kan ikke endres (faktureringsavdeling tar seg av dette, vi vil holde
+        // logikken så enkel som mulig).
+        // Totalpris for bestilling kan ikke endres ettersom pris er fastpris og bestemt av ruten.
+        public async Task<bool> EndreBestilling(Bestilling bestilling)
+        {
+            try
+            {
+                Bestillinger endreBestilling = await _db.Bestillinger.FindAsync(bestilling.Id);
+                if (endreBestilling != null)
+                {
+                    if (endreBestilling.Betalt != true)
+                    {
+                        Kunde nyKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
+                        if(nyKunde != default)
+                        {
+                            endreBestilling.Kunde = nyKunde;
+                            endreBestilling.Betalt = bestilling.Betalt;
+
+                            await _db.SaveChangesAsync();
+                            _log.LogInformation("BestillingRepository.cs: EndreBestilling: Vellykket. Bestilling endret");
+                            return true;
+                        }
+                        _log.LogInformation("BestillingRepository.cs: EndreBestilling: Kunde ikke funnet. Kunne ikke endre bestilling");
+                        return false;
+                    }
+                    _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
+                    return false;
+                }
+                _log.LogInformation("BestillingRepository.cs: EndreBestilling: Fant ikke bestillingen i databasen");
+                return false;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreBestilling: Databasefeil: " + e);
+                return false;
+            }
+        }
+
         //vet ikke om trengs
         public async Task<List<Billetter>> HentAlleBilletter()
         {
@@ -1086,5 +1173,19 @@ namespace Regnbuelinja.DAL
             return salt;
         }
 
+        Task<Billetter> IBestillingRepository.HentEnBillett(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IBestillingRepository.EndreBillett(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IBestillingRepository.SlettBillett(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
