@@ -478,7 +478,7 @@ namespace Regnbuelinja.DAL
                     Ferd ferd = somSkalSlettes.Billetter.First().Ferd;
                     Ferd returFerd = somSkalSlettes.Billetter.Where(b => b.Ferd.Id != ferd.Id).Select(b => b.Ferd).FirstOrDefault();
                     DateTime ankomstTid = returFerd == default ? ferd.AnkomstTid : returFerd.AnkomstTid;
-                    if (somSkalSlettes.Betalt != true || (ankomstTid.CompareTo(DateTime.Now) < 0))
+                    if ((!somSkalSlettes.Betalt) || (ankomstTid.CompareTo(DateTime.Now) < 0))
                     {
                         foreach (Billett billett in somSkalSlettes.Billetter)
                         {
@@ -551,23 +551,49 @@ namespace Regnbuelinja.DAL
                 }).FirstOrDefaultAsync();
                 if (billett == default)
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen billett med id " + id + " i databasen");
+                    _log.LogInformation("BestillingRepository.cs: HentEnBillett: Ingen billett med id " + id + " i databasen");
                 }
                 return billett;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Feil i databasen: " + e + ". Billett ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentEnBillett: Feil i databasen: " + e + ". Billett ikke hentet");
                 return null;
             }
         }
 
-        Task<bool> IBestillingRepository.EndreBillett(int id)
+        //SE PÅ DENNE LOGIKKEN IGJEN! Det som skal være tilfelle: En bestilling som ikke er betalt kan slettes, med mindre den allerede har skjedd. En betalt billett kan slettes hvis den har vært
+        public async Task<bool> EndreBillett(Billetter nyBillett)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Billett somSkalEndres = await _db.Billetter.FindAsync(nyBillett.Id);
+                if (somSkalEndres != null)
+                {
+                    if (!somSkalEndres.Bestilling.Betalt || (somSkalEndres.Ferd.AnkomstTid.CompareTo(DateTime.Now) < 0))
+                    {
+                        Ferd endreFerd = await _db.Ferder.FindAsync(nyBillett.FId);
+                        if (endreFerd != null)
+                        {
+                            somSkalEndres.Ferd = endreFerd;
+                            somSkalEndres.Voksen = nyBillett.Voksen;
+                            await _db.SaveChangesAsync();
+                            _log.LogInformation("BestillingRepository.cs: EndreBillett: Vellykket. Billetten er endret");
+                            return true;
+                        }
+                    }
+                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestilling allerede betalt men reisen ikke foretatt eller billett ikke betalt, men reise gjennomført");
+                }
+                _log.LogInformation("BestillingRepository.cs: EndreBillett: Billett ikke funnet i databasen");
+                return false;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreBillett: Databasefeil. Prøv igjen");
+                return false;
+            }
         }
 
-        //Billett kan slettes dersom ankomstTid har vært og billett er betalt ELLER ankomsttid ikke har vært, MEN betalingen er ikke gjennomført.
+        //Billett kan slettes dersom ankomstTid har vært og billett er betalt ELLER ankomsttid ikke har vært, MEN betalingen ikke er gjennomført.
         public async Task<bool> SlettBillett(int id)
         {
             try
@@ -576,7 +602,7 @@ namespace Regnbuelinja.DAL
                 if (somSkalSlettes != null)
                 {
                     DateTime ankomstTid = somSkalSlettes.Ferd.AnkomstTid;
-                    if (somSkalSlettes.Bestilling.Betalt != true || (ankomstTid.CompareTo(DateTime.Now)<0 && somSkalSlettes.Bestilling.Betalt == true))
+                    if ((!somSkalSlettes.Bestilling.Betalt) || (ankomstTid.CompareTo(DateTime.Now)<0))
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
                         _db.Remove(somSkalSlettes);

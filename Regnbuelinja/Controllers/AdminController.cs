@@ -314,7 +314,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(slettet);
             }
             _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
-            return NotFound("Ferd ikke funnet eller i eksisterende bestilling(er).");
+            return NotFound("Fant ikke ferb eller ferd med i bestilling(er)");
         }
 
         [HttpGet("bestillinger")]
@@ -366,7 +366,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(slettet);
             }
             _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
-            return NotFound("Billett ikke funnet eller i eksisterende bestilling(er).");
+            return Ok(slettet);
         }
 
         [HttpGet("billett/{id}")]
