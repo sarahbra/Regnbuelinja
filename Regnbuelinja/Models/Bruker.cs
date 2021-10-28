@@ -10,7 +10,7 @@ namespace Regnbuelinja.Models
     {
         [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,30}$")]
         public string Brukernavn { get; set; }
-        [RegularExpression(@"^(?=.*[0-9])(?=.*[A-Za-zæøåÆØÅ. \-])([a-zA_ZøæåØÆÅ]+){6,}$")]
+        [RegularExpression(@"^(?=.*[0-9])(?=.*[a-zA-ZæøåÆØÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}$")]
         public string Passord { get; set; }
     }
 }
