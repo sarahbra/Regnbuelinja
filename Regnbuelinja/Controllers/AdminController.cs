@@ -179,7 +179,7 @@ namespace Regnbuelinja.Controllers
             if (slettetBåt)
             {
                 _log.LogInformation("AdminController.cs: SlettBåt: Båt slettet fra databasen");
-                return Ok("Vellykket! Båt slettet");
+                return Ok("Vellykket. Båt slettet");
             }
             _log.LogInformation("AdminController.cs: SlettBåt: Databasefeil. Båt kunne ikke endres");
             return NotFound("Båt ikke funnet i databasen eller båt med i eksisterende bestilling(er).");

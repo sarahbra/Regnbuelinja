@@ -203,7 +203,7 @@ namespace Regnbuelinja.DAL
                 Baat somSkalSlettes = await _db.Baater.FirstOrDefaultAsync(b => b.Id == id);
                 if(somSkalSlettes != default)
                 {
-                    List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == somSkalSlettes.Id).ToListAsync();
+                    List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == id).ToListAsync();
                     if (AlleRelaterteBilletter.Any())
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettBåt: Båt med i en bestillt ferd. Ikke slettet");
@@ -706,13 +706,13 @@ namespace Regnbuelinja.DAL
 
                 if (!alleBilletter.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBåt: Båt ikke funnet eller ingen billetter for båt");
+                    _log.LogInformation("BestillingRepository.cs: HentBilletterForBåt: Båt ikke funnet eller ingen billetter for båt");
                 }
                 return alleBilletter;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBåt: Feil i databasen: " + e + ". Billetter ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentBilletterForBåt: Feil i databasen: " + e + ". Billetter ikke hentet");
                 return null;
             }
         }
