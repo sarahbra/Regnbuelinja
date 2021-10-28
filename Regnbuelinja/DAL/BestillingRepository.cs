@@ -652,7 +652,7 @@ namespace Regnbuelinja.DAL
                     FId = b.Ferd.Id,
                     BId = b.Bestilling.Id,
                     Voksen = b.Voksen
-                }).Distinct().ToListAsync();
+                }).ToListAsync();
                 
                 if (!alleBilletter.Any())
                 {
@@ -677,7 +677,7 @@ namespace Regnbuelinja.DAL
                     BId = b.Bestilling.Id,
                     FId = b.Ferd.Id,
                     Voksen = b.Voksen
-                }).Distinct().ToListAsync();
+                }).ToListAsync();
 
                 if (!alleBilletter.Any())
                 {
@@ -702,7 +702,7 @@ namespace Regnbuelinja.DAL
                     FId = b.Ferd.Id,
                     BId = b.Bestilling.Id,
                     Voksen = b.Voksen
-                }).Distinct().ToListAsync();
+                }).ToListAsync();
 
                 if (!alleBilletter.Any())
                 {
