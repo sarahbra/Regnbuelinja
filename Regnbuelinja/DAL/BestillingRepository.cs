@@ -511,6 +511,53 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<List<Bestilling>> HentBestillingerForRute(int id)
+        {
+            try
+            {
+                List<Bestilling> alleBestillinger = await _db.Billetter.Where(b => b.Ferd.Rute.Id == id).Select(b => b.Bestilling).Select(b => new Bestilling()
+                {
+                    Id = b.Id,
+                    KId = b.Kunden.Id,
+                    Betalt = b.Betalt
+                }).Distinct().ToListAsync();
+
+                if (!alleBestillinger.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForRute: Rute ikke funnet eller ingen bestillinger for rute");
+                }
+                return alleBestillinger;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForRute: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                return null;
+            }
+        }
+
+        public async Task<List<Bestilling>> HentBestillingerForBåt(int id)
+        {
+            try
+            {
+                List<Bestilling> alleBestillinger = await _db.Billetter.Where(b => b.Ferd.Baat.Id == id).Select(b => b.Bestilling).Select(b => new Bestilling()
+                {
+                    Id = b.Id,
+                    KId = b.Kunden.Id,
+                    Betalt = b.Betalt
+                }).Distinct().ToListAsync();
+
+                if (!alleBestillinger.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForBåt: Båt ikke funnet eller ingen bestillinger for båt");
+                }
+                return alleBestillinger;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleBestillingerForBåt: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                return null;
+            }
+        }
 
         public async Task<bool> LagreBruker(Bruker bruker)
         {
