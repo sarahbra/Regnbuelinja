@@ -649,8 +649,8 @@ namespace Regnbuelinja.DAL
                 List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => new Billetter() 
                 {
                     Id = b.Id,
-                    FId = b.Ferd.Id,
                     BId = b.Bestilling.Id,
+                    FId = b.Ferd.Id,
                     Voksen = b.Voksen
                 }).ToListAsync();
                 
@@ -699,8 +699,8 @@ namespace Regnbuelinja.DAL
                 List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
-                    FId = b.Ferd.Id,
                     BId = b.Bestilling.Id,
+                    FId = b.Ferd.Id,
                     Voksen = b.Voksen
                 }).ToListAsync();
 
