@@ -466,7 +466,8 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        // En bestilling kan slettes (etter kundeønske) hvis den ikke er betalt enda eller hvis ferden allerede er gjennomført (ankomsttid er tidligere enn dagens dato). 
+        // En bestilling kan slettes (etter kundeønske) hvis den ikke er betalt enda eller hvis ferden allerede er gjennomført (ankomsttid er tidligere enn dagens dato).
+        // TROR DENNE FUNKER! MÅ TESTES!!!
         public async Task<bool> SlettBestilling(int id)
         {
             try
@@ -474,10 +475,18 @@ namespace Regnbuelinja.DAL
                 Bestillinger somSkalSlettes = await _db.Bestillinger.FindAsync(id);
                 if(somSkalSlettes != null)
                 {
-                    if(somSkalSlettes.Betalt == true)
+                    Ferd ferd = somSkalSlettes.Billetter.First().Ferd;
+                    Ferd returFerd = somSkalSlettes.Billetter.Where(b => b.Ferd.Id != ferd.Id).Select(b => b.Ferd).FirstOrDefault();
+                    DateTime ankomstTid = returFerd == default ? ferd.AnkomstTid : returFerd.AnkomstTid;
+                    if (somSkalSlettes.Betalt != true || (ankomstTid.CompareTo(DateTime.Now) < 0))
                     {
+                        foreach (Billett billett in somSkalSlettes.Billetter)
+                        {
+                            _db.Billetter.Remove(billett);
+                        }
                         _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
                         _db.Remove(somSkalSlettes);
+                        await _db.SaveChangesAsync();
                     }
                     _log.LogInformation("BestillingRepository.cs: SlettBestilling: Bestillingen er ikke betalt enda. Kan ikke slettes");
                     return false;
@@ -525,6 +534,43 @@ namespace Regnbuelinja.DAL
             catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: EndreBestilling: Databasefeil: " + e);
+                return false;
+            }
+        }
+
+        Task<Billetter> IBestillingRepository.HentEnBillett(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IBestillingRepository.EndreBillett(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        //Billett kan slettes dersom ankomstTid har vært og billett er betalt ELLER ankomsttid ikke har vært, MEN betalingen er ikke gjennomført.
+        public async Task<bool> SlettBillett(int id)
+        {
+            try
+            {
+                Billett somSkalSlettes = await _db.Billetter.FindAsync(id);
+                if (somSkalSlettes != null)
+                {
+                    DateTime ankomstTid = somSkalSlettes.Ferd.AnkomstTid;
+                    if (somSkalSlettes.Bestilling.Betalt != true || (ankomstTid.CompareTo(DateTime.Now)<0 && somSkalSlettes.Bestilling.Betalt == true))
+                    {
+                        _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
+                        _db.Remove(somSkalSlettes);
+                    }
+                    _log.LogInformation("BestillingRepository.cs: SlettBestilling: Bestillingen er ikke betalt enda. Kan ikke slettes");
+                    return false;
+                }
+                _log.LogInformation("BestillingRepository.cs: SlettBestilling: Fant ikke bestillingen i databasen");
+                return false;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettBestilling: Databasefeil: " + e);
                 return false;
             }
         }
@@ -1173,19 +1219,5 @@ namespace Regnbuelinja.DAL
             return salt;
         }
 
-        Task<Billetter> IBestillingRepository.HentEnBillett(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IBestillingRepository.EndreBillett(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> IBestillingRepository.SlettBillett(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
