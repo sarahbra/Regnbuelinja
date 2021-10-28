@@ -105,6 +105,7 @@ namespace Regnbuelinja.DAL
         public DbSet<Baat> Baater { get; set; }
         public DbSet<Bestillinger> Bestillinger { get; set; }
         public DbSet<Billett> Billetter { get; set; }
+        public DbSet<Kunde> Kunder { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

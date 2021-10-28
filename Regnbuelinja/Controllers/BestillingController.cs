@@ -162,6 +162,23 @@ namespace Regnbuelinja.Controllers
             return Ok(StrekningsPris);
         }
 
+        public async Task<ActionResult> LagreKunde(Kunder kunde)
+        {
+            if(ModelState.IsValid)
+            {
+                bool kundeLagret = await _db.LagreKunde(kunde);
+                if(kundeLagret)
+                {
+                    _log.LogInformation("/Controllers/BestillingController.cs: LagreKunde: Vellykket. Kunde lagret i databasen");
+                    return Ok(kundeLagret);
+                }
+                _log.LogInformation("/Controllers/BestillingController.cs: LagreKunde: Feil i databasen. Prøv igjen!");
+                return Ok(kundeLagret);
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: LagreKunde: Feil i inputvalideringen");
+            return BadRequest("Feil i inputvalideringen");
+        }
+
         public async Task<ActionResult> Betal(int id)
         {
             bool betalt = await _db.Betal(id);

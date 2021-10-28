@@ -39,11 +39,11 @@ namespace Regnbuelinja.Controllers
                 if(lagret)
                 {
                     _log.LogInformation("AdminController.cs: LagreRute: Vellykket! Rute lagret");
-                    return Ok("Vellykket! Rute lagret i databasen");
+                    return Ok(lagret);
                 } else
                 {
                     _log.LogInformation("AdminController.cs: LagreRute: Databasefeil. Rute ikke lagret");
-                    return BadRequest("Feil i databasen. Prøv på nytt");
+                    return Ok(lagret);
                 }
             }
             _log.LogInformation("AdminController.cs: LagreRute: Feil i inputvalideringen.");
@@ -63,7 +63,7 @@ namespace Regnbuelinja.Controllers
                 if (RuteEndret)
                 {
                     _log.LogInformation("AdminController.cs: EndreRute: Vellykket! Rute endret");
-                    return Ok("Vellykket! Rute endret i databasen");
+                    return Ok("Vellykket. Rute endret");
                 }
                 else
                 {

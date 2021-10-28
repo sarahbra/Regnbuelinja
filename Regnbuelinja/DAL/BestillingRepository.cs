@@ -591,6 +591,29 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<bool> LagreKunde(Kunder kunde)
+        {
+            try
+            {
+                Kunde NyKunde = new Kunde()
+                {
+                    Fornavn = kunde.Fornavn,
+                    Etternavn = kunde.Etternavn,
+                    Epost = kunde.Epost,
+                    Telefonnr = kunde.Telefonnr
+                };
+
+                _db.Kunder.Add(NyKunde);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: LagreKunde: Kunde lagret");
+                return true;
+            } catch(Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreKunde: Feil i databasen: " + e + ". Kunde ikke lagret");
+                return false;
+            }
+        }
+
         public async Task<bool> LoggInn(Bruker bruker)
         {
             try
