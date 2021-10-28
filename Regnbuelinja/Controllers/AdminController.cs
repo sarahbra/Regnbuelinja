@@ -549,6 +549,8 @@ namespace Regnbuelinja.Controllers
             }
         }
 
+        //[HttpDelete("")]
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {

@@ -692,6 +692,69 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<bool> EndreKunde(Kunder kunde)
+        {
+            try
+            {
+                Kunde somSkalEndres = await _db.Kunder.FindAsync(kunde.Id);
+                if (!(somSkalEndres == null))
+                {
+                    somSkalEndres.Fornavn = kunde.Fornavn;
+                    somSkalEndres.Etternavn = kunde.Etternavn;
+                    somSkalEndres.Epost = kunde.Epost;
+                    somSkalEndres.Telefonnr = kunde.Telefonnr;
+
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: EndreKunde: Vellykket! Kunde endret");
+                    return true;
+
+                }
+                else
+                {
+                    _log.LogInformation("BestillingRepository.cs: EndreKunde: Kunde finnes ikke i databasen");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreKunde: Feil i databasen. Kunde ikke endret. " + e);
+                return false;
+            }
+        }
+
+        //Kan kun slette kunde dersom kunde ikke har ubetalte bestillinger
+        public async Task<bool> SlettKunde(int id)
+        {
+            try
+            {
+                Kunde fjerneKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == id);
+                if (!(fjerneKunde == default))
+                {
+                    List<Bestillinger> AlleRelaterteBestillinger = await _db.Bestillinger.Where(b => (b.Kunde.Id == id && b.Betalt == false)).ToListAsync();
+                    if (AlleRelaterteBestillinger.Any())
+                    {
+                        _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde har ubetalte bestillinger. Ikke slettet.");
+                        return false;
+                    }
+
+                    _db.Kunder.Remove(fjerneKunde);
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: SlettKunde: Vellykket! Kunde slettet");
+                    return true;
+                }
+                else
+                {
+                    _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde finnes ikke i databasen");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: SlettKunde: Feil i databasen. Kunde ikke slettet. " + e);
+                return false;
+            }
+        }
+
         public async Task<bool> LoggInn(Bruker bruker)
         {
             try
