@@ -8,9 +8,9 @@ namespace Regnbuelinja.Models
 {
     public class Bruker
     {
-        [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,20}$")]
+        [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,30}$")]
         public string Brukernavn { get; set; }
-        [RegularExpression(@"^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{6,}$")]
+        [RegularExpression(@"^(?=.*[0-9])(?=.*[A-Za-zæøåÆØÅ. \-])([a-zA_ZøæåØÆÅ]+){6,}$")]
         public string Passord { get; set; }
     }
 }

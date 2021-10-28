@@ -8,18 +8,31 @@ namespace Regnbuelinja.DAL
     public class Bestillinger
     {
         [Key]
-        public int BeId { get; set; }
+        public int Id { get; set; }
         //public virtual Kunde Kunde { get; set; }
         public double TotalPris { get; set; }
         public virtual List<Billett> Billetter { get; set; }
+        public bool Betalt { get; set; } = false;
+        public virtual Kunde Kunden {get; set;}
     } 
+
+    public class Kunde
+    {
+        public int Id { get; set; }
+        public string Fornavn { get; set; }
+        public string Etternavn { get; set; }
+        public string Telefonnr { get; set; }
+        public string Epost { get; set; }
+        public virtual List<Bestillinger> Bestillinger { get; set; }
+    }
 
     public class Billett
     {
         [Key]
-        public int BiId { get; set; }
+        public int Id { get; set; }
         public virtual Ferd Ferd { get; set; }
         public bool Voksen { get; set; }
+        public virtual Bestillinger Bestilling { get; set; }
     }
 
     public class Ferd

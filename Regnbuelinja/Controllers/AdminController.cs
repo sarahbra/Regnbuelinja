@@ -369,6 +369,66 @@ namespace Regnbuelinja.Controllers
 
         }
 
+        [HttpGet("billetter")]
+        public async Task<ActionResult> HentAlleBilletter()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Billetter> alleBilletter = await _db.HentAlleBilletter();
+            if (alleBilletter.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentAlleBilletter: Vellykket! Billetter hentet");
+                return Ok(alleBilletter);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleBilletter: Databasefeil eller ingen billetter i databasen");
+                return NotFound("Ingen billetter i databasen");
+            }
+        }
+
+        [HttpGet("bestilling/{id}/billetter")]
+        public async Task<ActionResult> HentBilletterForBestilling(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Billetter> alleBilletter = await _db.HentBilletterForBestilling(id);
+            if (alleBilletter.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Vellykket! Billetter hentet");
+                return Ok(alleBilletter);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Databasefeil, ingen billetter i bestilling eller bestilling ikke funnet");
+                return NotFound("Ingen billetter i bestilling eller bestilling ikke funnet");
+            }
+        }
+
+        [HttpGet("rute/{id}/bestillinger")]
+        public async Task<ActionResult> HentBestillingerForFerd(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Bestilling> alleBestillinger = await _db.HentBestillingerForFerd(id);
+            if (alleBestillinger.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Vellykket! Billetter hentet");
+                return Ok(alleBestillinger);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Databasefeil, ingen billetter i bestilling eller bestilling ikke funnet");
+                return NotFound("Ingen billetter i bestilling eller bestilling ikke funnet");
+            }
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {

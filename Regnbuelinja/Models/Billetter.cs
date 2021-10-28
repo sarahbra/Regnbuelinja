@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Regnbuelinja.Models
 {
-    public class Bestilling
+    public class Billetter
     {
         public int Id { get; set; }
-        public int KId { get; set; }
-        public bool Betalt { get; set; }
+        public int FId { get; set; }
+        public bool Voksen { get; set; }
     }
 }
