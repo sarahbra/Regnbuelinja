@@ -727,7 +727,7 @@ namespace Regnbuelinja.DAL
                     KId = b.Kunde.Id,
                     Totalpris = b.TotalPris,
                     Betalt = b.Betalt
-                }).Distinct().ToListAsync();
+                }).ToListAsync();
 
                 if (!alleBestillinger.Any())
                 {
