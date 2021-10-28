@@ -90,7 +90,7 @@ namespace Regnbuelinja.DAL
                 if(!(fjerneRute == null))
                 {
                     List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == fjerneRute.Id).ToListAsync();
-                    if(!AlleRelaterteBilletter.Any())
+                    if(AlleRelaterteBilletter.Any())
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
                         return false;
@@ -204,7 +204,7 @@ namespace Regnbuelinja.DAL
                 if(somSkalSlettes != default)
                 {
                     List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == somSkalSlettes.Id).ToListAsync();
-                    if (!AlleRelaterteBilletter.Any())
+                    if (AlleRelaterteBilletter.Any())
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettBåt: Båt med i en bestillt ferd. Ikke slettet");
                         return false;
@@ -394,7 +394,7 @@ namespace Regnbuelinja.DAL
                 if (!(fjerneFerd == default))
                 {
                     List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Id == fjerneFerd.Id).ToListAsync();
-                    if (!AlleRelaterteBilletter.Any())
+                    if (AlleRelaterteBilletter.Any())
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettFerd: Ferd i bestilling(er). Ikke slettet");
                         return false;
