@@ -369,6 +369,26 @@ namespace Regnbuelinja.Controllers
 
         }
 
+        [HttpGet("bestillinger")]
+        public async Task<ActionResult> HentAlleBestillinger()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Bestilling> alleBestillinger = await _db.HentAlleBestillinger();
+            if (alleBestillinger.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentAlleBestillinger: Vellykket! Bestillinger hentet");
+                return Ok(alleBestillinger);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleBestillinger: Databasefeil eller ingen bestillinger i databasen");
+                return NotFound("Ingen bestillinger i databasen");
+            }
+        }
+
         [HttpGet("billetter")]
         public async Task<ActionResult> HentAlleBilletter()
         {
@@ -409,7 +429,7 @@ namespace Regnbuelinja.Controllers
             }
         }
 
-        [HttpGet("rute/{id}/bestillinger")]
+        [HttpGet("ferd/{id}/bestillinger")]
         public async Task<ActionResult> HentBestillingerForFerd(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
@@ -419,13 +439,53 @@ namespace Regnbuelinja.Controllers
             List<Bestilling> alleBestillinger = await _db.HentBestillingerForFerd(id);
             if (alleBestillinger.Any())
             {
-                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Vellykket! Billetter hentet");
+                _log.LogInformation("AdminController.cs: HentBestillingerForFerd: Vellykket! Bestillinger hentet");
                 return Ok(alleBestillinger);
             }
             else
             {
-                _log.LogInformation("AdminController.cs: HentBilletterForBestilling: Databasefeil, ingen billetter i bestilling eller bestilling ikke funnet");
-                return NotFound("Ingen billetter i bestilling eller bestilling ikke funnet");
+                _log.LogInformation("AdminController.cs: HentBestillingerForFerd: Databasefeil eller ferd ikke funnet");
+                return NotFound("Ferd ikke funnet");
+            }
+        }
+
+        [HttpGet("rute/{id}/bestillinger")]
+        public async Task<ActionResult> HentBestillingerForRute(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Bestilling> alleBestillinger = await _db.HentBestillingerForRute(id);
+            if (alleBestillinger.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentBestillingerForRute: Vellykket! Bestillinger hentet");
+                return Ok(alleBestillinger);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentBestillingerForRute: Databasefeil eller rute ikke funnet");
+                return NotFound("Rute ikke funnet");
+            }
+        }
+
+        [HttpGet("baat/{id}/bestillinger")]
+        public async Task<ActionResult> HentBestillingerForBåt(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Bestilling> alleBestillinger = await _db.HentBestillingerForBåt(id);
+            if (alleBestillinger.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentBestillingerForBåt: Vellykket! Bestillinger hentet");
+                return Ok(alleBestillinger);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentBestillingerForBåt: Databasefeil eller båt ikke funnet");
+                return NotFound("Båt ikke funnet");
             }
         }
 
