@@ -813,7 +813,7 @@ namespace Regnbuelinja.DAL
 
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentEnKunde: Feil i databasen. Prøv igjen");
+                _log.LogInformation("BestillingRepository.cs: HentEnKunde: Feil i databasen. "+e+". Prøv igjen");
                 return null;
             }
         }
