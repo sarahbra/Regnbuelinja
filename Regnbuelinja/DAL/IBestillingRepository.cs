@@ -28,8 +28,11 @@ namespace Regnbuelinja.DAL
         Task<List<Billetter>> HentBilletterForFerd(int id);
         Task<List<Billetter>> HentBilletterForRute(int id);
         Task<List<Billetter>> HentBilletterForBåt(int id);
+        Task<List<Bestilling>> HentBestillingerForKunde(int id);
         Task<bool> LagreBruker(Bruker bruker);
         Task<bool> LagreKunde(Kunder kunde);
+        Task<Kunder> HentEnKunde(int id);
+        Task<List<Kunder>> HentAlleKunder();
         Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();
         Task<double> HentPris(int id);

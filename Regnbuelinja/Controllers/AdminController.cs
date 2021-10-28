@@ -469,6 +469,26 @@ namespace Regnbuelinja.Controllers
             }
         }
 
+        [HttpGet("kunde/{id}/bestillinger")]
+        public async Task<ActionResult> HentBestillingerForKunde(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Bestilling> alleBestillinger = await _db.HentBestillingerForKunde(id);
+            if (alleBestillinger.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentBestillingerForKunde: Vellykket! Bestillinger hentet");
+                return Ok(alleBestillinger);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentBestillingerForKunde: Kunde ikke funnet eller har ikke bestillt reise");
+                return NotFound("Kunde ikke funnet eller ingen bestillinger av kunde");
+            }
+        }
+
         [HttpGet("baat/{id}/billetter")]
         public async Task<ActionResult> HentBilletterForBåt(int id)
         {
@@ -486,6 +506,46 @@ namespace Regnbuelinja.Controllers
             {
                 _log.LogInformation("AdminController.cs: HentBilletterForBåt: Databasefeil eller båt ikke funnet");
                 return NotFound("Båt ikke funnet");
+            }
+        }
+
+        [HttpGet("kunde/{id}")]
+        public async Task<ActionResult> HentEnKunde(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            Kunder kunde = await _db.HentEnKunde(id);
+            if (kunde != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnKunde: Vellykket! Kunde hentet");
+                return Ok(kunde);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentEnKunde: Databasefeil eller kunde ikke funnet");
+                return NotFound("Kunde ikke funnet");
+            }
+        }
+
+        [HttpGet("kunder")]
+        public async Task<ActionResult> HentAlleKunder()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Kunder> alleKunder = await _db.HentAlleKunder();
+            if (alleKunder.Any())
+            {
+                _log.LogInformation("AdminController.cs: HentAlleKunder: Vellykket! Kunder hentet");
+                return Ok(alleKunder);
+            }
+            else
+            {
+                _log.LogInformation("AdminController.cs: HentAlleKunder: Databasefeil eller ingen kunder funnet");
+                return NotFound("Ingen kunder i databasen");
             }
         }
 

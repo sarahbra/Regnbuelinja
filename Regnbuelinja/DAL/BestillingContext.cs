@@ -9,11 +9,10 @@ namespace Regnbuelinja.DAL
     {
         [Key]
         public int Id { get; set; }
-        //public virtual Kunde Kunde { get; set; }
         public double TotalPris { get; set; }
         public virtual List<Billett> Billetter { get; set; }
         public bool Betalt { get; set; } = false;
-        public virtual Kunde Kunden {get; set;}
+        public virtual Kunde Kunde {get; set;}
     } 
 
     public class Kunde
@@ -96,9 +95,6 @@ namespace Regnbuelinja.DAL
         {
             Database.EnsureCreated();
         }
-
-        //public DbSet<Poststeder> Poststeder { get; set; }
-        //public DbSet<Kunde> Kunder { get; set; }
         public DbSet<Brukere> Brukere { get; set; }
         public DbSet<Rute> Ruter { get; set; }
         public DbSet<Ferd> Ferder { get; set; }

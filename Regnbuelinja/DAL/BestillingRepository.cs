@@ -425,7 +425,8 @@ namespace Regnbuelinja.DAL
                 List<Bestilling> alleBestillinger = await _db.Bestillinger.Select(b => new Bestilling()
                 {
                     Id = b.Id,
-                    KId = b.Kunden.Id,
+                    KId = b.Kunde.Id,
+                    Totalpris = b.TotalPris,
                     Betalt = b.Betalt
                 }).ToListAsync();
                 if (!alleBestillinger.Any())
@@ -564,6 +565,31 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<List<Bestilling>> HentBestillingerForKunde(int id)
+        {
+            try
+            {
+                List<Bestilling> alleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).Select(b => new Bestilling()
+                {
+                    Id = b.Id,
+                    KId = b.Kunde.Id,
+                    Totalpris = b.TotalPris,
+                    Betalt = b.Betalt
+                }).Distinct().ToListAsync();
+
+                if (!alleBestillinger.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentBestillingerForKunde: Kunde ikke funnet eller kunden har ikke bestillt neon reise enda");
+                }
+                return alleBestillinger;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentBestillingerForKunde: Feil i databasen: " + e + ". Bestillinger ikke hentet");
+                return null;
+            }
+        }
+
         public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
@@ -611,6 +637,58 @@ namespace Regnbuelinja.DAL
             {
                 _log.LogInformation("BestillingRepository.cs: LagreKunde: Feil i databasen: " + e + ". Kunde ikke lagret");
                 return false;
+            }
+        }
+
+        public async Task<Kunder> HentEnKunde(int id)
+        {
+            try
+            {
+                Kunder hentetKunde = await _db.Kunder.Where(k => k.Id == id).Select(k => new Kunder()
+                {
+                    Id = k.Id,
+                    Fornavn = k.Fornavn,
+                    Etternavn = k.Etternavn,
+                    Epost = k.Epost,
+                    Telefonnr = k.Telefonnr
+                }).FirstOrDefaultAsync();
+                if(hentetKunde == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentEnKunde: Feil kunde-id");
+                }
+                _log.LogInformation("BestillingReposuitory.cs: HentEnKunde: Vellykket. Kunde med id " + id + " hentet.");
+                return hentetKunde;
+
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentEnKunde: Feil i databasen. Prøv igjen");
+                return null;
+            }
+        }
+
+        public async Task<List<Kunder>> HentAlleKunder()
+        {
+            try
+            {
+                List<Kunder> alleKunder = await _db.Kunder.Select(k => new Kunder()
+                {
+                    Id = k.Id,
+                    Fornavn = k.Fornavn,
+                    Etternavn = k.Etternavn,
+                    Epost = k.Epost,
+                    Telefonnr = k.Telefonnr
+                }).ToListAsync();
+
+                if (!alleKunder.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleKunder: Ingen kunder i databasen");
+                }
+                return alleKunder;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleKunder: Feil i databasen: " + e + ". Kunder ikke hentet");
+                return null;
             }
         }
 
