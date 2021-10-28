@@ -502,7 +502,7 @@ namespace Regnbuelinja.DAL
 
         // En ubetalt bestilling kan endres (ved kundeønske), mens en betalt bestilling er fastsatt og kan ikke endres (faktureringsavdeling tar seg av dette, vi vil holde
         // logikken så enkel som mulig).
-        // Totalpris for bestilling kan ikke endres ettersom pris er fastpris og bestemt av ruten.
+
         public async Task<bool> EndreBestilling(Bestilling bestilling)
         {
             try
@@ -538,9 +538,28 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        Task<Billetter> IBestillingRepository.HentEnBillett(int id)
+        public async Task<Billetter> HentEnBillett(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Billetter billett = await _db.Billetter.Select(b => new Billetter()
+                {
+                    Id = b.Id,
+                    FId = b.Ferd.Id,
+                    BId = b.Bestilling.Id,
+                    Voksen = b.Voksen
+                }).FirstOrDefaultAsync();
+                if (billett == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen billett med id " + id + " i databasen");
+                }
+                return billett;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Feil i databasen: " + e + ". Billett ikke hentet");
+                return null;
+            }
         }
 
         Task<bool> IBestillingRepository.EndreBillett(int id)

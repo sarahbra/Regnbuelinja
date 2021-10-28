@@ -369,6 +369,24 @@ namespace Regnbuelinja.Controllers
             return NotFound("Billett ikke funnet eller i eksisterende bestilling(er).");
         }
 
+        [HttpGet("billett/{id}")]
+        public async Task<ActionResult> HentEnBillett(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Billetter hentetBillett = await _db.HentEnBillett(id);
+            if (hentetBillett != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnBillett: Vellykket. Billett hentet");
+                return Ok(hentetBillett);
+            }
+            _log.LogInformation("AdminController.cs: HentEnBillett: Ingen billett funnet i databasen med gitt id");
+            return NotFound("Ingen billett funnet");
+        }
+
         [HttpGet("bestilling/{id}/billetter")]
         public async Task<ActionResult> HentBilletterForBestilling(int id)
         {
