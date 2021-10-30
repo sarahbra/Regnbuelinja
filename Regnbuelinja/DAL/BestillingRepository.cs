@@ -145,6 +145,10 @@ namespace Regnbuelinja.DAL
             try
             {
                 List<Rute> alleRutene = await _db.Ruter.ToListAsync();
+                if(!alleRutene.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ingen ruter i databasen");
+                }
                 _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Vellykket! Ruter hentet");
                 return alleRutene;
             } catch (Exception e)
@@ -572,13 +576,13 @@ namespace Regnbuelinja.DAL
                 }).FirstOrDefaultAsync();
                 if (billett == default)
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen billett med id " + id + " i databasen");
+                    _log.LogInformation("BestillingRepository.cs: HentEnBillett: Ingen billett med id " + id + " i databasen");
                 }
                 return billett;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Feil i databasen: " + e + ". Billett ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentEnBillett: Feil i databasen: " + e + ". Billett ikke hentet");
                 return null;
             }
         }

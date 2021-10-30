@@ -166,11 +166,11 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.HentAlleRuter() as OkObjectResult;
+            var resultat = await adminController.HentAlleRuter() as ServiceUnavailableResult;
 
             //Assert
-            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
-            Assert.Equal("Feil i databasen. Ingen ruter hentet.", resultat.Value);
+            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
+            Assert.Equal("Databasefeil. Ruter ikke hentet", resultat.ViewName);
         }
 
         [Fact]
@@ -254,7 +254,7 @@ namespace Regnbuelinja_Test
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
-            Assert.Equal("Vellykket! Rute lagret i databasen", resultat.Value);
+            Assert.True((bool)resultat.Value);
         }
 
         [Fact]
@@ -290,11 +290,11 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.LagreRute(It.IsAny<Ruter>()) as OkObjectResult;
+            var resultat = await adminController.LagreRute(It.IsAny<Ruter>()) as ServiceUnavailableResult;
 
             //Assert
-            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
-            Assert.Equal("Feil i databasen. Prøv på nytt", resultat.Value);
+            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
+            Assert.Equal("Databasefeil. Rute ikke lagret", resultat.ViewName);
         }
 
 
