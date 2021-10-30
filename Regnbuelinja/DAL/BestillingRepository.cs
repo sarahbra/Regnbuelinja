@@ -143,6 +143,10 @@ namespace Regnbuelinja.DAL
             try
             {
                 List<Rute> alleRutene = await _db.Ruter.ToListAsync();
+                if(!alleRutene.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ingen ruter i databasen");
+                }
                 _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Vellykket! Ruter hentet");
                 return alleRutene;
             } catch (Exception e)
