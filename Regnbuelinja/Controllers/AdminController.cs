@@ -334,6 +334,67 @@ namespace Regnbuelinja.Controllers
             return new UnavailableViewResult("Databasefeil. Bestillinger ikke hentet");
         }
 
+        [HttpGet("bestilling/{id}")]
+        public async Task<ActionResult> HentEnBestilling(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Bestilling hentetBestilling = await _db.HentEnBestilling(id);
+            if (hentetBestilling != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnBestilling: Vellykket. Bestilling hentet");
+                return Ok(hentetBestilling);
+            }
+            _log.LogInformation("AdminController.cs: HentEnBestilling: Ingen bestilling funnet i databasen med gitt id");
+            return NotFound("Ingen bestilling funnet");
+        }
+
+        [HttpPut("bestilling/{id}")]
+        public async Task<ActionResult> EndreBestilling(Bestilling bestilling)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
+            {
+                bool EndretBestilling = await _db.EndreBestilling(bestilling);
+                if (EndretBestilling)
+                {
+                    _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
+                    return Ok("Vellykket! Bestilling endret i databasen");
+                }
+                _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
+                    "gjennomførte reiser");
+                return NotFound("Bestilling eller kunde ikke funnet, eller bestillingen inneholder ubetalte gjennomførte reiser, eller betalte reiser");
+            }
+            _log.LogInformation("AdminController.cs: EndreBestilling: Feil i inputvalideringen.");
+            return BadRequest("Feil i inputvalidering på server.");
+        }
+
+        [HttpDelete("bestilling/{id}")]
+        public async Task<ActionResult> SlettBestilling(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            bool slettet = await _db.SlettBestilling(id);
+            if (slettet)
+            {
+                _log.LogInformation("AdminController.cs: SlettBestilling: Bestilling slettet.");
+                return Ok(slettet);
+            }
+            _log.LogInformation("AdminController.cs: SlettBillett: Ikke slettet. Fant ikke bestillingen eller inneholder gjennomført(e) og ubetalt(e) reiser eller " +
+                " eller betalt(e) og ikke gjennomført(e)");
+            return NotFound("Bestilling ikke funnet eller inneholder gjennomført(e), ubetalt(e) reise(r) eller ugjennomført(e), betalt(e) reise(r)");
+        }
+
+
         [HttpGet("billetter")]
         public async Task<ActionResult> HentAlleBilletter()
         {
@@ -365,8 +426,32 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettBillett: Billett slettet.");
                 return Ok(slettet);
             }
-            _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
-            return NotFound("Billett ikke funnet eller i eksisterende bestilling(er).");
+            _log.LogInformation("AdminController.cs: SlettBillett: Ikke slettet. Fant ikke billetten eller reisen er gjennomført og ubetalt " +
+                " eller betalt og ikke gjennomført");
+            return NotFound("Billett ikke funnet eller inneholder gjennomført, ubetalt reise eller ugjennomført, betalt reise");
+        }
+
+        [HttpPut("billett/{id}")]
+        public async Task<ActionResult> EndreBillett(Billetter billett)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if (ModelState.IsValid)
+            {
+                bool EndretBillett = await _db.EndreBillett(billett);
+                if (EndretBillett)
+                {
+                    _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
+                    return Ok("Vellykket! Billett endret i databasen");
+                }
+                _log.LogInformation("AdminController.cs: EndreBillett: Billett eller ferd ikke funnet, eller billett allerede brukt eller betalt.");
+                //endres
+                return NotFound("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt");
+            }
+            _log.LogInformation("AdminController.cs: EndreBillett: Feil i inputvalideringen.");
+            return BadRequest("Feil i inputvalidering på server.");
         }
 
         [HttpGet("billett/{id}")]

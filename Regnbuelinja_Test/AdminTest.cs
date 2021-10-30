@@ -5,7 +5,6 @@ using Moq;
 using Regnbuelinja.Controllers;
 using Regnbuelinja.DAL;
 using Regnbuelinja.Models;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;

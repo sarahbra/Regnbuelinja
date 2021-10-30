@@ -145,9 +145,17 @@ namespace Regnbuelinja.DAL
 
                 context.Brukere.Add(nyBruker);
 
+                Kunde kunde1 = new Kunde
+                {
+                    Fornavn = "Chuck",
+                    Etternavn = "Norris",
+                    Telefonnr = "22222222",
+                    Epost = "mail@mail.no",
+                };
+
 
                 //Hardkodet totalpris
-                var bestilling1 = new Bestillinger { Billetter = billetter, TotalPris = (ferd1.Rute.Pris + 0.5* ferd1.Rute.Pris) };
+                var bestilling1 = new Bestillinger { Billetter = billetter, Kunde = kunde1};
                 context.Bestillinger.Add(bestilling1);
                 context.SaveChanges();
             }
