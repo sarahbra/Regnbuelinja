@@ -517,6 +517,7 @@ namespace Regnbuelinja.DAL
             }
         }
 
+
         // En ubetalt bestilling for en reise framover i tid kan endres (ved kundeønske), mens en betalt bestilling er fastsatt og kan ikke endres (faktureringsavdeling tar seg av dette,
         // vi vil holde logikken så enkel som mulig).
 
@@ -584,6 +585,41 @@ namespace Regnbuelinja.DAL
             {
                 _log.LogInformation("BestillingRepository.cs: HentEnBillett: Feil i databasen: " + e + ". Billett ikke hentet");
                 return null;
+            }
+        }
+
+        // Hvis kunde ønsker å legge til flere billetter til bestillingen sin. Krever at bestillingsId finnes,
+        // og at reisen ikke har vært og er ubetalt (igjen, for enkelhetsskyld => sendes til regnskapsavdelingen)
+        public async Task<bool> LagreBillett(Billetter billett)
+        {
+            try
+            {
+                Bestillinger bestilling = await _db.Bestillinger.FindAsync(billett.BId);
+                Ferd ferd = await _db.Ferder.FindAsync(billett.FId);
+                if(bestilling != null && ferd != null)
+                {
+                    if(!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
+                    {
+                        Billett nyBillett = new Billett()
+                        {
+                            Bestilling = bestilling,
+                            Ferd = ferd,
+                            Voksen = billett.Voksen
+                        };
+                        await _db.SaveChangesAsync();
+                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
+                        return true;
+                    }
+                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller billetten har reise som allerede har vært");
+                }
+                
+                _log.LogInformation("BestillingRepository.cs: LagreBillett: Fant ikke bestilling eller ferd i databasen");
+                return false;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreBillett: Databasefeil: " + e);
+                return false;
             }
         }
 

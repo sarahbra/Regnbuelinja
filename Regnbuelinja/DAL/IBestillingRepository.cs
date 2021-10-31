@@ -27,6 +27,7 @@ namespace Regnbuelinja.DAL
         Task<bool> SlettBestilling(int id);
         Task<bool> EndreBestilling(Bestilling bestilling);
         Task<Billetter> HentEnBillett(int id);
+        Task<bool> LagreBillett(Billetter billett);
         Task<bool> EndreBillett(Billetter billett);
         Task<bool> SlettBillett(int id);
         Task<List<Billetter>> HentAlleBilletter();
