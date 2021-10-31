@@ -433,18 +433,26 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                List<Bestilling> alleBestillinger = await _db.Bestillinger.Select(b => new Bestilling() {
-                    Id = b.Id,
-                    KId = b.Kunde.Id,
-                    Betalt = b.Betalt,
-                    Totalpris = HentTotalPris(b)
-                    
-                }).ToListAsync();
-                if (!alleBestillinger.Any())
+                List<Bestillinger> alleBestillinger = await _db.Bestillinger.ToListAsync();
+                List<Bestilling> hentedeBestillinger = new List<Bestilling>();
+                foreach(Bestillinger enBestilling in alleBestillinger)
+                {
+                    double TotalPris = await BeregnTotalPris(enBestilling.Id);
+                    Bestilling bestilling = new Bestilling()
+                    {
+                        Id = enBestilling.Id,
+                        KId = enBestilling.Kunde.Id,
+                        Betalt = enBestilling.Betalt,
+                        Totalpris = TotalPris
+                    };
+                    hentedeBestillinger.Add(bestilling);
+                }
+                
+                if (!hentedeBestillinger.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentAlleBestillinger: Ingen bestillinger i databasen");
                 }
-                return alleBestillinger;
+                return hentedeBestillinger;
             }
             catch (Exception e)
             {
@@ -457,13 +465,13 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Bestilling bestilling = await _db.Bestillinger.Select(b => new Bestilling()
-                {
+                double TotalPris = await BeregnTotalPris(id);
+                Bestilling bestilling = _db.Bestillinger.Where(b => b.Id == id).Select(b=> new Bestilling() {
                     Id = b.Id,
                     KId = b.Kunde.Id,
-                    Totalpris = HentTotalPris(b),
-                    Betalt = b.Betalt
-                }).FirstOrDefaultAsync();
+                    Betalt = b.Betalt,
+                    Totalpris = TotalPris
+                }).FirstOrDefault();
                 if (bestilling == default)
                 {
                     _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen bestilling med id "+id+" i databasen");
@@ -818,20 +826,27 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                List<Bestilling> alleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).Select(b => new Bestilling()
+                List<Bestillinger> alleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).ToListAsync();
+                List<Bestilling> hentedeBestillinger = new List<Bestilling>();
+                foreach(Bestillinger enBestilling in alleBestillinger)
                 {
-                    Id = b.Id,
-                    KId = b.Kunde.Id,
-                    Totalpris = HentTotalPris(b),
-                    Betalt = b.Betalt
-                }).ToListAsync();
-
-                if (!alleBestillinger.Any())
+                    double TotalPris = await BeregnTotalPris(enBestilling.Id);
+                    Bestilling bestilling = new Bestilling()
+                    {
+                        Id = enBestilling.Id,
+                        KId = enBestilling.Kunde.Id,
+                        Totalpris = TotalPris,
+                        Betalt = enBestilling.Betalt
+                    };
+                    hentedeBestillinger.Add(bestilling);
+                }
+                
+                if (!hentedeBestillinger.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentBestillingerForKunde: Kunde ikke funnet eller kunden har ikke bestillt neon reise enda");
                 }
                 _log.LogInformation("BestillingRepository.cs: HentBestillingerForKunde: Vellykket! Bestillinger hentet");
-                return alleBestillinger;
+                return hentedeBestillinger;
             }
             catch (Exception e)
             {
@@ -1153,7 +1168,7 @@ namespace Regnbuelinja.DAL
                         Billett returBillett = new Billett()
                         {
                             Ferd = ferdRetur,
-                            Voksen = true
+                            Voksen = false
                         };
                         billettListe.Add(returBillett);
                     }
@@ -1206,7 +1221,7 @@ namespace Regnbuelinja.DAL
             double pris = 0.0;
             if(bestilling != default)
             {
-                pris = HentTotalPris(bestilling);
+                pris = await BeregnTotalPris(id);
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentPris: Vellykket. Totalpris for bestilling med id " + id + " har blitt funnet i databasen.");
                 return pris;
             }
@@ -1285,7 +1300,7 @@ namespace Regnbuelinja.DAL
                 int antBarn = billetter.Count(b => !b.Voksen);
                 int antVoksne = billetter.Count(b => b.Voksen);
                 double prisPerBillett = billetter.First().Ferd.Rute.Pris;
-                strekningsPris += (antBarn * 0.5 * prisPerBillett) + (antVoksne * prisPerBillett);
+                strekningsPris += ((antBarn * 0.5 * prisPerBillett) + (antVoksne * prisPerBillett));
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentStrekningsPris: Vellykket. Strekningspris " + strekningsPris + " funnet for " + antBarn + " barn og " + antVoksne + " voksne fra avreisehavn " + Startpunkt + " for bestilling med id " + id);
                 return strekningsPris;
             }
@@ -1344,21 +1359,23 @@ namespace Regnbuelinja.DAL
             return salt;
         }
 
-        private double HentTotalPris(Bestillinger bestilling)
+        // Beregner totalpris. Returbilletter har rabatt
+        private async Task<double> BeregnTotalPris(int id)
         {
             double TotalPris = 0.0;
-            string Startpunkt = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
-            foreach (Billett billett in bestilling.Billetter)
+            List<Billett> billetter = await _db.Billetter.Where(b => b.Bestilling.Id == id).ToListAsync();
+            string Startpunkt = billetter.First().Ferd.Rute.Startpunkt;
+            foreach (Billett billett in billetter)
             {
-                if (billett.Ferd.Rute.Startpunkt == Startpunkt)
+                if (billett.Ferd.Rute.Startpunkt.Equals(Startpunkt))
                 {
-                    if (billett.Voksen) TotalPris += billett.Ferd.Rute.Pris;
-                    else TotalPris += 0.5 * billett.Ferd.Rute.Pris;
+                    if (billett.Voksen) TotalPris += (billett.Ferd.Rute.Pris);
+                    else TotalPris += (0.5 * billett.Ferd.Rute.Pris);
                 }
                 else
                 {
-                    if (billett.Voksen) TotalPris += 0.75 * billett.Ferd.Rute.Pris;
-                    else TotalPris += 0.75 * 0.5 * billett.Ferd.Rute.Pris;
+                    if (billett.Voksen) TotalPris += (0.75 * billett.Ferd.Rute.Pris);
+                    else TotalPris += (0.75 * 0.5 * billett.Ferd.Rute.Pris);
                 }
             }
             return TotalPris;

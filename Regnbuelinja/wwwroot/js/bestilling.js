@@ -76,6 +76,7 @@ function formaterKjøpsInfo(bestilling) {
     const id = hentId();
     let url = "Bestilling/HentPris?" + id;
     $.get(url, function (totalpris) {
+        console.log(totalpris);
         url = "Bestilling/HentStrekningsPris?" + id + "&startpunkt=" + bestilling.startpunkt + "&retur=false";
         $.get(url, function (strekningsPris) {
             let ut = "<table class='table'><thead><tr>";
