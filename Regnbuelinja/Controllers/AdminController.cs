@@ -233,7 +233,7 @@ namespace Regnbuelinja.Controllers
                 if (FerdLagret)
                 {
                     _log.LogInformation("AdminController.cs: LagreFerd: Ferd lagret vellykket");
-                    return Ok("Vellykket! Ferd lagret i databasen.");
+                    return Ok(FerdLagret);
                 }
                 _log.LogInformation("AdminController.cs: LagreFerd: Databasefeil eller feil rute/båt-id. Bruker ikke opprettet.");
                 return NotFound("Rute eller båt ikke funnet eller databasefeil");
@@ -289,7 +289,7 @@ namespace Regnbuelinja.Controllers
                 if (EndretFerd)
                 {
                     _log.LogInformation("AdminController.cs: EndreFerd: Vellykket! Ferd endret");
-                    return Ok("Vellykket! Ferd endret i databasen");
+                    return Ok(EndretFerd);
                 }
                 _log.LogInformation("AdminController.cs: EndreFerd: Databasefeil. Ferd ikke endret");
                 //endres
@@ -314,7 +314,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(slettet);
             }
             _log.LogInformation("AdminController.cs: SlettFerd: Ferd med i bestilling(er), eller databasefeil");
-            return NotFound("Fant ikke ferb eller ferd med i bestilling(er)");
+            return NotFound("Ferd ikke funnet i databasen eller ferd med i eksisterende bestilling(er).");
         }
 
         [HttpGet("bestillinger")]
@@ -427,7 +427,7 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
                     return Ok("Vellykket! Billett lagret i databasen.");
                 }
-                _log.LogInformation("AdminController.cs: LagreFerd: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
+                _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
                 return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
             }
             return BadRequest("Feil i inputvalidering på server");
