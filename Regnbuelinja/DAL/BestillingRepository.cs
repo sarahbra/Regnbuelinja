@@ -1005,8 +1005,7 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        // Ettersom kunde er linket til bestilling gjelder samme regler for sletting her. En kunde med en bestilling som enten er ubetalt og gjennomført ELLER
-        // betalt og ikke gjennomført kan ikke slettes.
+        // En kunde med bestilling(er) kan ikke slettes. Dersom kunde likevel skal slettes må bestilling(er) håndteres først, og da med tilknyttede regler.
 
         public async Task<bool> SlettKunde(int id)
         {
@@ -1015,27 +1014,20 @@ namespace Regnbuelinja.DAL
                 Kunde fjerneKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == id);
                 if (!(fjerneKunde == default))
                 {
-                    List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Bestilling.Kunde.Id == id).ToListAsync();
-                    foreach(Billett billett in AlleRelaterteBilletter) 
+                    List<Bestillinger> AlleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).ToListAsync();
+                    if(!AlleBestillinger.Any())
                     {
-                        bool reiseFramoverITid = billett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0;
-                        if((reiseFramoverITid && billett.Bestilling.Betalt) || (!reiseFramoverITid && !billett.Bestilling.Betalt))
-                        {
-                            _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde har ubetalte gjennomførte reiser eller " +
-                                "betalte framtidige reiser. Ikke slettet.");
-                            return false;
-                        }
+                        _db.Kunder.Remove(fjerneKunde);
+                        await _db.SaveChangesAsync();
+                        _log.LogInformation("BestillingRepository.cs: SlettKunde: Vellykket! Kunde slettet");
+                        return true;
                     }
-                    _db.Kunder.Remove(fjerneKunde);
-                    await _db.SaveChangesAsync();
-                    _log.LogInformation("BestillingRepository.cs: SlettKunde: Vellykket! Kunde slettet");
-                    return true;
-                }
-                else
-                {
-                    _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde finnes ikke i databasen");
+                    _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunden har bestillinger i databasen. Kunde ikke slettet");
                     return false;
+                    
                 }
+                _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde finnes ikke i databasen");
+                return false;
             }
             catch (Exception e)
             {
