@@ -9,7 +9,7 @@ namespace Regnbuelinja.DAL
     {
         [Key]
         public int Id { get; set; }
-        public virtual List<Billett> Billetter { get; set; }
+        public virtual List<Billett> Billetter { get; set; } = new List<Billett>();
         public bool Betalt { get; set; } = false;
         public virtual Person Kunde {get; set;}
     } 

@@ -419,18 +419,14 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            if (ModelState.IsValid)
+            bool BillettLagret = await _db.LagreBillett(Billett);
+            if (BillettLagret)
             {
-                bool BillettLagret = await _db.LagreBillett(Billett);
-                if (BillettLagret)
-                {
-                    _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
-                    return Ok("Vellykket! Billett lagret i databasen.");
-                }
-                _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
-                return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
+                _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
+                return Ok(BillettLagret);
             }
-            return BadRequest("Feil i inputvalidering på server");
+            _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
+            return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
         }
 
         [HttpDelete("billett/{id}")]
@@ -459,20 +455,14 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            if (ModelState.IsValid)
+            bool EndretBillett = await _db.EndreBillett(billett);
+            if (EndretBillett)
             {
-                bool EndretBillett = await _db.EndreBillett(billett);
-                if (EndretBillett)
-                {
-                    _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
-                    return Ok("Vellykket! Billett endret i databasen");
-                }
-                _log.LogInformation("AdminController.cs: EndreBillett: Billett eller ferd ikke funnet, eller billett allerede brukt eller betalt.");
-                //endres
-                return NotFound("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt");
+                _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
+                return Ok(EndretBillett);
             }
-            _log.LogInformation("AdminController.cs: EndreBillett: Feil i inputvalideringen.");
-            return BadRequest("Feil i inputvalidering på server.");
+            _log.LogInformation("AdminController.cs: EndreBillett: Billett eller ferd ikke funnet, eller billett allerede brukt eller betalt.");
+            return NotFound("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt");
         }
 
         [HttpGet("billett/{id}")]
