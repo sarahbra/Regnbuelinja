@@ -486,9 +486,11 @@ namespace Regnbuelinja.DAL
         }
 
         // En bestilling kan slettes (etter kundeønske) hvis den ikke er betalt enda OG ferden ikke har vært (med beskjed til kunde) ELLER
-        // hvis ferden allerede er gjennomført (ankomsttid er tidligere enn dagens dato) OG den er betalt. Dette sikrer at man ikke slettes uoppgjorte bestillinger som er gjennomført og
+        // hvis ferden allerede er gjennomført (ankomsttid er tidligere enn dagens dato) OG den er betalt. Dette sikrer at man ikke slettes uoppgjorte
+        // bestillinger som er gjennomført og
         // at man ikke sletter billetter og bestillinger til kunder som har betalt, men ikke har reist enda.
-        // Fremtidig ville man da kunne implementere en metode som eksporterte ubetalte gjennomførte ferder til regnskapsavdelingen dersom man ønsket å slette historiske ferder.
+        // Fremtidig ville man da kunne implementere en metode som eksporterte ubetalte gjennomførte ferder til regnskapsavdelingen dersom man ønsket
+        // å slette historiske ferder.
 
         // Billetter i bestilling slettes før bestillingen slettes (Cascade).
         // TROR DENNE FUNKER! MÅ TESTES!!!
@@ -610,7 +612,8 @@ namespace Regnbuelinja.DAL
                 {
                     string StartpunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
                     string EndepunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
-                    if((StartpunktIBestilling.Equals(ferd.Rute.Startpunkt) && EndepunktIBestilling.Equals(ferd.Rute.Endepunkt)) || (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt))) {
+                    if((StartpunktIBestilling.Equals(ferd.Rute.Startpunkt) && EndepunktIBestilling.Equals(ferd.Rute.Endepunkt)) || 
+                        (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt))) {
                         if (!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
                         {
                             Billett nyBillett = new Billett()
@@ -623,10 +626,12 @@ namespace Regnbuelinja.DAL
                             _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
                             return true;
                         }
-                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller billetten har reise som allerede har vært");
+                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller" +
+                            " billetten har reise som allerede har vært");
                         return false;
                     }
-                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billetter for en annen reise i bestillingen. Opprett heller ny bestilling");
+                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billetter" +
+                        " for en annen reise i bestillingen. Opprett heller ny bestilling");
                     return false;
                 }
                 
@@ -640,7 +645,8 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        // Kan kun endre en billett for en ubetalt ferd som er framover i tid. "Regnskapsavdelingen" vil håndtere betalte betalte billetter (herunder refusjon/ekstra betaling utfra rutepris)
+        // Kan kun endre en billett for en ubetalt ferd som er framover i tid. "Regnskapsavdelingen" vil håndtere betalte betalte billetter (herunder refusjon/ekstra
+        // betaling utfra rutepris)
         // Bestilling - fremmednøkkel endres ikke da billetten er knyttet til kunde via bestilling.
         public async Task<bool> EndreBillett(Billetter billett)
         {
@@ -1015,7 +1021,8 @@ namespace Regnbuelinja.DAL
                         bool reiseFramoverITid = billett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0;
                         if((reiseFramoverITid && billett.Bestilling.Betalt) || (!reiseFramoverITid && !billett.Bestilling.Betalt))
                         {
-                            _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde har ubetalte gjennomførte reiser eller betalte framtidige reiser. Ikke slettet.");
+                            _log.LogInformation("BestillingRepository.cs: SlettKunde: Kunde har ubetalte gjennomførte reiser eller " +
+                                "betalte framtidige reiser. Ikke slettet.");
                             return false;
                         }
                     }
@@ -1138,7 +1145,8 @@ namespace Regnbuelinja.DAL
             // Oppretter billetter for alle barn og voksne, tur retur med halv pris på barnebilletter og 25% rabatt på returbilletter.
             if (ferd != null)
             {
-                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme start- og endepunktene har blitt funnet i databasen.");
+                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme " +
+                    "start- og endepunktene har blitt funnet i databasen.");
                 Billett nyBillett;
                 for (int i = 1; i <= nyBestilling.AntallVoksne; i++)
                 {
@@ -1197,7 +1205,8 @@ namespace Regnbuelinja.DAL
             }
             else
             {
-                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme start- og endepunktene har ikke blitt funnet i databasen.");
+                _log.LogInformation("/Controllers/BestillingRepository.cs: LagreBestilling: Ferd med passende dato, og de samme start- og endepunktene har ikke" +
+                    " blitt funnet i databasen.");
                 return null;
             }
         }
