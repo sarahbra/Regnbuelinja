@@ -145,7 +145,7 @@ namespace Regnbuelinja.DAL
 
                 context.Brukere.Add(nyBruker);
 
-                Kunde kunde1 = new Kunde
+                Person kunde1 = new Person
                 {
                     Fornavn = "Chuck",
                     Etternavn = "Norris",

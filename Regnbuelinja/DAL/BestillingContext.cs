@@ -11,10 +11,10 @@ namespace Regnbuelinja.DAL
         public int Id { get; set; }
         public virtual List<Billett> Billetter { get; set; }
         public bool Betalt { get; set; } = false;
-        public virtual Kunde Kunde {get; set;}
+        public virtual Person Kunde {get; set;}
     } 
 
-    public class Kunde
+    public class Person
     {
         public int Id { get; set; }
         public string Fornavn { get; set; }
@@ -22,6 +22,7 @@ namespace Regnbuelinja.DAL
         public string Telefonnr { get; set; }
         public string Epost { get; set; }
         public virtual List<Bestillinger> Bestillinger { get; set; }
+        public bool Admin { get; set; } = false;
     }
 
     public class Billett
@@ -100,7 +101,7 @@ namespace Regnbuelinja.DAL
         public DbSet<Baat> Baater { get; set; }
         public DbSet<Bestillinger> Bestillinger { get; set; }
         public DbSet<Billett> Billetter { get; set; }
-        public DbSet<Kunde> Kunder { get; set; }
+        public DbSet<Person> Kunder { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

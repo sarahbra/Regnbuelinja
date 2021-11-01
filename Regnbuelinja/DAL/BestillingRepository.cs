@@ -548,7 +548,7 @@ namespace Regnbuelinja.DAL
                                 return false;
                             }
                         }
-                        Kunde nyKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
+                        Person nyKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
                         if(nyKunde != default)
                         {
                             endreBestilling.Kunde = nyKunde;
@@ -711,7 +711,6 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        //vet ikke om trengs
         public async Task<List<Billetter>> HentAlleBilletter()
         {
             try
@@ -897,11 +896,13 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        // I utgangspunktet er det kunder selv som skal registrere seg, men har lagt inn funksjonaliteten likevel
+        // (I tilfelle admin også vil bestille billetter)
         public async Task<bool> LagreKunde(Kunder kunde)
         {
             try
             {
-                Kunde NyKunde = new Kunde()
+                Person NyKunde = new Person()
                 {
                     Fornavn = kunde.Fornavn,
                     Etternavn = kunde.Etternavn,
@@ -950,7 +951,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                List<Kunder> alleKunder = await _db.Kunder.Select(k => new Kunder()
+                List<Kunder> alleKunder = await _db.Kunder.Where(k => k.Admin == false).Select(k => new Kunder()
                 {
                     Id = k.Id,
                     Fornavn = k.Fornavn,
@@ -979,7 +980,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Kunde somSkalEndres = await _db.Kunder.FindAsync(kunde.Id);
+                Person somSkalEndres = await _db.Kunder.FindAsync(kunde.Id);
                 if (!(somSkalEndres == null))
                 {
                     somSkalEndres.Fornavn = kunde.Fornavn;
@@ -1011,7 +1012,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Kunde fjerneKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == id);
+                Person fjerneKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == id);
                 if (!(fjerneKunde == default))
                 {
                     List<Bestillinger> AlleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).ToListAsync();
