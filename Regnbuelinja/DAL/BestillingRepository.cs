@@ -1067,7 +1067,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Person fjerneKunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == id);
+                Person fjerneKunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == id && k.Admin == false);
                 if (!(fjerneKunde == default))
                 {
                     List<Bestillinger> AlleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).ToListAsync();
