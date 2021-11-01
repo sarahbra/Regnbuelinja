@@ -2,7 +2,7 @@
 
 namespace Regnbuelinja.Models
 {
-    public class Kunder
+    public class Personer
     {
         public int Id { get; set; }
         [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,20}$")]

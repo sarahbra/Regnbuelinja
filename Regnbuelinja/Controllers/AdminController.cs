@@ -585,7 +585,7 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            Kunder kunde = await _db.HentEnKunde(id);
+            Personer kunde = await _db.HentEnKunde(id);
             if (kunde != null)
             {
                 _log.LogInformation("AdminController.cs: HentEnKunde: Vellykket! Kunde hentet");
@@ -602,7 +602,7 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            List<Kunder> alleKunder = await _db.HentAlleKunder();
+            List<Personer> alleKunder = await _db.HentAlleKunder();
             if (alleKunder != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleKunder: Vellykket! Kunder hentet");
@@ -612,8 +612,42 @@ namespace Regnbuelinja.Controllers
             return new ServiceUnavailableResult("Databasefeil. Ingen kunder hentet");
         }
 
+        [HttpGet("ansatt/{id}")]
+        public async Task<ActionResult> HentEnAnsatt(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            Personer ansatt = await _db.HentEnAnsatt(id);
+            if (ansatt != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnAnsatt: Vellykket! Ansatt hentet");
+                return Ok(ansatt);
+            }
+            _log.LogInformation("AdminController.cs: HentEnAnsatt: Ansatt ikke funnet");
+            return NotFound("Ansatt ikke funnet");
+        }
+
+        [HttpGet("ansatte")]
+        public async Task<ActionResult> HentAlleAnsatte()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Personer> alleAnsatte = await _db.HentAlleAnsatte();
+            if (alleAnsatte != null)
+            {
+                _log.LogInformation("AdminController.cs: HentAlleAnsatte: Vellykket! Ansatte hentet");
+                return Ok(alleAnsatte);
+            }
+            _log.LogInformation("AdminController.cs: HentAlleAnsatte: Databasefeil. Prøv igjen!");
+            return new ServiceUnavailableResult("Databasefeil. Ingen ansatte hentet");
+        }
+
         [HttpPut("kunde/{id}")]
-        public async Task<ActionResult> EndreKunde(Kunder kunde)
+        public async Task<ActionResult> EndreKunde(Personer person)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
@@ -621,8 +655,8 @@ namespace Regnbuelinja.Controllers
             }
             if (ModelState.IsValid)
             {
-                bool endretKunde = await _db.EndreKunde(kunde);
-                if (endretKunde)
+                bool endretPerson = await _db.EndrePerson(person);
+                if (endretPerson)
                 {
                     _log.LogInformation("AdminController.cs: EndreKunde: Kunde endret i databasen");
                     return Ok("Vellykket! Kunde endret i databasen");
@@ -630,7 +664,7 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: EndreKunde: Databasefeil eller kunde ikke funnet. Ikke endret");
                 return NotFound("Kunde ikke funnet i databasen");
             }
-            _log.LogInformation("AdminController.cs: EndreKunde: Feil i inputvalideringen. Kunde ikke endret");
+            _log.LogInformation("AdminController.cs: EndreKunde: Feil i inputvalideringen. Person ikke endret");
             return BadRequest("Feil i inputvalideringen");
         }
 
@@ -647,8 +681,8 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettKunde: Vellykket! Kunde slettet");
                 return Ok(slettet);
             }
-            _log.LogInformation("AdminController.cs: SlettKunde: Databasefeil, kunde ikke funnet eller ubetalte kundebestillinger i database");
-            return NotFound("Kunde ikke funnet eller ubetalte kundebestillinger i databasen");
+            _log.LogInformation("AdminController.cs: SlettKunde: Databasefeil, kunde ikke funnet eller kunde har bestillinger.");
+            return NotFound("Kunde ikke funnet eller kunden har bestillinger i database");
         }
 
         [HttpPost("brukere")]

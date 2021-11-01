@@ -162,7 +162,7 @@ namespace Regnbuelinja.Controllers
             return Ok(StrekningsPris);
         }
 
-        public async Task<ActionResult> LagreKunde(Kunder kunde)
+        public async Task<ActionResult> LagreKunde(Personer kunde)
         {
             if(ModelState.IsValid)
             {

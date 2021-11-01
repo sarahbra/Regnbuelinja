@@ -21,7 +21,8 @@ namespace Regnbuelinja.DAL
         public string Etternavn { get; set; }
         public string Telefonnr { get; set; }
         public string Epost { get; set; }
-        public virtual List<Bestillinger> Bestillinger { get; set; }
+        public virtual List<Bestillinger> Bestillinger { get; set; } = new List<Bestillinger>();
+        // Settes kun i dbInit av sikkerhetsgrunner
         public bool Admin { get; set; } = false;
     }
 
@@ -57,6 +58,7 @@ namespace Regnbuelinja.DAL
         public string Brukernavn { get; set; }
         public byte[] Passord { get; set; }
         public byte[] Salt { get; set; }
+        public virtual Person Person { get; set; }
     }
 
     public class Rute
@@ -101,7 +103,7 @@ namespace Regnbuelinja.DAL
         public DbSet<Baat> Baater { get; set; }
         public DbSet<Bestillinger> Bestillinger { get; set; }
         public DbSet<Billett> Billetter { get; set; }
-        public DbSet<Person> Kunder { get; set; }
+        public DbSet<Person> KunderOgAnsatte { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

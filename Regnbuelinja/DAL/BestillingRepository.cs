@@ -548,7 +548,7 @@ namespace Regnbuelinja.DAL
                                 return false;
                             }
                         }
-                        Person nyKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
+                        Person nyKunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
                         if(nyKunde != default)
                         {
                             endreBestilling.Kunde = nyKunde;
@@ -898,7 +898,7 @@ namespace Regnbuelinja.DAL
 
         // I utgangspunktet er det kunder selv som skal registrere seg, men har lagt inn funksjonaliteten likevel
         // (I tilfelle admin også vil bestille billetter)
-        public async Task<bool> LagreKunde(Kunder kunde)
+        public async Task<bool> LagreKunde(Personer kunde)
         {
             try
             {
@@ -910,7 +910,7 @@ namespace Regnbuelinja.DAL
                     Telefonnr = kunde.Telefonnr
                 };
 
-                _db.Kunder.Add(NyKunde);
+                _db.KunderOgAnsatte.Add(NyKunde);
                 await _db.SaveChangesAsync();
                 _log.LogInformation("BestillingRepository.cs: LagreKunde: Kunde lagret");
                 return true;
@@ -921,11 +921,11 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<Kunder> HentEnKunde(int id)
+        public async Task<Personer> HentEnKunde(int id)
         {
             try
             {
-                Kunder hentetKunde = await _db.Kunder.Where(k => k.Id == id).Select(k => new Kunder()
+                Personer hentetKunde = await _db.KunderOgAnsatte.Where(k => k.Id == id && k.Admin == false).Select(k => new Personer()
                 {
                     Id = k.Id,
                     Fornavn = k.Fornavn,
@@ -947,11 +947,11 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<List<Kunder>> HentAlleKunder()
+        public async Task<List<Personer>> HentAlleKunder()
         {
             try
             {
-                List<Kunder> alleKunder = await _db.Kunder.Where(k => k.Admin == false).Select(k => new Kunder()
+                List<Personer> alleKunder = await _db.KunderOgAnsatte.Where(k => k.Admin == false).Select(k => new Personer()
                 {
                     Id = k.Id,
                     Fornavn = k.Fornavn,
@@ -974,19 +974,74 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        // I utgangspunktet burde kundeinformasjon endres av kunden selv, men det kan være aktuelt for admin å endre kundeinformasjon dersom de f.eks. får
-        // beskjed om navneendring fra folkeregisteret 
-        public async Task<bool> EndreKunde(Kunder kunde)
+        public async Task<Personer> HentEnAnsatt(int id)
         {
             try
             {
-                Person somSkalEndres = await _db.Kunder.FindAsync(kunde.Id);
+                Personer hentetAnsatt = await _db.KunderOgAnsatte.Where(a => a.Id == id && a.Admin == true).Select(a => new Personer()
+                {
+                    Id = a.Id,
+                    Fornavn = a.Fornavn,
+                    Etternavn = a.Etternavn,
+                    Epost = a.Epost,
+                    Telefonnr = a.Telefonnr
+                }).FirstOrDefaultAsync();
+                if (hentetAnsatt == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentEnAnsatt: Feil ansatt-id");
+                }
+                _log.LogInformation("BestillingReposuitory.cs: HentEnKunde: Vellykket. Ansatt med id " + id + " hentet.");
+                return hentetAnsatt;
+
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentEnAnsatt: Feil i databasen. " + e + ". Prøv igjen");
+                return null;
+            }
+        }
+
+        public async Task<List<Personer>> HentAlleAnsatte()
+        {
+            try
+            {
+                List<Personer> alleAnsatte = await _db.KunderOgAnsatte.Where(a => a.Admin == true).Select(a => new Personer()
+                {
+                    Id = a.Id,
+                    Fornavn = a.Fornavn,
+                    Etternavn = a.Etternavn,
+                    Epost = a.Epost,
+                    Telefonnr = a.Telefonnr
+                }).ToListAsync();
+
+                if (!alleAnsatte.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentAlleAnsatte: Ingen ansatte i databasen");
+                }
+                _log.LogInformation("BestillingRepository.cs: HentAlleAnsatte: Vellykket. Ansatte hentet");
+                return alleAnsatte;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentAlleAnsatte: Feil i databasen: " + e + ". Ansatte ikke hentet");
+                return null;
+            }
+        }
+
+        // I utgangspunktet burde kundeinformasjon endres av kunden selv, men det kan være aktuelt for admin å endre kundeinformasjon dersom de f.eks. får
+        // beskjed om navneendring fra folkeregisteret
+        // Her kan også adminstatus gis til ansatte av admin.
+        public async Task<bool> EndrePerson(Personer person)
+        {
+            try
+            {
+                Person somSkalEndres = await _db.KunderOgAnsatte.FindAsync(person.Id);
                 if (!(somSkalEndres == null))
                 {
-                    somSkalEndres.Fornavn = kunde.Fornavn;
-                    somSkalEndres.Etternavn = kunde.Etternavn;
-                    somSkalEndres.Epost = kunde.Epost;
-                    somSkalEndres.Telefonnr = kunde.Telefonnr;
+                    somSkalEndres.Fornavn = person.Fornavn;
+                    somSkalEndres.Etternavn = person.Etternavn;
+                    somSkalEndres.Epost = person.Epost;
+                    somSkalEndres.Telefonnr = person.Telefonnr;
 
                     await _db.SaveChangesAsync();
                     _log.LogInformation("BestillingRepository.cs: EndreKunde: Vellykket! Kunde endret");
@@ -1012,13 +1067,13 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Person fjerneKunde = await _db.Kunder.FirstOrDefaultAsync(k => k.Id == id);
+                Person fjerneKunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == id);
                 if (!(fjerneKunde == default))
                 {
                     List<Bestillinger> AlleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).ToListAsync();
                     if(!AlleBestillinger.Any())
                     {
-                        _db.Kunder.Remove(fjerneKunde);
+                        _db.KunderOgAnsatte.Remove(fjerneKunde);
                         await _db.SaveChangesAsync();
                         _log.LogInformation("BestillingRepository.cs: SlettKunde: Vellykket! Kunde slettet");
                         return true;

@@ -126,9 +126,26 @@ namespace Regnbuelinja.DAL
                 billetter.Add(billett1);
                 billetter.Add(billett2);
 
+                Person kunde1 = new Person
+                {
+                    Fornavn = "Chuck",
+                    Etternavn = "Norris",
+                    Telefonnr = "22222222",
+                    Epost = "kunde@mail.no"
+                };
+
+                Person ansatt1 = new Person
+                {
+                    Fornavn = "Per",
+                    Etternavn = "Hansen",
+                    Telefonnr = "22232323",
+                    Epost = "ansatt@mail.no",
+                    Admin = true
+                };
 
                 // Adminbruker
-                var Bruker = new Bruker() {
+                var Bruker = new Bruker()
+                {
                     Brukernavn = "admin",
                     Passord = "Test1234"
                 };
@@ -142,20 +159,16 @@ namespace Regnbuelinja.DAL
                 nyBruker.Brukernavn = Bruker.Brukernavn;
                 nyBruker.Passord = hash;
                 nyBruker.Salt = salt;
+                nyBruker.Person = ansatt1;
 
                 context.Brukere.Add(nyBruker);
 
-                Person kunde1 = new Person
-                {
-                    Fornavn = "Chuck",
-                    Etternavn = "Norris",
-                    Telefonnr = "22222222",
-                    Epost = "mail@mail.no",
-                };
-
+                context.KunderOgAnsatte.Add(kunde1);
+                context.KunderOgAnsatte.Add(ansatt1);
 
                 //Hardkodet totalpris
                 var bestilling1 = new Bestillinger { Billetter = billetter, Kunde = kunde1};
+
                 context.Bestillinger.Add(bestilling1);
                 context.SaveChanges();
             }
