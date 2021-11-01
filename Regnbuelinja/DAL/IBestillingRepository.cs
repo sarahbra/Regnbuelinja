@@ -37,11 +37,13 @@ namespace Regnbuelinja.DAL
         Task<List<Billetter>> HentBilletterForBåt(int id);
         Task<List<Bestilling>> HentBestillingerForKunde(int id);
         Task<bool> LagreBruker(Bruker bruker);
-        Task<bool> LagreKunde(Kunder kunde);
-        Task<bool> EndreKunde(Kunder kunde);
+        Task<bool> LagreKunde(Personer kunde);
+        Task<bool> EndrePerson(Personer person);
         Task<bool> SlettKunde(int id);
-        Task<Kunder> HentEnKunde(int id);
-        Task<List<Kunder>> HentAlleKunder();
+        Task<Personer> HentEnKunde(int id);
+        Task<List<Personer>> HentAlleKunder();
+        Task<Personer> HentEnAnsatt(int id);
+        Task<List<Personer>> HentAlleAnsatte();
         Task<bool> LoggInn(Bruker bruker);
         Task<List<string>> HentAvgangshavner();
         Task<double> HentPris(int id);

@@ -419,18 +419,14 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            if (ModelState.IsValid)
+            bool BillettLagret = await _db.LagreBillett(Billett);
+            if (BillettLagret)
             {
-                bool BillettLagret = await _db.LagreBillett(Billett);
-                if (BillettLagret)
-                {
-                    _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
-                    return Ok("Vellykket! Billett lagret i databasen.");
-                }
-                _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
-                return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
+                _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
+                return Ok(BillettLagret);
             }
-            return BadRequest("Feil i inputvalidering på server");
+            _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
+            return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
         }
 
         [HttpDelete("billett/{id}")]
@@ -459,20 +455,14 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            if (ModelState.IsValid)
+            bool EndretBillett = await _db.EndreBillett(billett);
+            if (EndretBillett)
             {
-                bool EndretBillett = await _db.EndreBillett(billett);
-                if (EndretBillett)
-                {
-                    _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
-                    return Ok("Vellykket! Billett endret i databasen");
-                }
-                _log.LogInformation("AdminController.cs: EndreBillett: Billett eller ferd ikke funnet, eller billett allerede brukt eller betalt.");
-                //endres
-                return NotFound("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt");
+                _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
+                return Ok(EndretBillett);
             }
-            _log.LogInformation("AdminController.cs: EndreBillett: Feil i inputvalideringen.");
-            return BadRequest("Feil i inputvalidering på server.");
+            _log.LogInformation("AdminController.cs: EndreBillett: Billett eller ferd ikke funnet, eller billett allerede brukt eller betalt.");
+            return NotFound("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt");
         }
 
         [HttpGet("billett/{id}")]
@@ -585,7 +575,7 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            Kunder kunde = await _db.HentEnKunde(id);
+            Personer kunde = await _db.HentEnKunde(id);
             if (kunde != null)
             {
                 _log.LogInformation("AdminController.cs: HentEnKunde: Vellykket! Kunde hentet");
@@ -602,7 +592,7 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            List<Kunder> alleKunder = await _db.HentAlleKunder();
+            List<Personer> alleKunder = await _db.HentAlleKunder();
             if (alleKunder != null)
             {
                 _log.LogInformation("AdminController.cs: HentAlleKunder: Vellykket! Kunder hentet");
@@ -612,8 +602,42 @@ namespace Regnbuelinja.Controllers
             return new ServiceUnavailableResult("Databasefeil. Ingen kunder hentet");
         }
 
+        [HttpGet("ansatt/{id}")]
+        public async Task<ActionResult> HentEnAnsatt(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            Personer ansatt = await _db.HentEnAnsatt(id);
+            if (ansatt != null)
+            {
+                _log.LogInformation("AdminController.cs: HentEnAnsatt: Vellykket! Ansatt hentet");
+                return Ok(ansatt);
+            }
+            _log.LogInformation("AdminController.cs: HentEnAnsatt: Ansatt ikke funnet");
+            return NotFound("Ansatt ikke funnet");
+        }
+
+        [HttpGet("ansatte")]
+        public async Task<ActionResult> HentAlleAnsatte()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Personer> alleAnsatte = await _db.HentAlleAnsatte();
+            if (alleAnsatte != null)
+            {
+                _log.LogInformation("AdminController.cs: HentAlleAnsatte: Vellykket! Ansatte hentet");
+                return Ok(alleAnsatte);
+            }
+            _log.LogInformation("AdminController.cs: HentAlleAnsatte: Databasefeil. Prøv igjen!");
+            return new ServiceUnavailableResult("Databasefeil. Ingen ansatte hentet");
+        }
+
         [HttpPut("kunde/{id}")]
-        public async Task<ActionResult> EndreKunde(Kunder kunde)
+        public async Task<ActionResult> EndreKunde(Personer person)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
@@ -621,8 +645,8 @@ namespace Regnbuelinja.Controllers
             }
             if (ModelState.IsValid)
             {
-                bool endretKunde = await _db.EndreKunde(kunde);
-                if (endretKunde)
+                bool endretPerson = await _db.EndrePerson(person);
+                if (endretPerson)
                 {
                     _log.LogInformation("AdminController.cs: EndreKunde: Kunde endret i databasen");
                     return Ok("Vellykket! Kunde endret i databasen");
@@ -630,7 +654,7 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: EndreKunde: Databasefeil eller kunde ikke funnet. Ikke endret");
                 return NotFound("Kunde ikke funnet i databasen");
             }
-            _log.LogInformation("AdminController.cs: EndreKunde: Feil i inputvalideringen. Kunde ikke endret");
+            _log.LogInformation("AdminController.cs: EndreKunde: Feil i inputvalideringen. Person ikke endret");
             return BadRequest("Feil i inputvalideringen");
         }
 
@@ -647,8 +671,8 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettKunde: Vellykket! Kunde slettet");
                 return Ok(slettet);
             }
-            _log.LogInformation("AdminController.cs: SlettKunde: Databasefeil, kunde ikke funnet eller ubetalte kundebestillinger i database");
-            return NotFound("Kunde ikke funnet eller ubetalte kundebestillinger i databasen");
+            _log.LogInformation("AdminController.cs: SlettKunde: Databasefeil, kunde ikke funnet eller kunde har bestillinger.");
+            return NotFound("Kunde ikke funnet eller kunden har bestillinger i database");
         }
 
         [HttpPost("brukere")]
@@ -693,9 +717,15 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalideringen på server");
         }
 
-        public void LoggUt()
+        [HttpGet("logg_ut")]
+        public ActionResult LoggUt([FromQuery(Name = "returUrl")] string returUrl)
         {
-            HttpContext.Session.SetString(_loggetInn, "");
+            HttpContext.Session.Clear();
+            if (returUrl == null || returUrl.Length == 0)
+            {
+                returUrl = "/admin/login";
+            }
+            return Redirect(returUrl);
         }
     }
 
