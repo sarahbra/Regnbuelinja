@@ -365,7 +365,7 @@ namespace Regnbuelinja.Controllers
                 if (EndretBestilling)
                 {
                     _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
-                    return Ok("Vellykket! Bestilling endret i databasen");
+                    return Ok(EndretBestilling);
                 }
                 _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
                     "gjennomførte reiser");
