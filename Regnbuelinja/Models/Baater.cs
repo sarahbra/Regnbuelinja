@@ -9,7 +9,7 @@ namespace Regnbuelinja.Models
     public class Baater
     {
         public int Id { get; set; }
-        [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,20}$")]
+        [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,50}$")]
         public string Båtnavn { get; set; }
     }
 }

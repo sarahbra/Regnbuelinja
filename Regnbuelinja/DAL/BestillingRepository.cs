@@ -598,6 +598,8 @@ namespace Regnbuelinja.DAL
 
         // Hvis kunde ønsker å legge til flere billetter til bestillingen sin. Krever at bestillingsId finnes,
         // og at reisen ikke har vært og er ubetalt (igjen, for enkelhetsskyld => sendes til regnskapsavdelingen)
+        // Det kreves også at ruta er lik ruta til originalbestillingen, eller lik en eventuell retur-reise. Hvis man skal legge til
+        // billett for en annen strekning må en ny bestilling opprettes.
         public async Task<bool> LagreBillett(Billetter billett)
         {
             try
@@ -606,19 +608,26 @@ namespace Regnbuelinja.DAL
                 Ferd ferd = await _db.Ferder.FindAsync(billett.FId);
                 if(bestilling != null && ferd != null)
                 {
-                    if(!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
-                    {
-                        Billett nyBillett = new Billett()
+                    string StartpunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
+                    string EndepunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
+                    if((StartpunktIBestilling.Equals(ferd.Rute.Startpunkt) && EndepunktIBestilling.Equals(ferd.Rute.Endepunkt)) || (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt))) {
+                        if (!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
                         {
-                            Bestilling = bestilling,
-                            Ferd = ferd,
-                            Voksen = billett.Voksen
-                        };
-                        await _db.SaveChangesAsync();
-                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
-                        return true;
+                            Billett nyBillett = new Billett()
+                            {
+                                Bestilling = bestilling,
+                                Ferd = ferd,
+                                Voksen = billett.Voksen
+                            };
+                            await _db.SaveChangesAsync();
+                            _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
+                            return true;
+                        }
+                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller billetten har reise som allerede har vært");
+                        return false;
                     }
-                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller billetten har reise som allerede har vært");
+                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billetter for en annen reise i bestillingen. Opprett heller ny bestilling");
+                    return false;
                 }
                 
                 _log.LogInformation("BestillingRepository.cs: LagreBillett: Fant ikke bestilling eller ferd i databasen");
