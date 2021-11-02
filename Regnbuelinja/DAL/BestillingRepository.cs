@@ -646,7 +646,7 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        // Kan kun endre en billett for en ubetalt ferd som er framover i tid. "Regnskapsavdelingen" vil håndtere betalte betalte billetter (herunder refusjon/ekstra
+        // Kan kun endre en billett for en ubetalt ferd som er framover i tid. "Regnskapsavdelingen" vil håndtere betalte billetter (herunder refusjon/ekstra
         // betaling utfra rutepris)
         // Bestilling - fremmednøkkel endres ikke da billetten er knyttet til kunde via bestilling.
         public async Task<bool> EndreBillett(Billetter billett)
