@@ -1363,7 +1363,7 @@ namespace Regnbuelinja_Test
             var resultat = await adminController.HentBilletterForFerd(It.IsAny<int>()) as NotFoundObjectResult;
 
             //Assert
-            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
             Assert.Equal("Ferd ikke funnet", resultat.Value);
         }
 
@@ -1428,7 +1428,7 @@ namespace Regnbuelinja_Test
             var resultat = await adminController.HentBilletterForRute(It.IsAny<int>()) as NotFoundObjectResult;
 
             //Assert
-            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
             Assert.Equal("Rute ikke funnet", resultat.Value);
         }
 
@@ -1479,29 +1479,35 @@ namespace Regnbuelinja_Test
             Assert.Equal("Ikke logget inn", resultat.Value);
         }
 
-        //[Fact]
-        //public async Task HentBestillingerForKundeIkkeOk()
-        //{
-        //    mockRep.Setup(b => b.HentBilletterForBåt(It.IsAny<int>())).ReturnsAsync(() => null);
-        //    var adminController = new AdminController(mockRep.Object, mockLog.Object);
+        [Fact]
+        public async Task HentBestillingerForKundeIkkeOk()
+        {
+            mockRep.Setup(b => b.HentBestillingerForKunde(It.IsAny<int>())).ReturnsAsync(() => null);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
-        //    mockSession[_loggetInn] = _loggetInn;
-        //    mockHttpContext.Setup(s => s.Session).Returns(mockSession);
-        //    adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
-        //    //Act
-        //    var resultat = await adminController.HentBilletterForBåt(It.IsAny<int>()) as NotFoundObjectResult;
+            //Act
+            var resultat = await adminController.HentBestillingerForKunde(It.IsAny<int>()) as NotFoundObjectResult;
 
-        //    //Assert
-        //    Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
-        //    Assert.Equal("Båt ikke funnet", resultat.Value);
-        //}
+            //Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Kunde ikke funnet", resultat.Value);
+        }
 
         [Fact]
         public async Task HentBestillingerForKundeLoggetInnOk()
         {
             //Arrange
-            mockRep.Setup(b => b.HentBestillingerForKunde(It.IsAny<int>())).ReturnsAsync(It.IsAny<List<Bestilling>>());
+            var bestilling1 = new Bestilling { Id = 1, KId=1, Betalt = true};
+            var bestilling2 = new Bestilling { Id = 1, KId=1, Betalt = true};
+            List<Bestilling> bestillingListe = new List<Bestilling>();
+            bestillingListe.Add(bestilling1);
+            bestillingListe.Add(bestilling2);
+
+            mockRep.Setup(b => b.HentBestillingerForKunde(1)).ReturnsAsync(bestillingListe);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
             mockSession[_loggetInn] = _loggetInn;
@@ -1513,7 +1519,7 @@ namespace Regnbuelinja_Test
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
-            Assert.Equal((List<Bestilling>)resultat.Value, It.IsAny<List<Bestilling>>());
+            Assert.Equal((List<Bestilling>)resultat.Value, bestillingListe);
         }
 
         [Fact]
@@ -1548,8 +1554,8 @@ namespace Regnbuelinja_Test
             var resultat = await adminController.HentBilletterForBåt(It.IsAny<int>()) as NotFoundObjectResult;
 
             //Assert
-            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
-            Assert.Equal("Båt ikke funnet", resultat.Value);
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Båt ikke funnet.", resultat.Value);
         }
 
         [Fact]
