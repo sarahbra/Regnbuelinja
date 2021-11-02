@@ -717,9 +717,15 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalideringen på server");
         }
 
-        public void LoggUt()
+        [HttpGet("logg_ut")]
+        public ActionResult LoggUt([FromQuery(Name = "returUrl")] string returUrl)
         {
-            HttpContext.Session.SetString(_loggetInn, "");
+            HttpContext.Session.Clear();
+            if (returUrl == null || returUrl.Length == 0)
+            {
+                returUrl = "/admin/login";
+            }
+            return Redirect(returUrl);
         }
     }
 

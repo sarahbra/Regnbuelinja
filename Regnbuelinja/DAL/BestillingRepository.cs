@@ -164,7 +164,7 @@ namespace Regnbuelinja.DAL
             {
                 Baat nyBaat = new Baat
                 {
-                    Navn = båt.Båtnavn
+                    Navn = båt.navn
                 };
 
                 _db.Baater.Add(nyBaat);
@@ -187,7 +187,7 @@ namespace Regnbuelinja.DAL
                 Baat somSkalEndres = await _db.Baater.FirstOrDefaultAsync(b => b.Id == båt.Id);
                 if(somSkalEndres!= default)
                 {
-                    somSkalEndres.Navn = båt.Båtnavn;
+                    somSkalEndres.Navn = båt.navn;
                     await _db.SaveChangesAsync();
                     _log.LogInformation("BestillingRepository.cs: EndreBåt: Vellykket! Båt endret");
                     return true;
@@ -739,7 +739,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Id == id).Select(b => new Billetter()
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Bestilling.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
                     FId = b.Ferd.Id,

@@ -10,6 +10,6 @@ namespace Regnbuelinja.Models
     {
         public int Id { get; set; }
         [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,50}$")]
-        public string Båtnavn { get; set; }
+        public string navn { get; set; }
     }
 }
