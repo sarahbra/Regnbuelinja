@@ -514,6 +514,7 @@ namespace Regnbuelinja.DAL
                         _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
                         _db.Remove(somSkalSlettes);
                         await _db.SaveChangesAsync();
+                        return true;
                     }
                     _log.LogInformation("BestillingRepository.cs: SlettBestilling: Bestillingen er ikke betalt og gjennomført ELLER betalt, men ikke gjennomført. Ikke slettet");
                     return false;
