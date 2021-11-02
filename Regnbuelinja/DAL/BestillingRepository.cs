@@ -739,7 +739,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Id == id).Select(b => new Billetter()
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Bestilling.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
                     FId = b.Ferd.Id,
