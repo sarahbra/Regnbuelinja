@@ -84,23 +84,23 @@ namespace Regnbuelinja_Test
             Assert.False((bool)resultat.Value);
         }
 
-        [Fact]
-        public void LoggUt()
-        {
-            
-            //Arrange
-            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+        //[Fact]
+        //public void LoggUtOk()
+        //{
+        //    //Arrange
+        //    var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
-            mockSession[_loggetInn] = _loggetInn;
-            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
-            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+        //    mockSession[_loggetInn] = _loggetInn;
+        //    mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+        //    adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
-            //Act
-            adminController.LoggUt();
+        //    //Act
+        //    var resultat = adminController.LoggUt("/admin/login") as RedirectToRouteResult;
 
-            //Assert
-            Assert.Equal(_ikkeLoggetInn, mockSession[_loggetInn]);
-        }
+        //    //Assert
+        //    Assert.Equal("/admin/login", resultat.RouteValues["action"].ToString());
+        //    Assert.Null(resultat.RouteValues["controller"].ToString());
+        //}
 
         [Fact]
         public async Task LagreBrukerLoggetInnOk()
@@ -1304,6 +1304,69 @@ namespace Regnbuelinja_Test
         }
 
         [Fact]
+        public async Task HentBilletterForBestillingLoggetInnOk()
+        {
+            //Arrange
+            var billett1 = new Billetter { Id = 1, FId = It.IsAny<int>(), BId = 1, Voksen = true };
+            var billett2 = new Billetter { Id = 2, FId = It.IsAny<int>(), BId = 1, Voksen = false };
+
+            var billettListe = new List<Billetter>()
+            {
+                billett1,
+                billett2
+            };
+            mockRep.Setup(b => b.HentBilletterForBestilling(1)).ReturnsAsync(billettListe);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentBilletterForBestilling(1) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.Equal((List<Billetter>)resultat.Value, billettListe);
+        }
+
+        [Fact]
+        public async Task HentBilletterForBestillingIkkeLoggetInn()
+        {
+            mockRep.Setup(b => b.HentBilletterForBestilling(It.IsAny<int>())).ReturnsAsync(It.IsAny<List<Billetter>>);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentBilletterForBestilling(It.IsAny<int>()) as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentBilletterForBestillingIkkeOk()
+        {
+            mockRep.Setup(b => b.HentBilletterForBestilling(It.IsAny<int>())).ReturnsAsync(() => null);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentBilletterForBestilling(It.IsAny<int>()) as NotFoundObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Bestilling ikke funnet", resultat.Value);
+        }
+
+        [Fact]
         public async Task HentBilletterForFerdLoggetInnOk()
         {
             //Arrange
@@ -2056,5 +2119,398 @@ namespace Regnbuelinja_Test
             Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
             Assert.Equal("Bestilling eller kunde ikke funnet, eller bestillingen inneholder ubetalte gjennomførte reiser, eller betalte reiser", resultat.Value);
         }
+        [Fact]
+        public async Task EndreKundeIkkeLoggetInn()
+        {
+            //Arrange
+            mockRep.Setup(b => b.EndrePerson(It.IsAny<Personer>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task EndreKundeLoggetInnOk()
+        {
+            //Arrange
+            mockRep.Setup(b => b.EndrePerson(It.IsAny<Personer>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.True((bool)resultat.Value);
+        }
+
+
+        // Vet ikke om testmiljøet blir riktig. Sjekk dette om igjen
+        [Fact]
+        public async Task EndreKundeLoggetInnIkkeOK()
+        {
+            //Arrange
+            mockRep.Setup(b => b.EndrePerson(It.IsAny<Personer>())).ReturnsAsync(false);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as NotFoundObjectResult;
+
+            // Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Kunde ikke funnet i databasen", resultat.Value);
+        }
+
+        [Fact]
+        public async Task EndreKundeLoggetInnFeilModel()
+        {
+            //Arrange
+            mockRep.Setup(b => b.EndrePerson(It.IsAny<Personer>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            adminController.ModelState.AddModelError("Fornavn", "Feil i inputvalideringen");
+
+            //Act
+            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as BadRequestObjectResult;
+
+            // Assert
+            Assert.Equal((int)HttpStatusCode.BadRequest, resultat.StatusCode);
+            Assert.Equal("Feil i inputvalideringen", resultat.Value);
+        }
+
+        [Fact]
+        public async Task SlettKundeIkkeLoggetInn()
+        {
+            //Arrange
+            mockRep.Setup(b => b.SlettKunde(It.IsAny<int>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.SlettKunde(It.IsAny<int>()) as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task SlettKundeLoggetInnOk()
+        {
+            //Arrange
+            mockRep.Setup(b => b.SlettKunde(It.IsAny<int>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.SlettKunde(It.IsAny<int>()) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.True((bool)resultat.Value);
+        }
+
+        [Fact]
+        public async Task SlettKundeLoggetInnIkkeOK()
+        {
+            //Arrange
+            mockRep.Setup(b => b.SlettKunde(1)).ReturnsAsync(false);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.SlettKunde(1) as NotFoundObjectResult;
+
+            // Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Kunde ikke funnet eller kunden har bestillinger i database", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentAlleKunderLoggetInnOK()
+        {
+            //Arrange
+            var kunde1 = new Personer { Id = 1, Fornavn="Kunde", Etternavn="Kundesen", Epost="kunde@kunde.no", Telefonnr="11111111"};
+            var kunde2 = new Personer { Id = 2, Fornavn = "Tor", Etternavn = "Latterbrøl", Epost="kunde2@kunde.no", Telefonnr="44444444" };
+
+            var kundeListe = new List<Personer>();
+            kundeListe.Add(kunde1);
+            kundeListe.Add(kunde2);
+
+            mockRep.Setup(b => b.HentAlleKunder()).ReturnsAsync(kundeListe);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentAlleKunder() as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.Equal((List<Personer>)resultat.Value, kundeListe);
+        }
+
+        [Fact]
+        public async Task HentAlleKunderIkkeLoggetInn()
+        {
+            mockRep.Setup(b => b.HentAlleKunder()).ReturnsAsync(It.IsAny<List<Personer>>);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentAlleKunder() as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentAlleKunderFeilDb()
+        {
+            mockRep.Setup(b => b.HentAlleKunder()).ReturnsAsync(() => null);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentAlleKunder() as ServiceUnavailableResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
+            Assert.Equal("Databasefeil. Ingen kunder hentet", resultat.ViewName);
+        }
+
+        [Fact]
+        public async Task HentAlleAnsatteLoggetInnOK()
+        {
+            //Arrange
+            var ansatt = new Personer { Id = 1, Fornavn = "Kunde", Etternavn = "Kundesen", Epost = "kunde@kunde.no", Telefonnr = "11111111"};
+            var ansatt2 = new Personer { Id = 2, Fornavn = "Tor", Etternavn = "Latterbrøl", Epost = "kunde2@kunde.no", Telefonnr = "44444444"};
+
+            var ansattListe = new List<Personer>();
+            ansattListe.Add(ansatt);
+            ansattListe.Add(ansatt2);
+
+            mockRep.Setup(b => b.HentAlleAnsatte()).ReturnsAsync(ansattListe);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentAlleAnsatte() as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.Equal((List<Personer>)resultat.Value, ansattListe);
+        }
+
+        [Fact]
+        public async Task HentAlleAnsatteIkkeLoggetInn()
+        {
+            mockRep.Setup(b => b.HentAlleAnsatte()).ReturnsAsync(It.IsAny<List<Personer>>);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentAlleAnsatte() as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentAlleAnsatteFeilDb()
+        {
+            mockRep.Setup(b => b.HentAlleAnsatte()).ReturnsAsync(() => null);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentAlleAnsatte() as ServiceUnavailableResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.ServiceUnavailable, resultat.StatusCode);
+            Assert.Equal("Databasefeil. Ingen ansatte hentet", resultat.ViewName);
+        }
+
+        [Fact]
+        public async Task HentEnKundeLoggetInnOk()
+        {
+            //Arrange
+            var kunde = new Personer
+            {
+                Id = 1,
+                Fornavn = "Kunde",
+                Etternavn = "Kundesen",
+                Epost = "kunde@kundesen.no",
+                Telefonnr = "22222222"
+            };
+
+            mockRep.Setup(b => b.HentEnKunde(It.IsAny<int>())).ReturnsAsync(kunde);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentEnKunde(It.IsAny<int>()) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.Equal<Personer>((Personer)resultat.Value, kunde);
+        }
+
+        [Fact]
+        public async Task HentEnKundeIkkeLoggetInn()
+        {
+            //Arrange
+            mockRep.Setup(b => b.HentEnKunde(It.IsAny<int>())).ReturnsAsync(It.IsAny<Personer>());
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentEnKunde(It.IsAny<int>()) as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentEnKundeLoggetInnFeilDb()
+        {
+            //Arrange
+            mockRep.Setup(b => b.HentEnKunde(It.IsAny<int>())).ReturnsAsync(() => null);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentEnKunde(It.IsAny<int>()) as NotFoundObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Kunde ikke funnet", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentEnAnsattLoggetInnOk()
+        {
+            //Arrange
+            var ansatt = new Personer
+            {
+                Id = 1,
+                Fornavn = "Ansatt",
+                Etternavn = "Jobbemann",
+                Epost = "ansatt@ansatte.no",
+                Telefonnr = "22224444"
+            };
+
+            mockRep.Setup(b => b.HentEnAnsatt(It.IsAny<int>())).ReturnsAsync(ansatt);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentEnAnsatt(It.IsAny<int>()) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.Equal<Personer>((Personer)resultat.Value, ansatt);
+        }
+
+        [Fact]
+        public async Task HentEnAnsattIkkeLoggetInn()
+        {
+            //Arrange
+            mockRep.Setup(b => b.HentEnAnsatt(It.IsAny<int>())).ReturnsAsync(It.IsAny<Personer>());
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentEnAnsatt(It.IsAny<int>()) as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task HentEnAnsattLoggetInnFeilDb()
+        {
+            //Arrange
+            mockRep.Setup(b => b.HentEnAnsatt(It.IsAny<int>())).ReturnsAsync(() => null);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.HentEnAnsatt(It.IsAny<int>()) as NotFoundObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Ansatt ikke funnet", resultat.Value);
+        }
+
     }
 }

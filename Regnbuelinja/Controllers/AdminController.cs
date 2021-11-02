@@ -649,7 +649,7 @@ namespace Regnbuelinja.Controllers
                 if (endretPerson)
                 {
                     _log.LogInformation("AdminController.cs: EndreKunde: Kunde endret i databasen");
-                    return Ok("Vellykket! Kunde endret i databasen");
+                    return Ok(endretPerson);
                 }
                 _log.LogInformation("AdminController.cs: EndreKunde: Databasefeil eller kunde ikke funnet. Ikke endret");
                 return NotFound("Kunde ikke funnet i databasen");
