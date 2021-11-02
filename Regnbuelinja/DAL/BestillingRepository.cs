@@ -101,7 +101,7 @@ namespace Regnbuelinja.DAL
                     {
                         foreach (Ferd ferd in AlleRelaterteFerder)
                         {
-                            _log.LogInformation("BestillingRepository.cs: SlettRute: Ferd med id " + id + " slettet");
+                            _log.LogInformation("BestillingRepository.cs: SlettRute: Ferd med id " + ferd.Id + " slettet");
                             _db.Ferder.Remove(ferd);
                         }
                     }
