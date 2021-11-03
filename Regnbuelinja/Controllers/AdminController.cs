@@ -428,7 +428,24 @@ namespace Regnbuelinja.Controllers
             _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
             return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
         }
-
+        /*
+        [HttpPost("bestillinger")]
+        public async Task<ActionResult> LagreBestilling(Bestilling bestilling)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            bool BillettLagret = await _db.LagreBestilling2(bestilling);
+            if (BillettLagret)
+            {
+                _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
+                return Ok(BillettLagret);
+            }
+            _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
+            return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
+        }
+        */
         [HttpDelete("billett/{id}")]
         public async Task<ActionResult> SlettBillett(int id)
         {
@@ -711,6 +728,28 @@ namespace Regnbuelinja.Controllers
                 }
                 _log.LogInformation("AdminController.cs: LagreBruker: Databasefeil. Bruker ikke opprettet.");
                 return new ServiceUnavailableResult("Databasefeil. Bruker ikke opprettet");
+            }
+            return BadRequest("Feil i inputvalidering på server");
+        }
+
+        [HttpPost("kunder")]
+        public async Task<ActionResult> LagreKunde(Personer kunde)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            if (ModelState.IsValid)
+            {
+                bool kundeOpprettet = await _db.LagreKunde(kunde);
+                if (kundeOpprettet)
+                {
+                    _log.LogInformation("AdminController.cs: LagreKunde: Kunden lagret vellykket");
+                    return Ok(kundeOpprettet);
+                }
+                _log.LogInformation("AdminController.cs: LagreKunde: Databasefeil. Kunden ikke opprettet.");
+                return new ServiceUnavailableResult("Databasefeil. Kunden ikke opprettet");
             }
             return BadRequest("Feil i inputvalidering på server");
         }

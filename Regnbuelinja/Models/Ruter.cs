@@ -10,9 +10,9 @@ namespace Regnbuelinja.Models
     {
         public int Id { get; set; }
         [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
-        public string Avreisehavn { get; set; }
+        public string Startpunkt { get; set; }
         [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
-        public string Ankomsthavn { get; set; }
+        public string Endepunkt { get; set; }
         public double Pris { get; set; }
     }
 }
