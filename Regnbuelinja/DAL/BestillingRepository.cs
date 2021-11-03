@@ -492,8 +492,8 @@ namespace Regnbuelinja.DAL
         // Fremtidig ville man da kunne implementere en metode som eksporterte ubetalte gjennomførte ferder til regnskapsavdelingen dersom man ønsket
         // å slette historiske ferder.
 
-        // Billetter i bestilling slettes før bestillingen slettes (Cascade).
-        // TROR DENNE FUNKER! MÅ TESTES!!!
+        // Billetter i bestilling slettes før bestillingen slettes.
+
         public async Task<bool> SlettBestilling(int id)
         {
             try
@@ -549,10 +549,10 @@ namespace Regnbuelinja.DAL
                                 return false;
                             }
                         }
-                        Person nyKunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
-                        if(nyKunde != default)
+                        Person kunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
+                        if(kunde != default)
                         {
-                            endreBestilling.Kunde = nyKunde;
+                            endreBestilling.Kunde = kunde;
                             endreBestilling.Betalt = bestilling.Betalt;
 
                             await _db.SaveChangesAsync();
@@ -835,6 +835,9 @@ namespace Regnbuelinja.DAL
         }
 
         // Henter gyldige ferder som kan velges for en ny billett i en eksisterende bestilling.
+        // Hvis ingen billetter ligger inne hentes alle ferder
+        // Hvis en ferd og en returferd ligger i bestillingen returneres disse
+        // Hvis kun en ferd er bestillt returneres ferden samt alle returferder for samme rute.
         public async Task<List<Ferder>> HentFerderForBestilling(int id)
         {
             try
@@ -858,10 +861,30 @@ namespace Regnbuelinja.DAL
                     }).ToListAsync();
                 } else
                 {
-                    string Startpunkt = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
-                    string Endepunkt = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
-                    gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == Startpunkt) && (f.Rute.Endepunkt == Endepunkt)) || (f.Rute.Startpunkt == Endepunkt)
-                        && (f.Rute.Endepunkt == Startpunkt))).Select(f => new Ferder()
+                    gyldigeFerder = new List<Ferder>();
+
+                    Ferd ferd = bestilling.Billetter.First().Ferd;
+                    Ferder ferdSomHentes = new Ferder() {
+                        FId = ferd.Id,
+                        BId = ferd.Baat.Id,
+                        RId = ferd.Rute.Id,
+                        AnkomstTid = ferd.AnkomstTid.ToString("o"),
+                        AvreiseTid = ferd.AvreiseTid.ToString("o")
+                    };
+
+                    gyldigeFerder.Add(ferdSomHentes);
+
+                    Ferd returFerd = bestilling.Billetter.Where(b => b.Ferd.Id != ferd.Id).Select(b => b.Ferd).FirstOrDefault();
+                    if(returFerd!=default)
+                    {
+                        gyldigeFerder.Add(ferdSomHentes);
+                        return gyldigeFerder;
+                    } else
+                    {
+                        string startpunkt = ferd.Rute.Startpunkt;
+                        string endepunkt = ferd.Rute.Endepunkt;
+                        DateTime AnkomstTid = ferd.AnkomstTid;
+                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid)>0))).Select(f => new Ferder()
                         {
                             FId = f.Id,
                             RId = f.Rute.Id,
@@ -869,8 +892,11 @@ namespace Regnbuelinja.DAL
                             AvreiseTid = f.AvreiseTid.ToString("o"),
                             AnkomstTid = f.AnkomstTid.ToString("o")
                         }).ToListAsync();
+                        gyldigeFerder.Add(ferdSomHentes);
 
+                    }
                 }
+                    
                 if (!gyldigeFerder.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Ingen gyldige ferder funnet");
