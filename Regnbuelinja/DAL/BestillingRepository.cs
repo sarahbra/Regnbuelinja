@@ -26,7 +26,6 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                //if(rute.Pris > 100 && rute.Pris)
                 Rute lagretRute = new Rute()
                 {
                     Startpunkt = rute.Startpunkt,
@@ -672,7 +671,7 @@ namespace Regnbuelinja.DAL
                         _log.LogInformation("BestillingRepository.cs: EndreBillett: Ferd ikke funnet. Kunne ikke endre billett.");
                         return false;
                     }
-                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestillingen er betalt. Kan ikke endres");
+                    _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
                     return false;
                 }
                 _log.LogInformation("BestillingRepository.cs: EndreBestilling: Fant ikke bestillingen i databasen");
@@ -834,6 +833,40 @@ namespace Regnbuelinja.DAL
             catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: HentBilletterForBåt: Feil i databasen: " + e + ". Billetter ikke hentet");
+                return null;
+            }
+        }
+
+        // Henter gyldige ferder som kan endres for en billett i en bestilling.
+        public async Task<List<Ferder>> HentFerderForBillett(int id)
+        {
+            try
+            {
+                Billett billett = await _db.Billetter.FindAsync(id);
+                if(billett == default)
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Billett ikke funnet i databasen");
+                    return null;
+                }
+                string Startpunkt = billett.Ferd.Rute.Startpunkt;
+                string Endepunkt = billett.Ferd.Rute.Endepunkt;
+                List<Ferder> gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == Startpunkt) && (f.Rute.Endepunkt == Endepunkt)) || (f.Rute.Startpunkt == Endepunkt)
+                    && (f.Rute.Endepunkt == Startpunkt))).Select(f => new Ferder() {
+                        FId = f.Id,
+                        RId = f.Rute.Id,
+                        BId = f.Baat.Id,
+                        AvreiseTid = f.AvreiseTid.ToString("o"),
+                        AnkomstTid = f.AnkomstTid.ToString("o")
+                    }).ToListAsync();
+                if(!gyldigeFerder.Any())
+                {
+                    _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Ingen gyldige ferder funnet");
+                }
+                _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Gyldige ferder returnert");
+                return gyldigeFerder;
+            } catch(Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Databasefeil: " + e);
                 return null;
             }
         }
@@ -1172,8 +1205,9 @@ namespace Regnbuelinja.DAL
         {
             try
             {
+                Ferd ferden = await _db.Ferder.FindAsync(bestilling.Id);
                 Person kunde = await _db.KunderOgAnsatte.FindAsync(bestilling.KId);
-                if(kunde != null)
+                if(ferden != null && kunde != null)
                 {
                     Bestillinger nyBestilling = new Bestillinger
                     {
@@ -1201,7 +1235,7 @@ namespace Regnbuelinja.DAL
             List<Billett> billettListe = new List<Billett>();
 
             DateTime AvreiseTid = ParseDatoLocal(nyBestilling.AvreiseTid);
-
+            
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(UtenTimer(AvreiseTid.Date)) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
@@ -1287,6 +1321,32 @@ namespace Regnbuelinja.DAL
                 return null;
             }
         }
+        /*
+        public async Task<bool> LagreBestilling2(Bestilling bestilling)
+        {
+            try
+            {
+                Rute lagretRute = new Rute()
+                {
+                    Startpunkt = rute.Startpunkt,
+                    Endepunkt = rute.Endepunkt,
+                    Pris = rute.Pris
+                };
+
+                _db.Ruter.Add(lagretRute);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: LagreRute: Rute lagret vellykket");
+                return true;
+            }
+            catch
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreRute: Feil i databasen. Rute ikke lagret");
+                return false;
+            }
+
+        }
+        */
+
 
         public async Task<BestillingOutput> HentBestilling(int id)
         {
@@ -1308,31 +1368,6 @@ namespace Regnbuelinja.DAL
             _log.LogInformation("/Controllers/BestillingRepository.cs: HentBestilling: Ingen bestilling med ID " + id + " har blitt funnet i databasen");
             return bestilling;
         }
-
-        public async Task<List<Bestilling>> HentAlleBestillingerForKunde(int id)
-        {
-            Person kunde = await _db.KunderOgAnsatte.FindAsync(id);
-            if(kunde==default)
-            {
-                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Kunde ikke funnet i databasen");
-                return null;
-            }
-           
-            List<Bestilling> bestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).Select(b => new Bestilling
-            {
-                Id = b.Id,
-                KId = kunde.Id,
-                
-            }).ToListAsync();
-
-            if (!bestillinger.Any())
-            {
-                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Kunden har ingen bestillinger i databasen");
-            }
-            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Vellykket. En liste av bestillingoutput-objekter blir returnert.");
-            return bestillinger;
-        }
-
 
 
         public async Task<double> HentPris(int id)
