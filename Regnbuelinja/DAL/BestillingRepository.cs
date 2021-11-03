@@ -845,17 +845,33 @@ namespace Regnbuelinja.DAL
                     _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Bestilling ikke funnet i databasen");
                     return null;
                 }
-                string Startpunkt = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
-                string Endepunkt = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
-                List<Ferder> gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == Startpunkt) && (f.Rute.Endepunkt == Endepunkt)) || (f.Rute.Startpunkt == Endepunkt)
-                    && (f.Rute.Endepunkt == Startpunkt))).Select(f => new Ferder() {
+                List<Ferder> gyldigeFerder;
+                if(!bestilling.Billetter.Any())
+                {
+                    gyldigeFerder = await _db.Ferder.Select(f => new Ferder()
+                    {
                         FId = f.Id,
                         RId = f.Rute.Id,
                         BId = f.Baat.Id,
                         AvreiseTid = f.AvreiseTid.ToString("o"),
                         AnkomstTid = f.AnkomstTid.ToString("o")
                     }).ToListAsync();
-                if(!gyldigeFerder.Any())
+                } else
+                {
+                    string Startpunkt = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
+                    string Endepunkt = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
+                    gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == Startpunkt) && (f.Rute.Endepunkt == Endepunkt)) || (f.Rute.Startpunkt == Endepunkt)
+                        && (f.Rute.Endepunkt == Startpunkt))).Select(f => new Ferder()
+                        {
+                            FId = f.Id,
+                            RId = f.Rute.Id,
+                            BId = f.Baat.Id,
+                            AvreiseTid = f.AvreiseTid.ToString("o"),
+                            AnkomstTid = f.AnkomstTid.ToString("o")
+                        }).ToListAsync();
+
+                }
+                if (!gyldigeFerder.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Ingen gyldige ferder funnet");
                 }
