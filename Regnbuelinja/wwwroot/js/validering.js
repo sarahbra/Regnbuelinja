@@ -23,7 +23,7 @@ function validerEtternavn(etternavn) {
 }
 
 function validerEpost(epost) {
-    const regexp = /^[0-9a-zA-ZæøåÆØÅ\. \=]{2,50}$/;
+    const regexp = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     const ok = regexp.test(epost);
     if (!ok) {
         $("#feilEpost").html("Eposten må være på formatet adresse@mail.no");
@@ -62,18 +62,18 @@ function validerBrukernavn(brukernavn) {
     }
 }
 
-//skift dette
-function validerPassord(passord) {
-    const regexp = /^(?=.*[0-9])(?=.*[a-zA-ZæøåØÆÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}$/;
-    if (!regexp.test(passord)) {
-        $("#feilPassord").html("Passordet må være minst 6 tegn langt med minst en bokstav og ett tall");
-        return false;
-    } else {
-        $("#feilPassord").html("");
-        return true;
-    }
-}
+////skift dette
+//function validerPassord(passord) {
+//    const regexp = /^(?=.*[0-9])(?=.*[a-zA-ZæøåØÆÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}$/;
+//    if (!regexp.test(passord)) {
+//        $("#feilPassord").html("Passordet må være minst 6 tegn langt med minst en bokstav og ett tall");
+//        return false;
+//    } else {
+//        $("#feilPassord").html("");
+//        return true;
+//    }
+//}
 
-function validerBruker(bruker) {
-    return (validerBrukernavn(bruker.brukernavn) && validerPassord(bruker.passord));
-}
+//function validerBruker(bruker) {
+//    return (validerBrukernavn(bruker.brukernavn) && validerPassord(bruker.passord));
+//}
