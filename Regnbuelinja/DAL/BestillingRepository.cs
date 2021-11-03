@@ -28,8 +28,8 @@ namespace Regnbuelinja.DAL
             {
                 Rute lagretRute = new Rute()
                 {
-                    Startpunkt = rute.Avreisehavn,
-                    Endepunkt = rute.Ankomsthavn,
+                    Startpunkt = rute.Startpunkt,
+                    Endepunkt = rute.Endepunkt,
                     Pris = rute.Pris
                 };
 
@@ -59,8 +59,8 @@ namespace Regnbuelinja.DAL
                         return false;
                     }
                     
-                    somSkalEndres.Startpunkt = endreRute.Avreisehavn;
-                    somSkalEndres.Endepunkt = endreRute.Ankomsthavn;
+                    somSkalEndres.Startpunkt = endreRute.Startpunkt;
+                    somSkalEndres.Endepunkt = endreRute.Endepunkt;
                     somSkalEndres.Pris = endreRute.Pris;
 
                     await _db.SaveChangesAsync();
@@ -1258,6 +1258,32 @@ namespace Regnbuelinja.DAL
                 return null;
             }
         }
+        /*
+        public async Task<bool> LagreBestilling2(Bestilling bestilling)
+        {
+            try
+            {
+                Rute lagretRute = new Rute()
+                {
+                    Startpunkt = rute.Startpunkt,
+                    Endepunkt = rute.Endepunkt,
+                    Pris = rute.Pris
+                };
+
+                _db.Ruter.Add(lagretRute);
+                await _db.SaveChangesAsync();
+                _log.LogInformation("BestillingRepository.cs: LagreRute: Rute lagret vellykket");
+                return true;
+            }
+            catch
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreRute: Feil i databasen. Rute ikke lagret");
+                return false;
+            }
+
+        }
+        */
+
 
         public async Task<BestillingOutput> HentBestilling(int id)
         {
