@@ -466,20 +466,20 @@ namespace Regnbuelinja.Controllers
         }
 
         [HttpPut("billett/{id}")]
-        public async Task<ActionResult> EndreBillett(Billetter billett)
+        public async Task<ActionResult> EndreBillett(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            bool EndretBillett = await _db.EndreBillett(billett);
+            bool EndretBillett = await _db.EndreBillett(id);
             if (EndretBillett)
             {
                 _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
                 return Ok(EndretBillett);
             }
-            _log.LogInformation("AdminController.cs: EndreBillett: Billett eller ferd ikke funnet, eller billett allerede brukt eller betalt.");
-            return NotFound("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt");
+            _log.LogInformation("AdminController.cs: EndreBillett: Billett ikke funnet, eller billett allerede brukt eller betalt.");
+            return NotFound("Billett ikke funnet, billett er allerede brukt eller betalt");
         }
 
         [HttpGet("billett/{id}")]

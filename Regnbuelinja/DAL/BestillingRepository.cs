@@ -649,27 +649,23 @@ namespace Regnbuelinja.DAL
         // Kan kun endre en billett for en ubetalt ferd som er framover i tid. "Regnskapsavdelingen" vil håndtere betalte billetter (herunder refusjon/ekstra
         // betaling utfra rutepris)
         // Bestilling - fremmednøkkel endres ikke da billetten er knyttet til kunde via bestilling.
-        public async Task<bool> EndreBillett(Billetter billett)
+        // Endrer kun mellom voksen og barn ettersom bestillingen er knyttet til en spesifikk rute og ferd - ny bestilling og billett hvis kunden skal til en ny destinasjon
+        public async Task<bool> EndreBillett(int id)
         {
             try
             {
-                Billett endreBillett = await _db.Billetter.FindAsync(billett.BId);
+                Billett endreBillett = await _db.Billetter.FindAsync(id);
                 if (endreBillett != null)
                 {
                     if (!endreBillett.Bestilling.Betalt && (endreBillett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
                     {
-                        Ferd nyFerd = await _db.Ferder.FindAsync(billett.FId);
-                        if(nyFerd != null)
-                        {
-                            endreBillett.Ferd = nyFerd;
-                            endreBillett.Voksen = billett.Voksen;
+                        if (endreBillett.Voksen) endreBillett.Voksen = false;
+                        else endreBillett.Voksen = true;
 
-                            _log.LogInformation("BestillingRepository.cs: EndreBillett: Vellykket! Billetten er endret");
-                            await _db.SaveChangesAsync();
-                            return true;
-                        }
-                        _log.LogInformation("BestillingRepository.cs: EndreBillett: Ferd ikke funnet. Kunne ikke endre billett.");
-                        return false;
+                        _log.LogInformation("BestillingRepository.cs: EndreBillett: Vellykket! Billetten er endret");
+                        await _db.SaveChangesAsync();
+                        return true;
+                       
                     }
                     _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
                     return false;

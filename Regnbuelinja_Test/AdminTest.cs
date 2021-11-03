@@ -432,7 +432,7 @@ namespace Regnbuelinja_Test
         public async Task SlettRuteLoggetInnOKMedBillettTest()
         {
             //Arrange
-            var ruter = new Ruter { Avreisehavn = "Haiti", Ankomsthavn = "Oslo", Pris = 9999.99 };
+            var ruter = new Ruter { Startpunkt = "Haiti", Endepunkt = "Oslo", Pris = 9999.99 };
             var ferder = new Ferder { AnkomstTid = It.IsAny<DateTime>().ToString("o"), AvreiseTid = It.IsAny<DateTime>().ToString("o"), RId = 1, BId = It.IsAny<int>() };
             var billetter = new Billetter { BId = It.IsAny<int>(), FId = 1, Voksen = true };
 
@@ -497,8 +497,8 @@ namespace Regnbuelinja_Test
         public async Task EndreRuteLoggetInnOKMedBillettTest()
         {
             //Arrange
-            var ruter = new Ruter { Avreisehavn = "Haiti", Ankomsthavn = "Oslo", Pris = 9999.99 };
-            var ruter2 = new Ruter {Id = 1, Avreisehavn = "New York", Ankomsthavn = "Oslo", Pris = 250.00 };
+            var ruter = new Ruter { Startpunkt = "Haiti", Endepunkt = "Oslo", Pris = 9999.99 };
+            var ruter2 = new Ruter {Id = 1, Startpunkt = "New York", Endepunkt = "Oslo", Pris = 250.00 };
             var ferder = new Ferder { AnkomstTid = It.IsAny<DateTime>().ToString("o"), AvreiseTid = It.IsAny<DateTime>().ToString("o"), RId = 1, BId = It.IsAny<int>() };
             var billetter = new Billetter { BId = It.IsAny<int>(), FId = 1, Voksen = true };
 
@@ -1809,7 +1809,7 @@ namespace Regnbuelinja_Test
         public async Task EndreBillettIkkeLoggetInn()
         {
             //Arrange
-            mockRep.Setup(b => b.EndreBillett(It.IsAny<Billetter>())).ReturnsAsync(true);
+            mockRep.Setup(b => b.EndreBillett(It.IsAny<int>())).ReturnsAsync(true);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
             mockSession[_loggetInn] = _ikkeLoggetInn;
@@ -1817,7 +1817,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as UnauthorizedObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<int>()) as UnauthorizedObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
@@ -1828,7 +1828,7 @@ namespace Regnbuelinja_Test
         public async Task EndreBillettLoggetInnOk()
         {
             //Arrange
-            mockRep.Setup(b => b.EndreBillett(It.IsAny<Billetter>())).ReturnsAsync(true);
+            mockRep.Setup(b => b.EndreBillett(It.IsAny<int>())).ReturnsAsync(true);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
             mockSession[_loggetInn] = _loggetInn;
@@ -1836,7 +1836,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as OkObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<int>()) as OkObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
@@ -1862,11 +1862,11 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(billett) as NotFoundObjectResult;
+            var resultat = await adminController.EndreBillett(1) as NotFoundObjectResult;
 
             // Assert
             Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
-            Assert.Equal("Billett eller ferd ikke funnet, billett er allerede brukt eller betalt", resultat.Value);
+            Assert.Equal("Billett ikke funnet, billett er allerede brukt eller betalt", resultat.Value);
         }
 
         [Fact]
