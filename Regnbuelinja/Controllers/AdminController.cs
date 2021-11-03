@@ -585,6 +585,23 @@ namespace Regnbuelinja.Controllers
             return NotFound("Båt ikke funnet.");
         }
 
+        [HttpGet("bestilling/{id}/ferder")]
+        public async Task<ActionResult> HentFerderForBestilling(int id)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            List<Ferder> alleFerder = await _db.HentFerderForBestilling(id);
+            if (alleFerder != null)
+            {
+                _log.LogInformation("AdminController.cs: HentFerderForBestilling: Vellykket! Ferder hentet");
+                return Ok(alleFerder);
+            }
+            _log.LogInformation("AdminController.cs: HentFerderForBestilling: Databasefeil eller bestilling ikke funnet");
+            return NotFound("Bestilling ikke funnet.");
+        }
+
         [HttpGet("kunde/{id}")]
         public async Task<ActionResult> HentEnKunde(int id)
         {

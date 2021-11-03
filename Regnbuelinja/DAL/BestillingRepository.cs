@@ -834,19 +834,19 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        // Henter gyldige ferder som kan endres for en billett i en bestilling.
-        public async Task<List<Ferder>> HentFerderForBillett(int id)
+        // Henter gyldige ferder som kan velges for en ny billett i en eksisterende bestilling.
+        public async Task<List<Ferder>> HentFerderForBestilling(int id)
         {
             try
             {
-                Billett billett = await _db.Billetter.FindAsync(id);
-                if(billett == default)
+                Bestillinger bestilling = await _db.Bestillinger.FindAsync(id);
+                if(bestilling == default)
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Billett ikke funnet i databasen");
+                    _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Bestilling ikke funnet i databasen");
                     return null;
                 }
-                string Startpunkt = billett.Ferd.Rute.Startpunkt;
-                string Endepunkt = billett.Ferd.Rute.Endepunkt;
+                string Startpunkt = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
+                string Endepunkt = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
                 List<Ferder> gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == Startpunkt) && (f.Rute.Endepunkt == Endepunkt)) || (f.Rute.Startpunkt == Endepunkt)
                     && (f.Rute.Endepunkt == Startpunkt))).Select(f => new Ferder() {
                         FId = f.Id,
@@ -857,13 +857,13 @@ namespace Regnbuelinja.DAL
                     }).ToListAsync();
                 if(!gyldigeFerder.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Ingen gyldige ferder funnet");
+                    _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Ingen gyldige ferder funnet");
                 }
-                _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Gyldige ferder returnert");
+                _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Gyldige ferder returnert");
                 return gyldigeFerder;
             } catch(Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentFerderForBillett: Databasefeil: " + e);
+                _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Databasefeil: " + e);
                 return null;
             }
         }
@@ -1215,7 +1215,7 @@ namespace Regnbuelinja.DAL
                     _log.LogInformation("BestillingRepository.cs: LagreBestilling: Vellykket! Bestilling lagret i databasen.");
                     return true;
                 }
-                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Kunden ikke funnet");
+                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Kunde ikke funnet");
                 return false;
                 
             } catch(Exception e)
@@ -1472,7 +1472,7 @@ namespace Regnbuelinja.DAL
                 password: passord,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA512,
-                iterationCount: 1000,
+                iterationCount: 1500,
                 numBytesRequested: 32);
         }
 
