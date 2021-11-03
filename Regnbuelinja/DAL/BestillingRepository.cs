@@ -878,7 +878,7 @@ namespace Regnbuelinja.DAL
                     if(returFerd!=default)
                     {
                         gyldigeFerder.Add(ferdSomHentes);
-                        return gyldigeFerder;
+                        _log.LogInformation("BestillingRepository.cs: Vellykket! Ferd og returferd returnert");
                     } else
                     {
                         string startpunkt = ferd.Rute.Startpunkt;
@@ -893,10 +893,8 @@ namespace Regnbuelinja.DAL
                             AnkomstTid = f.AnkomstTid.ToString("o")
                         }).ToListAsync();
                         gyldigeFerder.Add(ferdSomHentes);
-
                     }
                 }
-                    
                 if (!gyldigeFerder.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Ingen gyldige ferder funnet");
