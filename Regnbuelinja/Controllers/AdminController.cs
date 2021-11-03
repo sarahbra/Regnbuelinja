@@ -365,7 +365,7 @@ namespace Regnbuelinja.Controllers
                 if (EndretBestilling)
                 {
                     _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
-                    return Ok("Vellykket! Bestilling endret i databasen");
+                    return Ok(EndretBestilling);
                 }
                 _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
                     "gjennomførte reiser");
@@ -666,7 +666,7 @@ namespace Regnbuelinja.Controllers
                 if (endretPerson)
                 {
                     _log.LogInformation("AdminController.cs: EndreKunde: Kunde endret i databasen");
-                    return Ok("Vellykket! Kunde endret i databasen");
+                    return Ok(endretPerson);
                 }
                 _log.LogInformation("AdminController.cs: EndreKunde: Databasefeil eller kunde ikke funnet. Ikke endret");
                 return NotFound("Kunde ikke funnet i databasen");
@@ -690,6 +690,24 @@ namespace Regnbuelinja.Controllers
             }
             _log.LogInformation("AdminController.cs: SlettKunde: Databasefeil, kunde ikke funnet eller kunde har bestillinger.");
             return NotFound("Kunde ikke funnet eller kunden har bestillinger i database");
+        }
+
+        [HttpPost("bestillinger")]
+        public async Task<ActionResult> LagreBestilling(Bestilling bestilling)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            bool lagret = await _db.LagreBestilling(bestilling);
+            if (lagret)
+            {
+                _log.LogInformation("AdminController.cs: LagreBestilling: Vellykket! Bestilling lagret");
+                return Ok(lagret);
+            }
+            _log.LogInformation("AdminController.cs: LagreBestilling: Databasefeil, kunde eller feil ikke funnet.");
+            return NotFound("Kunde eller ferd ikke funnet");
         }
 
         [HttpPost("brukere")]
