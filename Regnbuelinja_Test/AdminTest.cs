@@ -787,7 +787,7 @@ namespace Regnbuelinja_Test
         public async Task SlettBåtLoggetInnOKMedBillettTest()
         {
             //Arrange
-            var båt = new Baater { navn = "Kontiki" };
+            var båt = new Baater { Navn = "Kontiki" };
             var ferder = new Ferder { AnkomstTid = It.IsAny<DateTime>().ToString("o"), AvreiseTid = It.IsAny<DateTime>().ToString("o"), RId = It.IsAny<int>(), BId = 1 };
             var billetter = new Billetter { BId = It.IsAny<int>(), FId = 1, Voksen = true };
 

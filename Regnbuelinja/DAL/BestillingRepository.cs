@@ -164,7 +164,7 @@ namespace Regnbuelinja.DAL
             {
                 Baat nyBaat = new Baat
                 {
-                    Navn = båt.navn
+                    Navn = båt.Navn
                 };
 
                 _db.Baater.Add(nyBaat);
@@ -187,7 +187,7 @@ namespace Regnbuelinja.DAL
                 Baat somSkalEndres = await _db.Baater.FirstOrDefaultAsync(b => b.Id == båt.Id);
                 if(somSkalEndres!= default)
                 {
-                    somSkalEndres.Navn = båt.navn;
+                    somSkalEndres.Navn = båt.Navn;
                     await _db.SaveChangesAsync();
                     _log.LogInformation("BestillingRepository.cs: EndreBåt: Vellykket! Båt endret");
                     return true;
@@ -1165,6 +1165,34 @@ namespace Regnbuelinja.DAL
             }
             _log.LogInformation("/Controllers/BestillingRepository.cs: HentFerder: Vellykket. Ferdene ble returnert fra databasen.");
             return ferder;
+        }
+
+        public async Task<bool> LagreBestilling(Bestilling bestilling)
+        {
+            try
+            {
+                Ferd ferden = await _db.Ferder.FindAsync(bestilling.Id);
+                Person kunde = await _db.KunderOgAnsatte.FindAsync(bestilling.KId);
+                if(ferden != null && kunde != null)
+                {
+                    Bestillinger nyBestilling = new Bestillinger
+                    {
+                        Kunde = kunde,
+                        Betalt = bestilling.Betalt,
+                    };
+                    _db.Bestillinger.Add(nyBestilling);
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: LagreBestilling: Vellykket! Bestilling lagret i databasen.");
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Ferd eller kunde ikke funnet");
+                return false;
+                
+            } catch(Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Databasefeil: " + e + ". Bestilling ikke lagret");
+                return false;
+            }
         }
 
         public async Task<string> LagreBestilling(BestillingOutput nyBestilling)

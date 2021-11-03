@@ -13,7 +13,6 @@ namespace Regnbuelinja.Controllers
     public class BestillingController : ControllerBase
     {
         private readonly IBestillingRepository _db;
-
         private ILogger<BestillingController> _log;
 
         public BestillingController(IBestillingRepository db, ILogger<BestillingController> log)

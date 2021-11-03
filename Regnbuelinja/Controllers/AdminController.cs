@@ -675,6 +675,24 @@ namespace Regnbuelinja.Controllers
             return NotFound("Kunde ikke funnet eller kunden har bestillinger i database");
         }
 
+        [HttpPost("bestillinger")]
+        public async Task<ActionResult> LagreBestilling(Bestilling bestilling)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            bool lagret = await _db.LagreBestilling(bestilling);
+            if (lagret)
+            {
+                _log.LogInformation("AdminController.cs: LagreBestilling: Vellykket! Bestilling lagret");
+                return Ok(lagret);
+            }
+            _log.LogInformation("AdminController.cs: LagreBestilling: Databasefeil, kunde eller feil ikke funnet.");
+            return NotFound("Kunde eller ferd ikke funnet");
+        }
+
         [HttpPost("brukere")]
         public async Task<ActionResult> LagreBruker(Bruker bruker)
         {
