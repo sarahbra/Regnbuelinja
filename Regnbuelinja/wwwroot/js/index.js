@@ -42,7 +42,7 @@ $("#orderForm").submit(function (event) {
     $.post("Bestilling/LagreBestilling", params.toString(), function (id) {
              //Gå til neste side med billettinfo
 
-        window.location.assign("/bestilling.html?id=" + id);
+        window.location.assign("/kunderegistrering.html?BestillingsId=" + id);
     }).fail(function (jqXHR) {
         $("#feil").html("Feil på server - prøv igjen senere: " + jqXHR.responseText);
         return false;

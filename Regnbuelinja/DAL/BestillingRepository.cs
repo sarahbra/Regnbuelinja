@@ -1497,7 +1497,7 @@ namespace Regnbuelinja.DAL
                 password: passord,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA512,
-                iterationCount: 1000,
+                iterationCount: 1500,
                 numBytesRequested: 32);
         }
 

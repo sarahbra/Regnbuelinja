@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+    <div id="header"></div>
     <div class="page container">
         <div class="row justify-content-md-center">
             <div class="col">
@@ -23,63 +24,54 @@
                 <form id="kundeForm">
                     <div class="mb-3 p-0">
                         <label for="Fornavn">Fornavn</label>
-                        <input type="text" class="form-control" id="Fornavn" required></input>
+                        <input type="text" class="form-control" id="Fornavn" required>
                         <div class="invalid-feedback">
                             Du må skrive inn fornavn
                         </div>
-                    </div>
-                    <div class="mb-3 p-0" id="EndepunktDiv">
-                        <label for="Endepunkt">Hvor vil du reise til?</label>
-                        <select name="Endepunkt" class="form-control" id="Endepunkt"></select>
-                        <div class="invalid-feedback">
-                            Du må velge ankomsthavn
-                        </div>
+                        <span id="feilEpost" style="color: red"></span>
                     </div>
                     <div class="mb-3 p-0">
-                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturFalse" value="false" autocomplete="off"
-                               checked />
-                        <label class="btn btn-outline-secondary" for="TurReturFalse">Én vei</label>
-                        <input type="radio" class="btn-check" name="TurRetur" id="TurReturTrue" value="true" autocomplete="off" />
-                        <label class="btn btn-outline-secondary" for="TurReturTrue">Tur/retur</label>
-                    </div>
-                    <div class="mb-3 hidden p-0" id="AvreiseContainer">
-                        <label for="Dato">Når vil du reise?</label>
-                        <input class="form-control" id="AvreiseDato" name="AvreiseDato" placeholder="DD/MM/YYYY" type="text" autocomplete="off" required />
+                        <label for="Etternavn">Etternavn</label>
+                        <input type="text" class="form-control" id="Etternavn" required>
                         <div class="invalid-feedback">
-                            Du må velge en avreisedato
+                            Du må skrive inn etternavn
                         </div>
-                        <span id="returDatoFinnesIkke" style="color: red"></span>
-                    </div>
-                    <div class="mb-3 hidden p-0" id="TilbakeContainer">
-                        <label for="Dato">Når vil du reise tilbake?</label>
-                        <input class="form-control" id="HjemreiseDato" name="HjemreiseDato" placeholder="DD/MM/YYYY" type="text" autocomplete="off" />
-                        <div class="invalid-feedback">
-                            Du må velge en hjemreisedato
-                        </div>
+                        <span id="feilEpost" style="color: red"></span>
                     </div>
                     <div class="mb-3 p-0">
-                        <label for="AntallVoksne">Antall voksne</label>
-                        <input class="form-control" id="AntallVoksne" name="AntallVoksne" type="number" min="1" value="1" required />
+                        <label for="Epost">Epost</label>
+                        <input type="text" class="form-control" id="Epost" required />
                         <div class="invalid-feedback">
-                            Du må velge minst én voksen. Tallet må være et heltall
+                            Du må skrive inn epost
                         </div>
+                        <span id="feilEpost" style="color: red"></span>
                     </div>
-                    <div class="mb-4 p-0">
-                        <label for="AntallBarn">Antall barn</label>
-                        <input class="form-control" id="AntallBarn" name="AntallBarn" type="number" min="0" placeholder="Velg antall passasjerer under 18 år" />
+                    <div class="mb-3 p-0">
+                        <label for="Telefonnr">Telefonnummer</label>
+                        <input type="text" class="form-control" id="Telefonnr" required />
                         <div class="invalid-feedback">
-                            Du må skrive inn et heltall
+                            Du må skrive inn telefonnummer
                         </div>
+                        <span id="feilTelefonnr" style="color: red"></span>
                     </div>
                     <button class="btn btn-lg btn-primary col-sm-6" type="submit" style="background-color: #563e7c">
-                        Bestill billett
+                        Registrer
                     </button>
                 </form>
+                <span id="feil" style="color: red"></span>
             </div>
-            <span id="feil" style="color: red"></span>
+            <div class="col"></div>
+            <div class="col">
+                <div class="mb-2 p-0">
+                    <h3 class="mb-1" style="color: #563e7c">Allerede kunde?</h3>
+                    <button class="btn btn-lg btn-secondary">
+                        Logg inn
+                    </button>
+                </div>
+
+            </div>
         </div>
     </div>
-
     <scripts src="/js/kunderegistrering.html"></scripts>
     <script src="/js/validering.js"></script>
 </body>

@@ -11,7 +11,7 @@
 }
 
 function validerEtternavn(etternavn) {
-    const regexp = /^[a-zA-ZæøåÆØÅ\. \=]{2,20}$/;
+    const regexp = /^[a-zA-ZæøåÆØÅ\. \=]{2,30}$/;
     const ok = regexp.test(etternavn);
     if (!ok) {
         $("#feilEtternavn").html("Etternavnet må bestå av 2-20 bokstaver.");
@@ -26,7 +26,7 @@ function validerEpost(epost) {
     const regexp = /^[0-9a-zA-ZæøåÆØÅ\. \=]{2,50}$/;
     const ok = regexp.test(epost);
     if (!ok) {
-        $("#feilEpost").html("Adressen må bestå av 2-50 bokstaver og tall.");
+        $("#feilEpost").html("Eposten må være på formatet adresse@mail.no");
         return false;
     } else {
         $("#feilEpost").html("");
@@ -34,9 +34,9 @@ function validerEpost(epost) {
     }
 }
 
-function validerTelefonnr(Telefonnr) {
-    const regexp = /^[0-9]{4}$/;
-    const ok = regexp.test(postNr);
+function validerTelefonnr(telefonnr) {
+    const regexp = /^[0-9]{8}$/;
+    const ok = regexp.test(telefonnr);
     if (!ok) {
         $("#feilTelefonnr").html("Telefonnummeret må bestå av 8 tall.");
         return false;
@@ -62,8 +62,9 @@ function validerBrukernavn(brukernavn) {
     }
 }
 
+//skift dette
 function validerPassord(passord) {
-    const regexp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    const regexp = /^(?=.*[0-9])(?=.*[a-zA-ZæøåØÆÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}$/;
     if (!regexp.test(passord)) {
         $("#feilPassord").html("Passordet må være minst 6 tegn langt med minst en bokstav og ett tall");
         return false;
