@@ -26,6 +26,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
+                //if(rute.Pris > 100 && rute.Pris)
                 Rute lagretRute = new Rute()
                 {
                     Startpunkt = rute.Startpunkt,
@@ -1171,9 +1172,8 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Ferd ferden = await _db.Ferder.FindAsync(bestilling.Id);
                 Person kunde = await _db.KunderOgAnsatte.FindAsync(bestilling.KId);
-                if(ferden != null && kunde != null)
+                if(kunde != null)
                 {
                     Bestillinger nyBestilling = new Bestillinger
                     {
@@ -1201,7 +1201,7 @@ namespace Regnbuelinja.DAL
             List<Billett> billettListe = new List<Billett>();
 
             DateTime AvreiseTid = ParseDatoLocal(nyBestilling.AvreiseTid);
-            
+
             Ferd ferd = await _db.Ferder.FirstOrDefaultAsync(f => f.AvreiseTid.Date.Equals(UtenTimer(AvreiseTid.Date)) &&
                 f.Rute.Startpunkt.Equals(nyBestilling.Startpunkt) && f.Rute.Endepunkt.Equals(nyBestilling.Endepunkt));
 
@@ -1287,32 +1287,6 @@ namespace Regnbuelinja.DAL
                 return null;
             }
         }
-        /*
-        public async Task<bool> LagreBestilling2(Bestilling bestilling)
-        {
-            try
-            {
-                Rute lagretRute = new Rute()
-                {
-                    Startpunkt = rute.Startpunkt,
-                    Endepunkt = rute.Endepunkt,
-                    Pris = rute.Pris
-                };
-
-                _db.Ruter.Add(lagretRute);
-                await _db.SaveChangesAsync();
-                _log.LogInformation("BestillingRepository.cs: LagreRute: Rute lagret vellykket");
-                return true;
-            }
-            catch
-            {
-                _log.LogInformation("BestillingRepository.cs: LagreRute: Feil i databasen. Rute ikke lagret");
-                return false;
-            }
-
-        }
-        */
-
 
         public async Task<BestillingOutput> HentBestilling(int id)
         {
@@ -1335,7 +1309,7 @@ namespace Regnbuelinja.DAL
             return bestilling;
         }
 
-        public async Task<List<BestillingOutput>> HentAlleBestillingerForKunde(int id)
+        public async Task<List<Bestilling>> HentAlleBestillingerForKunde(int id)
         {
             Person kunde = await _db.KunderOgAnsatte.FindAsync(id);
             if(kunde==default)
@@ -1343,14 +1317,12 @@ namespace Regnbuelinja.DAL
                 _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Kunde ikke funnet i databasen");
                 return null;
             }
-            List<BestillingOutput> bestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).Select(b => new BestillingOutput
+           
+            List<Bestilling> bestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).Select(b => new Bestilling
             {
-                Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
-                Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
-                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString("o"),
-                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.Id != b.Billetter.First().Ferd.Id).Ferd.AvreiseTid.ToString("o"),
-                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
-                AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
+                Id = b.Id,
+                KId = kunde.Id,
+                
             }).ToListAsync();
 
             if (!bestillinger.Any())

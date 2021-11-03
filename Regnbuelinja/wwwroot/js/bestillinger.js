@@ -1,6 +1,6 @@
 ﻿$(function () {
     const id = window.location.search.substring(1);
-    const url = "Admin/HentAlleBestillingerForKunde?" + id;
+    const url = "Bestilling/HentAlleBestillingerForKunde?"+ id;
     $.get(url, function (bestillinger) {
         formaterSide(bestillinger);
     }).fail(function (request) {
@@ -9,10 +9,11 @@
 });
 
 function formaterSide(bestillinger) {
-    let ut = "<table table-responsive table-striped><thead><tr><th>Bestilling</th><th>Totalpris</th><th>Betalt</th></tr></thead>";
+    let ut = "<table table-responsive><thead><tr><th>Bestilling</th><th>Kunde</th><th>Totalpris</th><th>Betalt</th></tr></thead>";
     for (let bestilling of bestillinger) {
-        ut += "<tr><td><a href='/bestilling.html?Id=" + id + "'>" + bestilling.Id + "</a></td>" +
+        ut += "<tr><td><a href='/bestilling.html?Id=" + bestilling.id + "'>" + bestilling.Id + "</a></td>" +
             "<td>" + parseFloat(bestilling.totalpris).toFixed(2) + "</td>";
+        ut += "<td>" + bestilling.kid + "</td>";
         if (bestilling.betalt) {
             ut += "<td>Ja</td>";
         } else {

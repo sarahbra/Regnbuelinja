@@ -100,7 +100,7 @@ namespace Regnbuelinja.Controllers
 
         public async Task<ActionResult> HentAlleBestillingerForKunde(int id)
         {
-            List<BestillingOutput> bestillinger = await _db.HentAlleBestillingerForKunde(id);
+            List<Bestilling> bestillinger = await _db.HentBestillingerForKunde(id);
             if(bestillinger != null)
             {
                 _log.LogInformation("/Controllers/BestillingController.cs: HentAlleBestillingerForKunde: Vellykket! Bestillinger hentet");

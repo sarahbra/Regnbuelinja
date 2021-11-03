@@ -9,7 +9,7 @@ namespace Regnbuelinja.Models
     {
         public int Id { get; set; }
         public int KId { get; set; }
-        public double Totalpris { get; set; }
         public bool Betalt { get; set; }
+        public double Totalpris { get; set; }
     }
 }
