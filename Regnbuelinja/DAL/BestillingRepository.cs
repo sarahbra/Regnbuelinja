@@ -623,6 +623,7 @@ namespace Regnbuelinja.DAL
                                 Ferd = ferd,
                                 Voksen = billett.Voksen
                             };
+                            _db.Billetter.Add(nyBillett);
                             await _db.SaveChangesAsync();
                             _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
                             return true;
@@ -1201,9 +1202,8 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Ferd ferden = await _db.Ferder.FindAsync(bestilling.Id);
                 Person kunde = await _db.KunderOgAnsatte.FindAsync(bestilling.KId);
-                if(ferden != null && kunde != null)
+                if(kunde != null)
                 {
                     Bestillinger nyBestilling = new Bestillinger
                     {
@@ -1215,7 +1215,7 @@ namespace Regnbuelinja.DAL
                     _log.LogInformation("BestillingRepository.cs: LagreBestilling: Vellykket! Bestilling lagret i databasen.");
                     return true;
                 }
-                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Ferd eller kunde ikke funnet");
+                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Kunden ikke funnet");
                 return false;
                 
             } catch(Exception e)
@@ -1317,32 +1317,6 @@ namespace Regnbuelinja.DAL
                 return null;
             }
         }
-        /*
-        public async Task<bool> LagreBestilling2(Bestilling bestilling)
-        {
-            try
-            {
-                Rute lagretRute = new Rute()
-                {
-                    Startpunkt = rute.Startpunkt,
-                    Endepunkt = rute.Endepunkt,
-                    Pris = rute.Pris
-                };
-
-                _db.Ruter.Add(lagretRute);
-                await _db.SaveChangesAsync();
-                _log.LogInformation("BestillingRepository.cs: LagreRute: Rute lagret vellykket");
-                return true;
-            }
-            catch
-            {
-                _log.LogInformation("BestillingRepository.cs: LagreRute: Feil i databasen. Rute ikke lagret");
-                return false;
-            }
-
-        }
-        */
-
 
         public async Task<BestillingOutput> HentBestilling(int id)
         {
@@ -1515,18 +1489,21 @@ namespace Regnbuelinja.DAL
         {
             double TotalPris = 0.0;
             List<Billett> billetter = await _db.Billetter.Where(b => b.Bestilling.Id == id).ToListAsync();
-            string Startpunkt = billetter.First().Ferd.Rute.Startpunkt;
-            foreach (Billett billett in billetter)
+            if (billetter.Any())
             {
-                if (billett.Ferd.Rute.Startpunkt.Equals(Startpunkt))
+                string Startpunkt = billetter.First().Ferd.Rute.Startpunkt;
+                foreach (Billett billett in billetter)
                 {
-                    if (billett.Voksen) TotalPris += (billett.Ferd.Rute.Pris);
-                    else TotalPris += (0.5 * billett.Ferd.Rute.Pris);
-                }
-                else
-                {
-                    if (billett.Voksen) TotalPris += (0.75 * billett.Ferd.Rute.Pris);
-                    else TotalPris += (0.75 * 0.5 * billett.Ferd.Rute.Pris);
+                    if (billett.Ferd.Rute.Startpunkt.Equals(Startpunkt))
+                    {
+                        if (billett.Voksen) TotalPris += (billett.Ferd.Rute.Pris);
+                        else TotalPris += (0.5 * billett.Ferd.Rute.Pris);
+                    }
+                    else
+                    {
+                        if (billett.Voksen) TotalPris += (0.75 * billett.Ferd.Rute.Pris);
+                        else TotalPris += (0.75 * 0.5 * billett.Ferd.Rute.Pris);
+                    }
                 }
             }
             return TotalPris;
