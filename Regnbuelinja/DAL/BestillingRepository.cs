@@ -1201,9 +1201,8 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Ferd ferden = await _db.Ferder.FindAsync(bestilling.Id);
                 Person kunde = await _db.KunderOgAnsatte.FindAsync(bestilling.KId);
-                if(ferden != null && kunde != null)
+                if(kunde != null)
                 {
                     Bestillinger nyBestilling = new Bestillinger
                     {
@@ -1215,7 +1214,7 @@ namespace Regnbuelinja.DAL
                     _log.LogInformation("BestillingRepository.cs: LagreBestilling: Vellykket! Bestilling lagret i databasen.");
                     return true;
                 }
-                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Ferd eller kunde ikke funnet");
+                _log.LogInformation("BestillingRepository.cs: LagreBestilling: Bestilling ikke lagret! Kunde ikke funnet");
                 return false;
                 
             } catch(Exception e)
