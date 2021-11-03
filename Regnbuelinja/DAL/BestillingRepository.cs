@@ -1309,6 +1309,33 @@ namespace Regnbuelinja.DAL
             return bestilling;
         }
 
+        public async Task<List<BestillingOutput>> HentAlleBestillingerForKunde(int id)
+        {
+            Person kunde = await _db.KunderOgAnsatte.FindAsync(id);
+            if(kunde==default)
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Kunde ikke funnet i databasen");
+                return null;
+            }
+            List<BestillingOutput> bestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).Select(b => new BestillingOutput
+            {
+                Startpunkt = b.Billetter.First().Ferd.Rute.Startpunkt,
+                Endepunkt = b.Billetter.First().Ferd.Rute.Endepunkt,
+                AvreiseTid = b.Billetter.First().Ferd.AvreiseTid.ToString("o"),
+                HjemreiseTid = b.Billetter.FirstOrDefault(bi => bi.Ferd.Id != b.Billetter.First().Ferd.Id).Ferd.AvreiseTid.ToString("o"),
+                AntallVoksne = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == true).Count(),
+                AntallBarn = b.Billetter.Where(bi => bi.Ferd.AvreiseTid.Equals(b.Billetter.First().Ferd.AvreiseTid) && bi.Voksen == false).Count()
+            }).ToListAsync();
+
+            if (!bestillinger.Any())
+            {
+                _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Kunden har ingen bestillinger i databasen");
+            }
+            _log.LogInformation("/Controllers/BestillingRepository.cs: HentAlleBestillingerForKunde: Vellykket. En liste av bestillingoutput-objekter blir returnert.");
+            return bestillinger;
+        }
+
+
 
         public async Task<double> HentPris(int id)
         {

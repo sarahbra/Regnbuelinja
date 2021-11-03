@@ -98,6 +98,18 @@ namespace Regnbuelinja.Controllers
             return ValidationProblem("Invalid input object from client");
         }
 
+        public async Task<ActionResult> HentAlleBestillingerForKunde(int id)
+        {
+            List<BestillingOutput> bestillinger = await _db.HentAlleBestillingerForKunde(id);
+            if(bestillinger != null)
+            {
+                _log.LogInformation("/Controllers/BestillingController.cs: HentAlleBestillingerForKunde: Vellykket! Bestillinger hentet");
+                return Ok(bestillinger);
+            }
+            _log.LogInformation("/Controllers/BestillingController.cs: HentAlleBestillingerForKunde: Kunde ikke funnet i databasen");
+            return NotFound("Ingen bestillinger for kunde med ID " + id + " funnet");
+        }
+
         public async Task<ActionResult> HentBestilling(int id)
         {
             BestillingOutput hentBestilling = await _db.HentBestilling(id);

@@ -55,6 +55,7 @@ namespace Regnbuelinja.DAL
         Task<bool> LagreBestilling(Bestilling bestilling);
         Task<string> LagreBestilling(BestillingOutput nyBestilling);
         Task<BestillingOutput> HentBestilling(int id);
+        Task<List<BestillingOutput>> HentAlleBestillingerForKunde(int id);
         Task<bool> Betal(int id);
         Task<string> HentAnkomstTid(int id, string Startpunkt);
         Task<double> HentStrekningsPris(int id, string Startpunkt);

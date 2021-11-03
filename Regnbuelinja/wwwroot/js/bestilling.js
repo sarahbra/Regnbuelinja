@@ -27,8 +27,8 @@ function formaterSide(bestilling) {
 }
 
 function hentId() {
-    const url = window.location.search.substring(1);
-    return url;
+    const id = window.location.search.substring(1);
+    return id;
 }
 
 
