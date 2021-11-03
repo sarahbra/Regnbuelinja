@@ -672,7 +672,7 @@ namespace Regnbuelinja.DAL
                         _log.LogInformation("BestillingRepository.cs: EndreBillett: Ferd ikke funnet. Kunne ikke endre billett.");
                         return false;
                     }
-                    _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
+                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestillingen er betalt. Kan ikke endres");
                     return false;
                 }
                 _log.LogInformation("BestillingRepository.cs: EndreBestilling: Fant ikke bestillingen i databasen");
