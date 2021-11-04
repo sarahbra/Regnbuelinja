@@ -971,12 +971,12 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<bool> EndreBruker(Bruker bruker, int userId)
+        public async Task<bool> EndreBruker(Bruker bruker, string username)
         {
             try
             {
                 Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
-                if(somSkalEndres != default && somSkalEndres.Id == userId)
+                if(somSkalEndres != default && somSkalEndres.Brukernavn == username)
                 {
                     string passord = bruker.Passord;
                     byte[] salt = LagEtSalt();
@@ -1271,11 +1271,11 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<Personer> HentProfil(int id)
+        public async Task<Personer> HentProfil(string username)
         {
             try
             {
-                Brukere bruker = await _db.Brukere.FindAsync(id);
+                Brukere bruker = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(username));
                 if(bruker != null)
                 {
                     Personer brukerProfil = new Personer()

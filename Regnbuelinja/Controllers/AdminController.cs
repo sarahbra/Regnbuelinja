@@ -17,7 +17,7 @@ namespace Regnbuelinja.Controllers
         private readonly IBestillingRepository _db;
 
         private readonly ILogger<AdminController> _log;
-        private const string _brukerId = "0";
+        private const string _brukernavn = "";
         private const string _loggetInn = "loggetInn";
 
         public AdminController(IBestillingRepository db, ILogger<AdminController> log)
@@ -739,7 +739,7 @@ namespace Regnbuelinja.Controllers
 
             if (ModelState.IsValid)
             {
-                bool brukerEndret = await _db.EndreBruker(bruker, (int)HttpContext.Session.GetInt32(_brukerId));
+                bool brukerEndret = await _db.EndreBruker(bruker, HttpContext.Session.GetString(_brukernavn));
                 if (brukerEndret)
                 {
                     _log.LogInformation("AdminController.cs: EndreBruker: Passord endret");
@@ -781,7 +781,7 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
 
-            Personer bruker = await _db.HentProfil((int)HttpContext.Session.GetInt32(_brukerId));
+            Personer bruker = await _db.HentProfil(HttpContext.Session.GetString(_brukernavn));
             if(bruker != null)
             {
                 _log.LogInformation("AdminController.cs: HentProfil: Databasefeil. Kunne ikke hente profil");
@@ -801,12 +801,12 @@ namespace Regnbuelinja.Controllers
                 {
                     _log.LogInformation("AdminController.cs: LoggInn: Bruker logget inn vellykket.");
                     HttpContext.Session.SetString(_loggetInn, "loggetInn");
-                    HttpContext.Session.SetInt32(_brukerId, loggetInn);
+                    HttpContext.Session.SetString(_brukernavn, bruker.Brukernavn);
                     return Ok(true);
                 }
                 _log.LogInformation("AdminController.cs: LoggInn: Feil brukernavn eller passord. Ikke logget inn");
                 HttpContext.Session.SetString(_loggetInn, "");
-                HttpContext.Session.SetInt32(_brukerId, 0);
+                HttpContext.Session.SetString(_brukernavn, "");
                 return Ok(false);
             } 
             _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
