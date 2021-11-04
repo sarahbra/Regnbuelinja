@@ -677,16 +677,27 @@ namespace Regnbuelinja.DAL
         // betaling utfra rutepris)
         // Bestilling - fremmednøkkel endres ikke da billetten er knyttet til kunde via bestilling.
         // Endrer kun mellom voksen og barn ettersom bestillingen er knyttet til en spesifikk rute og ferd - ny bestilling og billett hvis kunden skal til en ny destinasjon
-        public async Task<bool> EndreBillett(int id)
+        public async Task<bool> EndreBillett(Billetter billett)
         {
             try
             {
-                Billett endreBillett = await _db.Billetter.FindAsync(id);
+                Billett endreBillett = await _db.Billetter.FindAsync(billett.Id);
                 if (endreBillett != null)
                 {
-                    if (!endreBillett.Bestilling.Betalt && (endreBillett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
+                    Bestillinger bestilling = endreBillett.Bestilling;
+                    if (!bestilling.Betalt && (endreBillett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
                     {
-                        if (endreBillett.Voksen) endreBillett.Voksen = false;
+                        if (endreBillett.Voksen)
+                        {
+                            if(endreBillett.Bestilling.Billetter.Count(b => b.Voksen) > 1)
+                            {
+                                endreBillett.Voksen = false;
+                            }
+                            else {
+                                _log.LogInformation("BestillingRepository: Endrebillett: Kan ikke endre til barnebillett da reisen krever minst en voksen passasjer");
+                                return false;
+                            }
+                        }
                         else endreBillett.Voksen = true;
 
                         _log.LogInformation("BestillingRepository.cs: EndreBillett: Vellykket! Billetten er endret");

@@ -1809,7 +1809,7 @@ namespace Regnbuelinja_Test
         public async Task EndreBillettIkkeLoggetInn()
         {
             //Arrange
-            mockRep.Setup(b => b.EndreBillett(It.IsAny<int>())).ReturnsAsync(true);
+            mockRep.Setup(b => b.EndreBillett(It.IsAny<Billetter>())).ReturnsAsync(true);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
             mockSession[_loggetInn] = _ikkeLoggetInn;
@@ -1817,7 +1817,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<int>()) as UnauthorizedObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as UnauthorizedObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
@@ -1828,7 +1828,7 @@ namespace Regnbuelinja_Test
         public async Task EndreBillettLoggetInnOk()
         {
             //Arrange
-            mockRep.Setup(b => b.EndreBillett(It.IsAny<int>())).ReturnsAsync(true);
+            mockRep.Setup(b => b.EndreBillett(It.IsAny<Billetter>())).ReturnsAsync(true);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
             mockSession[_loggetInn] = _loggetInn;
@@ -1836,7 +1836,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<int>()) as OkObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as OkObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
@@ -1851,6 +1851,7 @@ namespace Regnbuelinja_Test
             //Arrange
             
             var billett = new Billetter { BId = 1, FId = 1, Voksen = true };
+            var billett2 = new Billetter { BId = 1, FId = 1, Voksen = false };
             var bestilling = new Bestilling { Id = 1, KId = It.IsAny<int>(), Betalt = true, Totalpris = It.IsAny<double>() };
 
             mockRep.Setup(b => b.HentEnBestilling(1)).ReturnsAsync(bestilling);
@@ -1862,7 +1863,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(1) as NotFoundObjectResult;
+            var resultat = await adminController.EndreBillett(billett2) as NotFoundObjectResult;
 
             // Assert
             Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);

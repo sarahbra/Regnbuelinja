@@ -446,13 +446,13 @@ namespace Regnbuelinja.Controllers
         }
 
         [HttpPut("billett/{id}")]
-        public async Task<ActionResult> EndreBillett(int id)
+        public async Task<ActionResult> EndreBillett(Billetter billett)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            bool EndretBillett = await _db.EndreBillett(id);
+            bool EndretBillett = await _db.EndreBillett(billett);
             if (EndretBillett)
             {
                 _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
