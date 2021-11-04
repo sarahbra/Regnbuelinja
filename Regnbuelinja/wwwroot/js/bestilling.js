@@ -76,7 +76,7 @@ function formaterKjøpsInfo(bestilling) {
     const id = hentId();
     let url = "Bestilling/HentPris?" + id;
     $.get(url, function (totalpris) {
-        console.log(totalpris);
+  
         url = "Bestilling/HentStrekningsPris?" + id + "&startpunkt=" + bestilling.startpunkt + "&retur=false";
         $.get(url, function (strekningsPris) {
             let ut = "<table class='table'><thead><tr>";
@@ -89,7 +89,7 @@ function formaterKjøpsInfo(bestilling) {
                 "<td>" + bestilling.antallVoksne + " voksne + " + bestilling.antallBarn + " barn</td>" +
                 "<td>" + parseFloat(strekningsPris).toFixed(2) + " NOK</td>" +
                 "</tr>";
-            console.log(bestilling.hjemreiseTid);
+           
             if (bestilling.hjemreiseTid) {
                 url = "Bestilling/HentStrekningsPris?" + id + "&startpunkt=" + bestilling.endepunkt + "&retur=true";
                 ut += "<tr><th>2</th>" +
