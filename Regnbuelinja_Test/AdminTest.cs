@@ -2261,7 +2261,7 @@ namespace Regnbuelinja_Test
         {
             //Arrange
             var kunde1 = new Personer { Id = 1, Fornavn="Kunde", Etternavn="Kundesen", Epost="kunde@kunde.no", Telefonnr="11111111"};
-            var kunde2 = new Personer { Id = 2, Fornavn = "Tor", Etternavn = "Latterbrøl", Epost="kunde2@kunde.no", Telefonnr="44444444" };
+            var kunde2 = new Personer { Id = 2, Fornavn = "Viggo", Etternavn = "Torgersen", Epost="kunde2@kunde.no", Telefonnr="44444444" };
 
             var kundeListe = new List<Personer>();
             kundeListe.Add(kunde1);

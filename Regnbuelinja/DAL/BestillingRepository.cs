@@ -1217,7 +1217,7 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<bool> LoggInn(Bruker bruker)
+        public async Task<int> LoggInn(Bruker bruker)
         {
             try
             {
@@ -1225,21 +1225,48 @@ namespace Regnbuelinja.DAL
                 if (brukerIDB == default(Brukere))
                 {
                     _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
-                    return false;
+                    return 0;
                 }
                 byte[] hash = LagEnHash(bruker.Passord, brukerIDB.Salt);
                 bool OK = hash.SequenceEqual(brukerIDB.Passord);
                 if (OK)
                 {
                     _log.LogInformation("BestillingRepository.cs: LoggInn: Vellykket! Bruker logget inn");
-                    return true;
+                    return brukerIDB.Id;
                 }
                 _log.LogInformation("BestillingRepository.cs: LogInn: Logg inn feilet");
-                return false;
+                return 0;
 
             } catch (Exception e) {
                 _log.LogInformation("BestillingRepository.cs: LoggInn: Databasefeil: " + e);
-                return false;
+                return 0;
+            }
+        }
+
+        public async Task<Personer> HentProfil(int id)
+        {
+            try
+            {
+                Brukere bruker = await _db.Brukere.FindAsync(id);
+                if(bruker != null)
+                {
+                    Personer brukerProfil = new Personer()
+                    {
+                        Id = bruker.Person.Id,
+                        Fornavn = bruker.Person.Fornavn,
+                        Etternavn = bruker.Person.Etternavn,
+                        Epost = bruker.Person.Epost,
+                        Telefonnr = bruker.Person.Telefonnr
+                    };
+                    _log.LogInformation("BestillingRepository.cs: HentProfil: Vellykket! Brukerprofil returnert");
+                    return brukerProfil;
+                }
+                _log.LogInformation("BestillingRepository.cs: HentProfil: Fant ikke bruker i databasen");
+                return null;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentProfil: Brukerprofil ikke hentet. Databasefeil: " + e);
+                return null;
             }
         }
 
