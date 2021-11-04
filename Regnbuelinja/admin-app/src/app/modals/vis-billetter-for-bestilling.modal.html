@@ -1,0 +1,34 @@
+<div class="modal-content" ng-class="modal-size : 1300px">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="col-md-12 col-sm-8">
+                <div *ngIf="laster">Laster billetter.....</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Billett-id</th>
+                            <th>Bestillings-id</th>
+                            <th>Ferd-id</th>
+                            <th>Voksen/barn</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngFor="let billett of alleBilletter">
+                        <tr>
+                            <td>{{billett.id}}</td>
+                            <td>{{billett.bId}}</td>
+                            <td>{{billett.fId}}</td>
+                            <td>{{billett.voksen == true ? "Voksen" : "Barn"}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a class="routerLink" routerLink="/billetter">Gå til billetter for å endre eller slette</a>
+        <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+    </div>
+</div>

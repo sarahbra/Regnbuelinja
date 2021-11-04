@@ -1,0 +1,32 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Ny Bestilling</h4>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
+          <label> Kunde</label>
+          <div class="form-group">
+            <select class="form-control " formControlName="kIdForm">
+                <option *ngFor="let kunde of alleKunder" [ngValue]="kunde.id">{{kunde.fornavn + " " + kunde.etternavn}}</option>
+            </select>
+            <p class="alert alert-warning " [hidden]="forms.controls.kIdForm.valid || forms.controls.kIdForm.hasError('required')">
+              Obligatorisk
+            </p>
+          </div>
+          
+          <label>Betalt:</label>
+          <div class="form-group row">
+              <div class="col-sm-4">
+                <input type="checkbox" id="betalt" class="btn-check"/>
+              </div>
+          </div>
+
+          <div class="modal-footer">      
+            <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+            <button type="submit" class="btn btn-success" [disabled]="!forms.valid">Lagre</button>
+          </div>
+            
+        </form>
+    </div>
+</div>

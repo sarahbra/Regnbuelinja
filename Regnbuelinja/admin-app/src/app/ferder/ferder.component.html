@@ -1,0 +1,34 @@
+<div class="container">
+    <div>
+        <div class="col-md-12">
+            <button class='btn btn-primary btn-lg mb-4' (click)="leggTilFerd()">Legg til ferd</button>
+            <h2 class="mb-4"> Alle ferder </h2>
+            <div *ngIf="laster">Laster ferder.....</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Båt-id</th>
+                        <th>Rute-id</th>
+                        <th>Avreisetid</th>
+                        <th>Ankomsttid</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let ferd of alleFerder">
+                    <tr>
+                        <td>{{ferd.fId}}</td>
+                        <td>{{ferd.bId}}</td>
+                        <td>{{ferd.rId}}</td>
+                        <td>{{ferd.avreiseTid | date:'dd/MM/yyyy HH:mm'}}</td>
+                        <td>{{ferd.ankomstTid | date:'dd/MM/yyyy HH:mm'}}</td>
+                        <td><button class="btn btn-danger" (click)="visModalOgSlett(ferd.fId)">Slett</button></td>
+                        <td><button class="btn btn-success" [routerLink]="['/endre/', ferd.fId, 'ferd']">Endre</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

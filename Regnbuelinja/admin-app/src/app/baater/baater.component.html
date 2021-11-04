@@ -1,0 +1,29 @@
+<div class="container">
+    <div>
+        <div class="col-md-8">
+            <button class='btn btn-primary btn-lg mb-4' (click)="leggTilBaat()">Legg til båt</button>
+            <h2 class="mb-4"> Alle båter </h2>
+            <div *ngIf="laster">Laster båter.....</div>
+            <div>{{errorMessage}}</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Navn</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let baat of alleBaater">
+                    <tr>
+                        <td>{{baat.id}}</td>
+                        <td>{{baat.navn}}</td>
+                        <td><button class="btn btn-danger" (click)="visModalOgSlett(baat.id)">Slett</button></td>
+                        <td><button class="btn btn-success" [routerLink]="['/endre/', baat.id, 'baat']">Endre</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

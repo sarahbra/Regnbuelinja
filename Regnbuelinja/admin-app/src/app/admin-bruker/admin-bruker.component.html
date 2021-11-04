@@ -1,0 +1,33 @@
+<div class="container">
+    <div>
+        <div class="col-md-12">
+            <h2 class="mb-4"> Min bruker </h2>
+            <div *ngIf="laster">Laster.....</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fornavn</th>
+                        <th>Etternavn</th>
+                        <th>Epost</th>
+                        <th>Telefonnr</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{adminBrukerPersonalia.fornavn}}</td>
+                        <td>{{adminBrukerPersonalia.etternavn}}</td>
+                        <td>{{adminBrukerPersonalia.epost}}</td>
+                        <td>{{adminBrukerPersonalia.telefonnr}}</td>
+                        <td><button class="btn btn-success" [routerLink]="['/endre/', null, 'admin']">Endre
+                                personalia</button>
+                        </td>
+                        <td><button class="btn btn-danger" [routerLink]="['/endre/', null, 'adminPassord'] ">Endre
+                                passord</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

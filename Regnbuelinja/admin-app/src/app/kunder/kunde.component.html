@@ -1,0 +1,34 @@
+<div class="container">
+    <div>
+        <div class="col-md-12">
+            <button class='btn btn-primary btn-lg mb-4 ' (click)="leggTilKunde()">Legg til kunde</button>
+            <h2 class="mb-4"> Alle kunder </h2>
+            <div *ngIf="laster">Laster kunder.....</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Fornavn</th>
+                        <th>Etternavn</th>
+                        <th>Epost</th>
+                        <th>Telefonnr</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let kunde of alleKunder">
+                    <tr>
+                        <td>{{kunde.id}}</td>
+                        <td>{{kunde.fornavn}}</td>
+                        <td>{{kunde.etternavn}}</td>
+                        <td>{{kunde.epost}}</td>
+                        <td>{{kunde.telefonnr}}</td>
+                        <td><button class="btn btn-danger" (click)="visModalOgSlett(kunde.id)">Slett</button></td>
+                        <td><button class="btn btn-success" [routerLink]="['/endre/', kunde.id, 'kunde']">Endre</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
