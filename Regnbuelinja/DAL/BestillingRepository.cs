@@ -630,7 +630,7 @@ namespace Regnbuelinja.DAL
                     else
                     {
                         Ferd IBestilling = bestilling.Billetter.First().Ferd;
-                        string StartpunktIBestilling = IBestilling.Rute.Endepunkt;
+                        string StartpunktIBestilling = IBestilling.Rute.Startpunkt;
                         string EndepunktIBestilling = IBestilling.Rute.Endepunkt;
 
                         // Hvis ferden i nybillett er lik ferden til eksisterende billett eller det er en returferd (med passende avreise/ankomsttid)
