@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router';
 import { NavbarService } from '../nav-meny/nav-meny.service';
 import { AdminPersonalia } from '../models/adminPersonalia';
 
@@ -10,18 +8,13 @@ import { AdminPersonalia } from '../models/adminPersonalia';
 })
 export class AdminBrukerComponent implements OnInit {
   adminBrukerPersonalia: AdminPersonalia;
-  laster: boolean;
+  lasteStatus: 'ikke-lastet' | 'laster' | 'lastet' = 'ikke-lastet';
 
-  constructor(
-    private _http: HttpClient,
-    private _router: Router,
-    private modalService: NgbModal,
-    public nav: NavbarService
-  ) {}
+  constructor(private _http: HttpClient, public nav: NavbarService) {}
 
   ngOnInit() {
     this.nav.show();
-    this.laster = true;
+    this.lasteStatus = 'laster';
     this.hentAdminBrukerPersonalia();
   }
 
@@ -29,7 +22,7 @@ export class AdminBrukerComponent implements OnInit {
     this._http.get<AdminPersonalia>('/api/admin/profil').subscribe(
       (adminBrukerPersonalia) => {
         this.adminBrukerPersonalia = adminBrukerPersonalia;
-        this.laster = false;
+        this.lasteStatus = 'lastet';
       },
       (error) => console.log(error)
     );

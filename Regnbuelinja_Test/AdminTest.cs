@@ -2113,7 +2113,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as UnauthorizedObjectResult;
+            var resultat = await adminController.EndreKunde(It.IsAny<int>(), It.IsAny<Personer>()) as UnauthorizedObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
@@ -2132,7 +2132,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as OkObjectResult;
+            var resultat = await adminController.EndreKunde(It.IsAny<int>(), It.IsAny<Personer>()) as OkObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
@@ -2153,7 +2153,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as NotFoundObjectResult;
+            var resultat = await adminController.EndreKunde(It.IsAny<int>(), It.IsAny<Personer>()) as NotFoundObjectResult;
 
             // Assert
             Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
@@ -2174,7 +2174,7 @@ namespace Regnbuelinja_Test
             adminController.ModelState.AddModelError("Fornavn", "Feil i inputvalideringen");
 
             //Act
-            var resultat = await adminController.EndreKunde(It.IsAny<Personer>()) as BadRequestObjectResult;
+            var resultat = await adminController.EndreKunde(It.IsAny<int>(), It.IsAny<Personer>()) as BadRequestObjectResult;
 
             // Assert
             Assert.Equal((int)HttpStatusCode.BadRequest, resultat.StatusCode);

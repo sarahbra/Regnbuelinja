@@ -993,8 +993,8 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
-                if(somSkalEndres != default && somSkalEndres.Brukernavn == username)
+                Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(username));
+                if(somSkalEndres != default)
                 {
                     string passord = bruker.Passord;
                     byte[] salt = LagEtSalt();

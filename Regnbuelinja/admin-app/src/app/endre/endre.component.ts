@@ -12,7 +12,6 @@ import { FerdRute } from '../models/ferdRute';
 import { formatDate } from '@angular/common';
 import { Bestilling } from '../models/bestilling';
 import { AdminPersonalia } from '../models/adminPersonalia';
-import { AdminBrukerPassord } from '../models/adminBrukerPassord';
 import { Billett } from '../models/billett';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertAvhengigheterFinnesModal } from '../modals/slett-modaler/alert-avhengigheter-finnes.modal';
@@ -45,7 +44,7 @@ export class EndreComponent implements OnInit {
   alleRuter: Array<Rute> = [];
   alleBestillinger: Array<Bestilling> = [];
   alleKunder: Array<Kunde> = [];
-  adminBrukerPassord: AdminBrukerPassord;
+  brukernavn: string;
   alleBilletter: Array<Billett> = [];
 
   //Idér for å printe ut på endreSiden
@@ -173,10 +172,11 @@ export class EndreComponent implements OnInit {
     //Legge til pattern her!
     passord: [null, Validators.required],
   };
+
   valideringBillett = {
     id: [null, Validators.required],
     fIdForm: [null, Validators.required],
-    bIdForm: [null, Validators.required]
+    bIdForm: [null, Validators.required],
   };
 
   constructor(
@@ -252,7 +252,7 @@ export class EndreComponent implements OnInit {
     );
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.voksen = document.getElementById('voksen');
   }
 
@@ -290,22 +290,18 @@ export class EndreComponent implements OnInit {
 
   //Trenger endepunkt for å hente en bruker (brukernavn bare! ikke passord!)
   hentAdminBrukernavn() {
-    this._http.get<AdminBrukerPassord>('/api/admin/??SARA!').subscribe(
-      (adminBrukerPassord) => {
-        this.adminBrukerPassord.brukernavn = adminBrukerPassord.brukernavn;
+    this._http.get<AdminPersonalia>('/api/admin/profil').subscribe(
+      (profil) => {
+        this.brukernavn = profil.brukernavn;
       },
       (error) => console.log(error)
     );
   }
+
   endreAdminPassord() {
     const passord = this.skjemaAdminPassord.value.passord;
 
-    const endretAdminPassord = new AdminBrukerPassord(
-      this.adminBrukerPassord.brukernavn,
-      passord
-    );
-
-    this._http.put('/api/admin/bruker/', endretAdminPassord).subscribe(
+    this._http.put('/api/admin/bruker', { passord }).subscribe(
       (retur) => {
         this._router.navigate(['/admin']);
       },
@@ -315,15 +311,15 @@ export class EndreComponent implements OnInit {
 
   hentAdminPersonalia() {
     this._http.get<AdminPersonalia>('/api/admin/profil').subscribe(
-      (adminBrukerPersonalia) => {
-        this.skjemaKunde.patchValue({ id: adminBrukerPersonalia.id });
-        this.skjemaKunde.patchValue({ fornavn: adminBrukerPersonalia.fornavn });
-        this.skjemaKunde.patchValue({
-          etternavn: adminBrukerPersonalia.etternavn,
+      (profil) => {
+        this.skjemaAdmin.patchValue({ id: profil.id });
+        this.skjemaAdmin.patchValue({ fornavn: profil.fornavn });
+        this.skjemaAdmin.patchValue({
+          etternavn: profil.etternavn,
         });
-        this.skjemaKunde.patchValue({ epost: adminBrukerPersonalia.epost });
-        this.skjemaKunde.patchValue({
-          telefonnr: adminBrukerPersonalia.telefonnr,
+        this.skjemaAdmin.patchValue({ epost: profil.epost });
+        this.skjemaAdmin.patchValue({
+          telefonnr: profil.telefonnr,
         });
       },
       (error) => console.log(error)
@@ -338,15 +334,14 @@ export class EndreComponent implements OnInit {
     const epost = this.skjemaAdmin.value.epost;
     const telefonnr = this.skjemaAdmin.value.telefonnr;
 
-    const endretAdminPersonalia = new AdminPersonalia(
-      id,
+    const endretAdminPersonalia = {
       fornavn,
       etternavn,
       epost,
-      telefonnr
-    );
+      telefonnr,
+    };
 
-    this._http.put('/api/admin/???? SARA/', endretAdminPersonalia).subscribe(
+    this._http.put('/api/admin/kunde/' + id, endretAdminPersonalia).subscribe(
       (retur) => {
         this._router.navigate(['/admin']);
       },
@@ -356,7 +351,6 @@ export class EndreComponent implements OnInit {
   hentEnBillett(id: number) {
     this._http.get<Billett>('/api/admin/billett/' + id).subscribe(
       (billett) => {
-  
         this.skjemaBillett.patchValue({ id: billett.id });
         this.skjemaBillett.patchValue({ fIdForm: billett.fId });
         this.skjemaBillett.patchValue({ bIdForm: billett.bId });
@@ -369,8 +363,7 @@ export class EndreComponent implements OnInit {
   }
 
   endreBillett() {
-
-    //[selected]="this.skjemaBillett.controls['bIdForm'].value" 
+    //[selected]="this.skjemaBillett.controls['bIdForm'].value"
     const id = this.skjemaBillett.value.id;
     const fId = this.skjemaBillett.value.fId;
     const bId = this.skjemaBillett.value.bId;
@@ -656,12 +649,15 @@ export class EndreComponent implements OnInit {
   }
 
   hentAlleFerderForBestilling() {
-    
-    this._http.get<FerdRute[]>('/api/admin/bestilling/' + this.valgtBestilling.id + "/ferder").subscribe(
-      (ferder) => {
-        this.alleFerder = ferder;
-      },
-      (error) => console.log(error)
-    );
+    this._http
+      .get<FerdRute[]>(
+        '/api/admin/bestilling/' + this.valgtBestilling.id + '/ferder'
+      )
+      .subscribe(
+        (ferder) => {
+          this.alleFerder = ferder;
+        },
+        (error) => console.log(error)
+      );
   }
 }
