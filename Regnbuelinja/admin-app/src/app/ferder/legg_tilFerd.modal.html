@@ -1,0 +1,88 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Ny Ferd</h4>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
+
+          <label>Båt Navn (bId)</label>
+          <div class="form-group">
+            <select class="form-control " formControlName="bIdForm">
+                <option *ngFor="let baat of alleBaater" [ngValue]="baat.id">{{baat.navn}}</option>
+            </select>
+            <p class="alert alert-warning " [hidden]="forms.controls.bIdForm.valid || forms.controls.bIdForm.hasError('required')">
+              Obligatorisk
+            </p>
+          </div>
+         
+          <label>Rute (rId)</label>
+          <div class="form-group">
+            <select class="form-control" formControlName="rIdForm">
+                <option *ngFor="let rute of alleRuter " [ngValue]="rute.id">{{rute.startpunkt + ' - ' + rute.endepunkt}}</option>
+            </select>
+            <p class="alert alert-warning" [hidden]="forms.controls.rIdForm.valid || forms.controls.rIdForm.hasError('required')">
+              Obligatorisk
+            </p>
+          </div>
+
+          <label>Avreise Dato</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="avreiseDatoForm" class="form-control" placeholder="Avreise dato" autofocus />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.avreiseDatoForm.valid || forms.controls.avreiseDatoForm.pristine">
+                Behold dato formatet: dd/MM/yyyy
+              </small>
+            </div>
+          </div>
+
+          <label>Avreise Tid</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="avreiseKlokkeslettForm" class="form-control" placeholder="Avreise tid" autofocus />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.avreiseKlokkeslettForm.valid || forms.controls.avreiseKlokkeslettForm.pristine">
+                Avreise tiden må ha følgende formatet: HH:mm
+              </small>
+            </div>
+          </div>
+          
+          <label>Ankomst Dato</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="ankomstDatoForm" class="form-control" placeholder="Ankomst dato" autofocus />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.ankomstDatoForm.valid || forms.controls.ankomstDatoForm.pristine">
+                Behold dato formatet: dd/MM/yyyy (Må være etter førrige datoen)
+              </small>
+            </div>
+          </div>
+
+          <label>Ankomst Tid</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="ankomstKlokkeslettForm" class="form-control" placeholder="Ankomst tid" autofocus />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.ankomstKlokkeslettForm.valid || forms.controls.ankomstKlokkeslettForm.pristine">
+                Ankomst tiden må ha følgende formatet: HH:mm
+              </small>
+            </div>
+          </div>
+
+          <div class="modal-footer">      
+            <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+            <button type="submit" class="btn btn-success" [disabled]="!forms.valid">Lagre</button>
+          </div>
+            
+        </form>
+    </div>
+</div>

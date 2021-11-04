@@ -1,0 +1,12 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Bekreft sletting</h4>
+    </div>
+    <div class="modal-body">
+        {{body}}
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Slett')">Slett</button>
+    </div>
+</div>

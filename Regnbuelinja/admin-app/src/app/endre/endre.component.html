@@ -1,0 +1,318 @@
+<!--Endre Båt-->
+
+<div class="container mt-4" *ngIf="visEndreBaat">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre båt med id {{this.baatId}}</h3>
+        <form [formGroup]="skjemaBaat" (ngSubmit)="vedSubmit('baat')">
+
+            <input class="form-control" formControlName="id" type="hidden" />
+
+            <div class="form-group">
+                <label>Båtnavn</label>
+                <input class="form-control" formControlName="navn" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaBaat.controls.navn.valid || skjemaBaat.controls.navn.pristine">
+                    Båt navn kan kun inneholde bokstaver og mellomrom, mellom 2-30 tegn
+                </p>
+
+            </div>
+
+            <div class="form-group">
+                <button type="submit" [disabled]="!skjemaBaat.valid" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default" routerLink="/baater">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--Endre Rute-->
+
+<div class="container mt-4" *ngIf="visEndreRute">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre rute med id {{this.ruteId}}</h3>
+        <form [formGroup]="skjemaRute" (ngSubmit)="vedSubmit('rute')">
+
+            <input class="form-control" formControlName="id" type="hidden" />
+
+            <div class="form-group">
+                <label>Avreisehavn</label>
+                <input class="form-control" formControlName="startpunkt" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaRute.controls.startpunkt.valid || skjemaRute.controls.startpunkt.pristine">
+                    Avreisehavn kan kun inneholde bokstaver, mellom 2-30 tegn
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Ankomsthavn</label>
+                <input class="form-control" formControlName="endepunkt" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaRute.controls.endepunkt.valid || skjemaRute.controls.endepunkt.pristine">
+                    Ankomsthavn kan kun inneholde bokstaver, mellom 2-30 tegn
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Pris</label>
+                <input class="form-control" formControlName="pris" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaRute.controls.pris.valid || skjemaRute.controls.pris.pristine">
+                    Ugyldig pris
+            </div>
+
+            <div class="form-group">
+                <button type="submit" [disabled]="!skjemaRute.valid" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default" routerLink="/ruter">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--Endre Kunde-->
+<div class="container mt-4" *ngIf="visEndreKunde">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre kunde med id {{this.kundeId}}</h3>
+        <form [formGroup]="skjemaKunde" (ngSubmit)="vedSubmit('kunde')">
+            <input class="form-control" formControlName="id" type="hidden" />
+
+            <div class="form-group">
+                <label>Fornavn</label>
+                <input class="form-control" formControlName="fornavn" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaKunde.controls.fornavn.valid || skjemaKunde.controls.fornavn.pristine">
+                    Fornavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
+                </p>
+            </div>
+
+            <div class=" form-group ">
+                <label>Etternavn</label>
+                <input class="form-control" formControlName="etternavn" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaKunde.controls.etternavn.valid || skjemaKunde.controls.etternavn.pristine">
+                    Etternavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Epost</label>
+                <input class="form-control" formControlName="epost" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaKunde.controls.epost.valid || skjemaKunde.controls.epost.pristine && skjemaKunde.controls.epost.touched">
+                    Ugyldig epost
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Telefonummer</label>
+                <input class="form-control" formControlName="telefonnr" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaKunde.controls.telefonnr.valid || skjemaKunde.controls.telefonnr.pristine">
+                    Telefonnummeret kan kun bestå av 8 tall
+                </p>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" [disabled]="!skjemaKunde.valid" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default " routerLink="/kunder">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--Endre Ferd-->
+<div class="container mt-4" *ngIf="visEndreFerd">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre ferd med id {{this.ferdId}}</h3>
+        <form [formGroup]="skjemaFerd" (ngSubmit)="vedSubmit('ferd')">
+            <input class="form-control" formControlName="fId" type="hidden" />
+
+
+            <div class="form-group">
+                <label>Båt navn (bId)</label>
+                <select class="form-control" formControlName="bId">
+                    <option *ngFor="let baat of alleBaater" [ngValue]="baat.id">{{baat.navn}}</option>
+                </select>
+                <p class="alert alert-warning"
+                    [hidden]="skjemaFerd.controls.bId.valid || skjemaFerd.controls.bId.hasError('required') ">
+                    er obligatorisk.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Rute (rId)</label>
+                <select class="form-control" formControlName="rId">
+                    <option *ngFor="let rute of alleRuter " [ngValue]="rute.id">{{rute.startpunkt + ' - ' +
+                        rute.endepunkt}}</option>
+                </select>
+                <p class="alert alert-warning"
+                    [hidden]="skjemaFerd.controls.rId.valid || skjemaFerd.controls.rId.hasError('required') ">
+                    er obligatorisk.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Avreise Tid</label>
+                <input class="form-control" formControlName="avreiseTid" />
+                <p class="alert alert-warning "
+                    [hidden]="skjemaFerd.controls.avreiseTid.valid || skjemaFerd.controls.avreiseTid.pristine">
+                    - Må være i formatet: dd/MM/yyyy HH:mm <br> - Ugyldig dato eller tid
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Ankomst Tid</label>
+                <input class="form-control" formControlName="ankomstTid" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaFerd.controls.ankomstTid.valid || skjemaFerd.controls.ankomstTid.pristine">
+                    - Må være i formatet: dd/MM/yyyy HH:mm <br> - Ugyldig dato eller tid <br> - Amkomst tid kan ikke
+                    være tidligere enn avreise tid
+                </p>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" [disabled]="!skjemaFerd.valid" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default" routerLink="/kunder">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--Endre Bestilling-->
+<div class="container mt-4" *ngIf="visEndreBestilling">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre bestilling med id {{this.bestillingsId}}</h3>
+        <form [formGroup]="skjemaBestilling" (ngSubmit)="vedSubmit('bestilling')">
+
+            <input class="form-control" formControlName="id" type="hidden" />
+            <input class="form-control" formControlName="totalpris" type="hidden" />
+
+            <div class="form-group">
+                <label>Kunde</label>
+                <select class="form-control" formControlName="kId">
+                    <option *ngFor="let kunde of alleKunder" [ngValue]="kunde.id">{{kunde.fornavn + "
+                        "+kunde.etternavn}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Betaling</label>
+                <select class="form-control" formControlName="betalt">
+                    <option value="false">Ikke betalt</option>
+                    <option value="true">Betalt</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-lg ">Endre</button>
+                <button class="btn btn-default" routerLink="/bestillinger">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Endre admin-bruker-personalia-->
+<div class="container mt-4" *ngIf="visEndreAdmin">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre personalia</h3>
+        <form [formGroup]="skjemaAdmin" (ngSubmit)="vedSubmit('admin')">
+            <input class="form-control" formControlName="id" type="hidden" />
+
+            <div class="form-group">
+                <label>Fornavn</label>
+                <input class="form-control" formControlName="fornavn" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaAdmin.controls.fornavn.valid || skjemaKunde.controls.fornavn.pristine">
+                    Fornavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
+                </p>
+            </div>
+
+            <div class=" form-group ">
+                <label>Etternavn</label>
+                <input class="form-control" formControlName="etternavn" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaAdmin.controls.etternavn.valid || skjemaKunde.controls.etternavn.pristine">
+                    Etternavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Epost</label>
+                <input class="form-control" formControlName="epost" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaAdmin.controls.epost.valid || skjemaKunde.controls.epost.pristine && skjemaKunde.controls.epost.touched">
+                    Ugyldig epost
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Telefonummer</label>
+                <input class="form-control" formControlName="telefonnr" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaAdmin.controls.telefonnr.valid || skjemaKunde.controls.telefonnr.pristine">
+                    Telefonnummer kan kun innehold tall og må være 8 siffer
+                </p>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" [disabled]="!skjemaKunde.valid" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default " routerLink="/kunder">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Endre Billett-->
+<div class="container mt-4" *ngIf="visEndreBillett">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre billett med id {{this.billettId}}</h3>
+        <form [formGroup]="skjemaBillett" (ngSubmit)="vedSubmit('billett')">
+
+            <input class="form-control" formControlName="id" type="hidden" />
+            <input class="form-control" formControlName="fId" type="hidden" />
+            <input class="form-control" formControlName="bId" type="hidden" />
+
+            <div class="form-group">
+                <label>Voksen/Barn</label>
+                <select class="form-control" formControlName="voksen">
+                    <option value="false">Barn</option>
+                    <option value="true">Voksen</option>
+                </select>
+            </div>
+
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default" routerLink="/billetter">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!--Endre admin-passord-->
+<div class="container mt-4" *ngIf="visEndreAdminPassord">
+    <div class="col-md-8">
+        <h3 class="mb-4">Endre passord</h3>
+        <form [formGroup]="skjemaAdminPassord" (ngSubmit)="vedSubmit('adminPassord')">
+            <label>Brukernavn: {{adminBrukerPassord.brukernavn}}</label>
+
+            <div class="form-group">
+                <label>Skriv inn nytt passord</label>
+                <input class="form-control" formControlName="passord" />
+                <p class="alert alert-warning"
+                    [hidden]="skjemaAdminPassord.controls.passord.valid || skjemaAdminPassord.controls.passord.pristine">
+                    Passord må bestå av???
+                </p>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" [disabled]="!skjemaKunde.valid" class="btn btn-success btn-lg">Endre</button>
+                <button class="btn btn-default " routerLink="/kunder">Tilbake</button>
+            </div>
+        </form>
+    </div>
+</div>

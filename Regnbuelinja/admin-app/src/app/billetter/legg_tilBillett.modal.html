@@ -1,0 +1,43 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Ny Billett</h4>
+    </div>
+
+  <div class="modal-body">
+    <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
+          
+          <label>Bestilling (bId)</label>
+          <div class="form-group">
+            <select class="form-control" formControlName="bIdForm" [(ngModel)]="valgtBestilling"(change)="hentAlleFerderForBestilling()">
+                <option *ngFor="let bestilling of alleBestillinger " [ngValue]="bestilling" >{{bestilling.id}}</option>
+            </select>
+            <p class="alert alert-warning" [hidden]="forms.controls.bIdForm.valid || forms.controls.bIdForm.hasError('required')">
+              Obligatorisk
+            </p>
+          </div>
+
+          <label>Ferd (fId)</label>
+          <div class="form-group">
+            <select class="form-control " formControlName="fIdForm">
+                <option *ngFor="let ferd of alleFerder" [ngValue]="ferd.fId">{{ferd.strekning}}, {{ferd.avreiseTid | date:'dd/MM/yyyy HH:mm'}} - {{ferd.ankomstTid | date:'dd/MM/yyyy HH:mm'}}</option>
+            </select>
+            <p class="alert alert-warning " [hidden]="forms.controls.fIdForm.valid || forms.controls.fIdForm.hasError('required')">
+              Obligatorisk
+            </p>
+          </div>
+          
+          <label>Voksen: </label>
+          <div class="form-group row">
+              <div class="col-sm-4">
+                <input type="checkbox" id="voksen" class="btn-check"/>
+              </div>
+          </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+        <button type="submit" class="btn btn-success" [disabled]="!forms.valid">Lagre</button>
+      </div>
+
+    </form>
+  </div>
+</div>
