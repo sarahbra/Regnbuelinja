@@ -43,7 +43,7 @@ namespace Regnbuelinja.Controllers
                     return Ok(lagret);
                 }
                 _log.LogInformation("AdminController.cs: LagreRute: Databasefeil. Rute ikke lagret");
-                return new ServiceUnavailableResult("Databasefeil. Rute ikke lagret");
+                return StatusCode(500, "Databasefeil. Rute ikke lagret");
             }
             _log.LogInformation("AdminController.cs: LagreRute: Feil i inputvalideringen.");
             return BadRequest("Feil i inputvalidering på server.");
@@ -86,7 +86,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(ruter);
             }
             _log.LogInformation("AdminController.cs: HentAlleRuter: Feil i databasen eller ingen ruter lagret");
-            return new ServiceUnavailableResult("Databasefeil. Ruter ikke hentet");
+            return StatusCode(500, "Databasefeil. Ruter ikke hentet");
         }
 
         [HttpGet("rute/{id}")]
@@ -142,7 +142,7 @@ namespace Regnbuelinja.Controllers
                     return Ok(lagretBåt);
                 }
                 _log.LogInformation("AdminController.cs: LagreBåt: Databasefeil. Båt kunne ikke lagres");
-                return new ServiceUnavailableResult("Databasen utilgjengelig. Båt ikke lagret");
+                return StatusCode(500, "Databasen utilgjengelig. Båt ikke lagret");
             }
             _log.LogInformation("AdminController.cs: LagreBåt: Feil i inputvalideringen. Båt ikke lagret");
             return BadRequest("Feil i inputvalideringen");
@@ -201,7 +201,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(alleBåter);
             }
             _log.LogInformation("AdminController.cs: HentAlleBaater: Databasefeil eller ingen båter i databasen");
-            return new ServiceUnavailableResult("Databasefeil. Båter ikke hentet");
+            return StatusCode(500, "Databasefeil. Båter ikke hentet");
         }
 
         [HttpGet("baat/{id}")]
@@ -275,7 +275,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(alleFerder);
             }
             _log.LogInformation("AdminController.cs: HentAlleFerder: Databasefeil. Ferder ikke hentet");
-            return new ServiceUnavailableResult("Databasefeil. Ferder ikke hentet");
+            return StatusCode(500, "Databasefeil. Ferder ikke hentet");
         }
 
         [HttpPut("ferd/{id}")]
@@ -333,7 +333,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(alleBestillinger);
             }
             _log.LogInformation("AdminController.cs: HentAlleBestillinger: Databasefeil eller ingen bestillinger i databasen");
-            return new ServiceUnavailableResult("Databasefeil. Bestillinger ikke hentet");
+            return StatusCode(500, "Databasefeil. Bestillinger ikke hentet");
         }
 
         [HttpGet("bestilling/{id}")]
@@ -406,7 +406,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(alleBilletter);
             }
             _log.LogInformation("AdminController.cs: HentAlleBilletter: Databasefeil. Billetter ikke hentet");
-            return new ServiceUnavailableResult("Databasefeil. Billetter ikke hentet");
+            return StatusCode(500, "Databasefeil. Billetter ikke hentet");
         }
 
         [HttpPost("billetter")]
@@ -613,7 +613,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(alleKunder);
             }
             _log.LogInformation("AdminController.cs: HentAlleKunder: Databasefeil. Prøv igjen!");
-            return new ServiceUnavailableResult("Databasefeil. Ingen kunder hentet");
+            return StatusCode(500, "Databasefeil. Ingen kunder hentet");
         }
 
         [HttpGet("ansatt/{id}")]
@@ -647,7 +647,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(alleAnsatte);
             }
             _log.LogInformation("AdminController.cs: HentAlleAnsatte: Databasefeil. Prøv igjen!");
-            return new ServiceUnavailableResult("Databasefeil. Ingen ansatte hentet");
+            return StatusCode(500, "Databasefeil. Ingen ansatte hentet");
         }
 
         [HttpPut("kunde/{id}")]
@@ -724,7 +724,7 @@ namespace Regnbuelinja.Controllers
                     return Ok(brukerOpprettet);
                 }
                 _log.LogInformation("AdminController.cs: LagreBruker: Databasefeil. Bruker ikke opprettet.");
-                return new ServiceUnavailableResult("Databasefeil. Bruker ikke opprettet");
+                return StatusCode(500, "Databasefeil. Bruker ikke opprettet");
             }
             return BadRequest("Feil i inputvalidering på server");
         }
@@ -768,7 +768,7 @@ namespace Regnbuelinja.Controllers
                     return Ok(kundeOpprettet);
                 }
                 _log.LogInformation("AdminController.cs: LagreKunde: Databasefeil. Kunden ikke opprettet.");
-                return new ServiceUnavailableResult("Databasefeil. Kunden ikke opprettet");
+                return StatusCode(500, "Databasefeil. Kunden ikke opprettet");
             }
             return BadRequest("Feil i inputvalidering på server");
         }
@@ -782,10 +782,10 @@ namespace Regnbuelinja.Controllers
             }
 
             Personer bruker = await _db.HentProfil(HttpContext.Session.GetString(_brukernavn));
-            if(bruker != null)
+            if(bruker == null)
             {
                 _log.LogInformation("AdminController.cs: HentProfil: Databasefeil. Kunne ikke hente profil");
-                return new ServiceUnavailableResult("Databasefeil. Kunne ikke hente profil");
+                return NotFound();
             }
             _log.LogInformation("AdminController.cs: HentProfil: Vellykket! Brukerprofil hentet");
             return Ok(bruker);
@@ -822,15 +822,6 @@ namespace Regnbuelinja.Controllers
                 returUrl = "/admin/login";
             }
             return Redirect(returUrl);
-        }
-    }
-
-    public class ServiceUnavailableResult : ViewResult
-    {
-        public ServiceUnavailableResult(string viewName)
-        {
-            ViewName = viewName;
-            StatusCode = (int)HttpStatusCode.ServiceUnavailable;
         }
     }
 }
