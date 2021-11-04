@@ -369,7 +369,7 @@ namespace Regnbuelinja.Controllers
                 }
                 _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
                     "gjennomførte reiser");
-                return NotFound("Bestilling eller kunde ikke funnet, eller bestillingen inneholder ubetalte gjennomførte reiser, eller betalte reiser");
+                return NotFound("Bestilling eller kunde ikke funnet, eller bestillingen er betalt eller bestillingen inneholder gjennomførte ubetalte reiser");
             }
             _log.LogInformation("AdminController.cs: EndreBestilling: Feil i inputvalideringen.");
             return BadRequest("Feil i inputvalidering på server.");
