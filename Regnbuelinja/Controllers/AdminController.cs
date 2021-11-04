@@ -759,8 +759,8 @@ namespace Regnbuelinja.Controllers
 
             if (ModelState.IsValid)
             {
-                bool kundeOpprettet = await _db.LagreKunde(kunde);
-                if (kundeOpprettet)
+                int kundeOpprettet = await _db.LagreKunde(kunde);
+                if (kundeOpprettet != 0)
                 {
                     _log.LogInformation("AdminController.cs: LagreKunde: Kunden lagret vellykket");
                     return Ok(kundeOpprettet);

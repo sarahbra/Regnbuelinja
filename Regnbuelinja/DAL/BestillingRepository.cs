@@ -42,7 +42,7 @@ namespace Regnbuelinja.DAL
                 _log.LogInformation("BestillingRepository.cs: LagreRute: Feil i databasen. Rute ikke lagret");
                 return false;
             }
-            
+
         }
 
         public async Task<bool> EndreRute(Ruter endreRute)
@@ -58,7 +58,7 @@ namespace Regnbuelinja.DAL
                         _log.LogInformation("BestillingRepository.cs: EndreRute: Rute med i en bestillt ferd. Ikke endret");
                         return false;
                     }
-                    
+
                     somSkalEndres.Startpunkt = endreRute.Startpunkt;
                     somSkalEndres.Endepunkt = endreRute.Endepunkt;
                     somSkalEndres.Pris = endreRute.Pris;
@@ -88,16 +88,16 @@ namespace Regnbuelinja.DAL
             try
             {
                 Rute fjerneRute = await _db.Ruter.FindAsync(id);
-                if(!(fjerneRute == null))
+                if (!(fjerneRute == null))
                 {
                     List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Rute.Id == fjerneRute.Id).ToListAsync();
-                    if(AlleRelaterteBilletter.Any())
+                    if (AlleRelaterteBilletter.Any())
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettRute: Rute med i en bestillt ferd. Ikke slettet");
                         return false;
                     }
                     List<Ferd> AlleRelaterteFerder = await _db.Ferder.Where(f => f.Rute.Id == id).ToListAsync();
-                    if(AlleRelaterteFerder.Any())
+                    if (AlleRelaterteFerder.Any())
                     {
                         foreach (Ferd ferd in AlleRelaterteFerder)
                         {
@@ -105,7 +105,7 @@ namespace Regnbuelinja.DAL
                             _db.Ferder.Remove(ferd);
                         }
                     }
-                    
+
                     _db.Ruter.Remove(fjerneRute);
                     await _db.SaveChangesAsync();
                     _log.LogInformation("BestillingRepository.cs: SlettRute: Vellykket! Rute slettet");
@@ -128,14 +128,14 @@ namespace Regnbuelinja.DAL
             try
             {
                 Rute hentetRute = await _db.Ruter.FirstOrDefaultAsync(r => r.Id == id);
-                if(hentetRute == default)
+                if (hentetRute == default)
                 {
                     _log.LogInformation("BestillingRepository.cs: HentEnRute: Rute ikke funnet i databasen");
                 }
                 return hentetRute;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepisotory.cs: HentEnRute: Feil i databasen på serveren: "+e);
+                _log.LogInformation("BestillingRepisotory.cs: HentEnRute: Feil i databasen på serveren: " + e);
                 return null;
             }
         }
@@ -145,7 +145,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 List<Rute> alleRutene = await _db.Ruter.ToListAsync();
-                if(!alleRutene.Any())
+                if (!alleRutene.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Ingen ruter i databasen");
                 }
@@ -153,10 +153,10 @@ namespace Regnbuelinja.DAL
                 return alleRutene;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil: " + e +". Ruter ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleRuter: Databasefeil: " + e + ". Ruter ikke hentet");
                 return null;
             }
-            
+
         }
 
         public async Task<bool> LagreBåt(Baater båt) {
@@ -173,10 +173,10 @@ namespace Regnbuelinja.DAL
                 return true;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen: " + e +". Båt ikke lagret");
+                _log.LogInformation("BestillingRepository.cs: LagreBåt: Feil i databasen: " + e + ". Båt ikke lagret");
                 return false;
             }
-            
+
         }
 
         //Båt i bestilling kan endres, men ikke slettes - må oppdateres hvis vi implementerer kapasitet.
@@ -185,7 +185,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 Baat somSkalEndres = await _db.Baater.FirstOrDefaultAsync(b => b.Id == båt.Id);
-                if(somSkalEndres!= default)
+                if (somSkalEndres != default)
                 {
                     somSkalEndres.Navn = båt.Navn;
                     await _db.SaveChangesAsync();
@@ -199,7 +199,7 @@ namespace Regnbuelinja.DAL
                 _log.LogInformation("BestillingRepository.cs: EndreBåt: Feil i databasen: " + e + ". Båt ikke endret");
                 return false;
             }
-            
+
         }
 
 
@@ -209,7 +209,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 Baat somSkalSlettes = await _db.Baater.FindAsync(id);
-                if(somSkalSlettes != null)
+                if (somSkalSlettes != null)
                 {
                     List<Billett> AlleRelaterteBilletter = await _db.Billetter.Where(b => b.Ferd.Baat.Id == id).ToListAsync();
                     if (AlleRelaterteBilletter.Any())
@@ -236,7 +236,7 @@ namespace Regnbuelinja.DAL
                 return false;
             } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: SlettBåt: Feil i databasen: "+e+". Båt ikke slettet");
+                _log.LogInformation("BestillingRepository.cs: SlettBåt: Feil i databasen: " + e + ". Båt ikke slettet");
                 return false;
             }
         }
@@ -261,7 +261,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 Baat hentetBåt = await _db.Baater.FirstOrDefaultAsync(b => b.Id == id);
-                if(hentetBåt == default)
+                if (hentetBåt == default)
                 {
                     _log.LogInformation("BestillingRepository.cs: HentEnBåt: Ingen båt funnet i databasen med gitt id");
                 }
@@ -319,7 +319,7 @@ namespace Regnbuelinja.DAL
                     AvreiseTid = f.AvreiseTid.ToString("o"),
                     AnkomstTid = f.AnkomstTid.ToString("o")
                 }).ToListAsync();
-                if(!alleFerdene.Any())
+                if (!alleFerdene.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentAlleFerder: Ingen ferder i databasen");
                 }
@@ -374,7 +374,7 @@ namespace Regnbuelinja.DAL
                     }
                     Rute nyRute = await _db.Ruter.FirstOrDefaultAsync(r => r.Id == ferd.RId);
                     Baat nyBåt = await _db.Baater.FirstOrDefaultAsync(b => b.Id == ferd.BId);
-                    if(nyRute == default || nyBåt == default)
+                    if (nyRute == default || nyBåt == default)
                     {
                         _log.LogInformation("BestillingRepository.cs: EndreFerd: Rute eller båt ikke funnet i database. Kan ikke endre");
                         return false;
@@ -389,7 +389,7 @@ namespace Regnbuelinja.DAL
                 }
                 _log.LogInformation("BestillingRepository.cs: EndreFerd: Ferd ikke funnet med gitt id");
                 return false;
-            } catch(Exception e)
+            } catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: EndreFerd: Databasefeil: " + e + ". Ferd ikke endret");
                 return false;
@@ -435,7 +435,7 @@ namespace Regnbuelinja.DAL
             {
                 List<Bestillinger> alleBestillinger = await _db.Bestillinger.ToListAsync();
                 List<Bestilling> hentedeBestillinger = new List<Bestilling>();
-                foreach(Bestillinger enBestilling in alleBestillinger)
+                foreach (Bestillinger enBestilling in alleBestillinger)
                 {
                     double TotalPris = await BeregnTotalPris(enBestilling.Id);
                     Bestilling bestilling = new Bestilling()
@@ -447,7 +447,7 @@ namespace Regnbuelinja.DAL
                     };
                     hentedeBestillinger.Add(bestilling);
                 }
-                
+
                 if (!hentedeBestillinger.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentAlleBestillinger: Ingen bestillinger i databasen");
@@ -466,7 +466,7 @@ namespace Regnbuelinja.DAL
             try
             {
                 double TotalPris = await BeregnTotalPris(id);
-                Bestilling bestilling = _db.Bestillinger.Where(b => b.Id == id).Select(b=> new Bestilling() {
+                Bestilling bestilling = _db.Bestillinger.Where(b => b.Id == id).Select(b => new Bestilling() {
                     Id = b.Id,
                     KId = b.Kunde.Id,
                     Betalt = b.Betalt,
@@ -474,7 +474,7 @@ namespace Regnbuelinja.DAL
                 }).FirstOrDefault();
                 if (bestilling == default)
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen bestilling med id "+id+" i databasen");
+                    _log.LogInformation("BestillingRepository.cs: HentEnBestilling: Ingen bestilling med id " + id + " i databasen");
                 }
                 return bestilling;
             }
@@ -499,12 +499,12 @@ namespace Regnbuelinja.DAL
             try
             {
                 Bestillinger somSkalSlettes = await _db.Bestillinger.FindAsync(id);
-                if(somSkalSlettes != null)
+                if (somSkalSlettes != null)
                 {
                     Ferd ferd = somSkalSlettes.Billetter.First().Ferd;
                     Ferd returFerd = somSkalSlettes.Billetter.Where(b => b.Ferd.Id != ferd.Id).Select(b => b.Ferd).FirstOrDefault();
                     DateTime ankomstTid = returFerd == default ? ferd.AnkomstTid : returFerd.AnkomstTid;
-                    if ((somSkalSlettes.Betalt && ankomstTid.CompareTo(DateTime.Now)<0) || (!somSkalSlettes.Betalt && (ankomstTid.CompareTo(DateTime.Now)>0)))
+                    if ((somSkalSlettes.Betalt && ankomstTid.CompareTo(DateTime.Now) < 0) || (!somSkalSlettes.Betalt && (ankomstTid.CompareTo(DateTime.Now) > 0)))
                     {
                         foreach (Billett billett in somSkalSlettes.Billetter)
                         {
@@ -541,16 +541,16 @@ namespace Regnbuelinja.DAL
                 {
                     if (!endreBestilling.Betalt)
                     {
-                        foreach(Billett billett in endreBestilling.Billetter)
+                        foreach (Billett billett in endreBestilling.Billetter)
                         {
-                            if(billett.Ferd.AnkomstTid.CompareTo(DateTime.Now) < 0)
+                            if (billett.Ferd.AnkomstTid.CompareTo(DateTime.Now) < 0)
                             {
                                 _log.LogInformation("BestillingRepository.cs: EndreBestilling: Kan ikke endres da den inneholder reiser som allerede har vært");
                                 return false;
                             }
                         }
-                        Person kunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == bestilling.KId); 
-                        if(kunde != default)
+                        Person kunde = await _db.KunderOgAnsatte.FirstOrDefaultAsync(k => k.Id == bestilling.KId);
+                        if (kunde != default)
                         {
                             endreBestilling.Kunde = kunde;
                             endreBestilling.Betalt = bestilling.Betalt;
@@ -610,9 +610,9 @@ namespace Regnbuelinja.DAL
                 Bestillinger bestilling = await _db.Bestillinger.FindAsync(billett.BId);
                 Ferd ferd = await _db.Ferder.FindAsync(billett.FId);
 
-                if(bestilling != null && ferd != null && !bestilling.Betalt)
+                if (bestilling != null && ferd != null && !bestilling.Betalt)
                 {
-                    if(!bestilling.Billetter.Any())
+                    if (!bestilling.Billetter.Any())
                     {
                         Billett nyBillett = new Billett()
                         {
@@ -635,7 +635,7 @@ namespace Regnbuelinja.DAL
 
                         // Hvis ferden i nybillett er lik ferden til eksisterende billett eller det er en returferd (med passende avreise/ankomsttid)
                         if ((ferd == IBestilling) || (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt) &&
-                            (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0) ))
+                            (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0)))
                         {
 
                             Billett nyBillett = new Billett()
@@ -654,9 +654,9 @@ namespace Regnbuelinja.DAL
                                 "bestilling eller returrute. Avreise/ankomsttid må også stemme overens");
                             return false;
                         }
-                        
+
                     }
-                    
+
                     _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
                     return true;
 
@@ -692,7 +692,7 @@ namespace Regnbuelinja.DAL
                         _log.LogInformation("BestillingRepository.cs: EndreBillett: Vellykket! Billetten er endret");
                         await _db.SaveChangesAsync();
                         return true;
-                       
+
                     }
                     _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
                     return false;
@@ -707,7 +707,7 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        
+
         //Kan bare slette billetter for ubetalte reiser framover i tid eller betalte reiser som har vært.
         public async Task<bool> SlettBillett(int id)
         {
@@ -770,14 +770,14 @@ namespace Regnbuelinja.DAL
                     BId = b.Bestilling.Id,
                     Voksen = b.Voksen
                 }).ToListAsync();
-                if(!alleBilletter.Any())
+                if (!alleBilletter.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBestilling: Bestilling ikke funnet eller ingen billetter i bestilling");
                 }
                 return alleBilletter;
-            } catch(Exception e)
+            } catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBestilling: Feil i databasen: " +e+". Billetter ikke hentet");
+                _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForBestilling: Feil i databasen: " + e + ". Billetter ikke hentet");
                 return null;
             }
         }
@@ -786,14 +786,14 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => new Billetter() 
+                List<Billetter> alleBilletter = await _db.Billetter.Where(b => b.Ferd.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
                     BId = b.Bestilling.Id,
                     FId = b.Ferd.Id,
                     Voksen = b.Voksen
                 }).ToListAsync();
-                
+
                 if (!alleBilletter.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentAlleBilletterForFerd: Ferd ikke funnet eller ingen billetter for ferd");
@@ -869,13 +869,13 @@ namespace Regnbuelinja.DAL
             try
             {
                 Bestillinger bestilling = await _db.Bestillinger.FindAsync(id);
-                if(bestilling == default)
+                if (bestilling == default)
                 {
                     _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Bestilling ikke funnet i databasen");
                     return null;
                 }
                 List<FerdRute> gyldigeFerder;
-                if(!bestilling.Billetter.Any())
+                if (!bestilling.Billetter.Any())
                 {
                     gyldigeFerder = await _db.Ferder.Select(f => new FerdRute()
                     {
@@ -899,7 +899,7 @@ namespace Regnbuelinja.DAL
                     gyldigeFerder.Add(ferdSomHentes);
 
                     Ferd returFerd = bestilling.Billetter.Where(b => b.Ferd.Id != ferd.Id).Select(b => b.Ferd).FirstOrDefault();
-                    if(returFerd != default)
+                    if (returFerd != default)
                     {
                         FerdRute returFerdRute = new FerdRute()
                         {
@@ -915,7 +915,7 @@ namespace Regnbuelinja.DAL
                         string startpunkt = ferd.Rute.Startpunkt;
                         string endepunkt = ferd.Rute.Endepunkt;
                         DateTime AnkomstTid = ferd.AnkomstTid;
-                            gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid)>0))).Select(f => new FerdRute()
+                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid) > 0))).Select(f => new FerdRute()
                         {
                             FId = f.Id,
                             AvreiseTid = f.AvreiseTid.ToString("o"),
@@ -931,12 +931,32 @@ namespace Regnbuelinja.DAL
                 }
                 _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Gyldige ferder returnert");
                 return gyldigeFerder;
-            } catch(Exception e)
+            } catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Databasefeil: " + e);
                 return null;
             }
         }
+
+        //public async Task<bool> LeggTilKunde(int id, Personer kunde)
+        //{
+        //    Person nyKunde = new Person
+        //    {
+        //        Fornavn = kunde.Fornavn,
+        //        Etternavn = kunde.Etternavn,
+        //        Epost = kunde.Epost,
+        //        Telefonnr = kunde.Telefonnr
+        //    };
+
+        //    Bestillinger KundensBestilling = await _db.Bestillinger.FindAsync(id);
+        //    if (KundensBestilling == default)
+        //    {
+        //        _log.LogInformation("BestillingRepository.cs: LeggTilKunde: Fant ikke bestillingen i databasen");
+        //    } else
+        //    {
+
+        //    }
+        //}
 
         public async Task<List<Bestilling>> HentBestillingerForKunde(int id)
         {
@@ -944,7 +964,7 @@ namespace Regnbuelinja.DAL
             {
                 List<Bestillinger> alleBestillinger = await _db.Bestillinger.Where(b => b.Kunde.Id == id).ToListAsync();
                 List<Bestilling> hentedeBestillinger = new List<Bestilling>();
-                foreach(Bestillinger enBestilling in alleBestillinger)
+                foreach (Bestillinger enBestilling in alleBestillinger)
                 {
                     double TotalPris = await BeregnTotalPris(enBestilling.Id);
                     Bestilling bestilling = new Bestilling()
@@ -956,7 +976,7 @@ namespace Regnbuelinja.DAL
                     };
                     hentedeBestillinger.Add(bestilling);
                 }
-                
+
                 if (!hentedeBestillinger.Any())
                 {
                     _log.LogInformation("BestillingRepository.cs: HentBestillingerForKunde: Kunde ikke funnet eller kunden har ikke bestillt neon reise enda");
@@ -979,7 +999,7 @@ namespace Regnbuelinja.DAL
                 {
                     Brukernavn = bruker.Brukernavn
                 };
-                
+
                 string passord = bruker.Passord;
                 byte[] salt = LagEtSalt();
                 byte[] hash = LagEnHash(passord, salt);
@@ -991,7 +1011,7 @@ namespace Regnbuelinja.DAL
                 await _db.SaveChangesAsync();
                 _log.LogInformation("BestillingRepository.cs: LagreBruker: Ny bruker generert");
                 return true;
-            } catch(Exception e)
+            } catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: LagreBruker: Bruker ikke lagret. Databasefeil: " + e);
                 return false;
@@ -1000,7 +1020,7 @@ namespace Regnbuelinja.DAL
 
         // I utgangspunktet er det kunder selv som skal registrere seg, men har lagt inn funksjonaliteten likevel
         // (I tilfelle admin også vil bestille billetter)
-        public async Task<bool> LagreKunde(Personer kunde)
+        public async Task<int> LagreKunde(Personer kunde)
         {
             try
             {
@@ -1014,14 +1034,25 @@ namespace Regnbuelinja.DAL
 
                 _db.KunderOgAnsatte.Add(NyKunde);
                 await _db.SaveChangesAsync();
+                int kid = await _db.KunderOgAnsatte.Where(k => k.Fornavn.Equals(NyKunde.Fornavn) && k.Etternavn.Equals(NyKunde.Etternavn)).Select(k => k.Id).FirstOrDefaultAsync();
                 _log.LogInformation("BestillingRepository.cs: LagreKunde: Kunde lagret");
-                return true;
-            } catch(Exception e)
+                return kid;
+            } catch (Exception e)
             {
                 _log.LogInformation("BestillingRepository.cs: LagreKunde: Feil i databasen: " + e + ". Kunde ikke lagret");
-                return false;
+                return 0;
             }
         }
+
+        //public async Task<bool> LeggKundeTilBestilling(int BId, int KId)
+        //{
+        //    try
+        //    {
+        //        Bestillinger bestilling = await _db.Bestillinger.FindAsync(BId);
+        //        Person kunde = await _db.KunderOgAnsatte.FindAsync(KId);
+        //        if(kunde)
+        //    }
+        //}
 
         public async Task<Personer> HentEnKunde(int id)
         {

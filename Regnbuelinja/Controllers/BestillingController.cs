@@ -110,6 +110,7 @@ namespace Regnbuelinja.Controllers
             return NotFound("Ingen bestillinger for kunde med ID " + id + " funnet");
         }
 
+
         public async Task<ActionResult> HentBestilling(int id)
         {
             BestillingOutput hentBestilling = await _db.HentBestilling(id);
@@ -177,8 +178,8 @@ namespace Regnbuelinja.Controllers
         {
             if(ModelState.IsValid)
             {
-                bool kundeLagret = await _db.LagreKunde(kunde);
-                if(kundeLagret)
+                int kundeLagret = await _db.LagreKunde(kunde);
+                if(kundeLagret != 0)
                 {
                     _log.LogInformation("/Controllers/BestillingController.cs: LagreKunde: Vellykket. Kunde lagret i databasen");
                     return Ok(kundeLagret);

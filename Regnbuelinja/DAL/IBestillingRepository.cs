@@ -38,7 +38,7 @@ namespace Regnbuelinja.DAL
         Task<List<Bestilling>> HentBestillingerForKunde(int id);
         Task<List<FerdRute>> HentFerdRuterForBestilling(int id);
         Task<bool> LagreBruker(Bruker bruker);
-        Task<bool> LagreKunde(Personer kunde);
+        Task<int> LagreKunde(Personer kunde);
         Task<bool> EndrePerson(Personer person);
         Task<bool> SlettKunde(int id);
         Task<Personer> HentEnKunde(int id);
