@@ -938,26 +938,6 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        //public async Task<bool> LeggTilKunde(int id, Personer kunde)
-        //{
-        //    Person nyKunde = new Person
-        //    {
-        //        Fornavn = kunde.Fornavn,
-        //        Etternavn = kunde.Etternavn,
-        //        Epost = kunde.Epost,
-        //        Telefonnr = kunde.Telefonnr
-        //    };
-
-        //    Bestillinger KundensBestilling = await _db.Bestillinger.FindAsync(id);
-        //    if (KundensBestilling == default)
-        //    {
-        //        _log.LogInformation("BestillingRepository.cs: LeggTilKunde: Fant ikke bestillingen i databasen");
-        //    } else
-        //    {
-
-        //    }
-        //}
-
         public async Task<List<Bestilling>> HentBestillingerForKunde(int id)
         {
             try
@@ -1044,15 +1024,27 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        //public async Task<bool> LeggKundeTilBestilling(int BId, int KId)
-        //{
-        //    try
-        //    {
-        //        Bestillinger bestilling = await _db.Bestillinger.FindAsync(BId);
-        //        Person kunde = await _db.KunderOgAnsatte.FindAsync(KId);
-        //        if(kunde)
-        //    }
-        //}
+        public async Task<bool> LeggKundeTilBestilling(int BId, int KId)
+        {
+            try
+            {
+                Bestillinger bestilling = await _db.Bestillinger.FindAsync(BId);
+                Person kunde = await _db.KunderOgAnsatte.FindAsync(KId);
+                if (kunde != null && bestilling != null)
+                {
+                    bestilling.Kunde = kunde;
+                    kunde.Bestillinger.Add(bestilling);
+                    await _db.SaveChangesAsync();
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: LeggKundeTilBestilling: Fant ikke kunden eller bestillingen");
+                return false;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: LeggKundeTilBestilling: Databasefeil: " + e);
+                return false;
+            }
+        }
 
         public async Task<Personer> HentEnKunde(int id)
         {
@@ -1532,28 +1524,6 @@ namespace Regnbuelinja.DAL
             }
             
         }
-
-        public async Task<bool> Betal(int id)
-        {
-            try
-            {
-                Bestillinger best = await _db.Bestillinger.FindAsync(id);
-                if (best != null)
-                {
-                    best.Betalt = true;
-                    await _db.SaveChangesAsync();
-                    _log.LogInformation("BestillingRepositor.cs: Betal: Vellykket: Bestillingen er betalt");
-                    return true;
-                }
-                _log.LogInformation("BestillingRepository.cs: Betal: Fant ikke bestillingen i databasen");
-                return false;
-
-            } catch (Exception e)
-            {
-                _log.LogInformation("BestillingRepository.cs: Betal: Databasefeil: " + e + ". Betalingen ikke gjennomført");
-                return false;
-            }
-        } 
 
         // En lokal metode for å konvertere dato strenger til DateTime objekter
         private DateTime ParseDatoLocal(string dato_tid)

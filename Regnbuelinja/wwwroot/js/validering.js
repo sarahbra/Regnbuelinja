@@ -50,30 +50,3 @@ function validerKunde(kunde) {
     return (validerFornavn(kunde.fornavn) && validerEtternavn(kunde.etternavn) && validerEpost(kunde.epost)
         && validerTelefonnr(kunde.telefonnr));
 }
-
-function validerBrukernavn(brukernavn) {
-    const regexp = /^[a-zA-ZæøåÆØÅ\. \=]{2,20}$/;
-    if (!regexp.test(brukernavn)) {
-        $("#feilBrukernavn").html("Brukernavnet må bestå av 2 til 20 bokstaver.");
-        return false;
-    } else {
-        $("#feilBrukernavn").html("");
-        return true;
-    }
-}
-
-////skift dette
-//function validerPassord(passord) {
-//    const regexp = /^(?=.*[0-9])(?=.*[a-zA-ZæøåØÆÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}$/;
-//    if (!regexp.test(passord)) {
-//        $("#feilPassord").html("Passordet må være minst 6 tegn langt med minst en bokstav og ett tall");
-//        return false;
-//    } else {
-//        $("#feilPassord").html("");
-//        return true;
-//    }
-//}
-
-//function validerBruker(bruker) {
-//    return (validerBrukernavn(bruker.brukernavn) && validerPassord(bruker.passord));
-//}

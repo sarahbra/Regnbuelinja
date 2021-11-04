@@ -191,16 +191,16 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalideringen");
         }
 
-        public async Task<ActionResult> Betal(int id)
+        public async Task<ActionResult> LeggKundeTilBestilling(int BId, int KId)
         {
-            bool betalt = await _db.Betal(id);
-            if(betalt)
+            bool lagtTil = await _db.LeggKundeTilBestilling(BId, KId);
+            if(lagtTil)
             {
-                _log.LogInformation("/Controllers/BestillingController.cs: Betal: Vellykket. Bestillingen er betalt");
-                return Ok(betalt);
+                _log.LogInformation("/Controllers/BestillingController.cs: LeggKundeTilBestilling: Vellykket. Kunde lagt til bestillingen");
+                return Ok(lagtTil);
             }
-            _log.LogInformation("/Controllers/BestillingController.cs: Betal: Fant ikke bestilling eller databasefeil");
-            return NotFound("Fant ikke bestillingen. Betaling ikke gjennomført");
+            _log.LogInformation("/Controllers/BestillingController.cs: LeggKundeTilBestilling: Fant ikke kunde eller bestilling");
+            return NotFound("Fant ikke kunde eller bestilling i databasen");
         }
     }
 }

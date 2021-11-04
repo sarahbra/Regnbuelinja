@@ -19,7 +19,7 @@
             const params = new URLSearchParams();
             params.set("KId", id);
             params.set("BId", bid);
-            $.post("Bestilling/LeggTilKunde", params.toString(), function (ok) {
+            $.post("Bestilling/LeggKundeTilBestilling", params.toString(), function (ok) {
                 window.location.href = "bestilling.html?Id=" + bid;
             }).fail(function (request) {
                 $("#feil").html(request.responseText);
