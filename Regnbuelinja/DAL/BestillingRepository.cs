@@ -624,18 +624,39 @@ namespace Regnbuelinja.DAL
                         _db.Billetter.Add(nyBillett);
                         await _db.SaveChangesAsync();
                         _log.LogInformation("BestillingRepository.cs: LagreBillett: Første billett lagret til bestilling");
-
+                        return true;
                     }
 
                     else
                     {
                         Ferd IBestilling = bestilling.Billetter.First().Ferd;
+                        Ferd returFerd = bestilling.Billetter.Where(b => b.Ferd != IBestilling).Select(b => b.Ferd).FirstOrDefault();
+
+                        if(returFerd != null)
+                        {
+                            if(ferd.Id == IBestilling.Id || returFerd.Id == ferd.Id)
+                            {
+                                Billett nyBillett = new Billett()
+                                {
+                                    Bestilling = bestilling,
+                                    Ferd = ferd,
+                                    Voksen = billett.Voksen
+                                };
+                                _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
+                                _db.Billetter.Add(nyBillett);
+                                await _db.SaveChangesAsync();
+                                return true;
+                            }
+                            _log.LogInformation("BestillingRepository.cs: Kan ikke lagre billett som ikke er tur/retur-ferd på denne bestillingen");
+                            return false;
+                        } 
                         string StartpunktIBestilling = IBestilling.Rute.Startpunkt;
                         string EndepunktIBestilling = IBestilling.Rute.Endepunkt;
 
                         // Hvis ferden i nybillett er lik ferden til eksisterende billett eller det er en returferd (med passende avreise/ankomsttid)
+                        
                         if ((ferd == IBestilling) || (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt) &&
-                            (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0)))
+                                (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0)))
                         {
 
                             Billett nyBillett = new Billett()
@@ -647,19 +668,12 @@ namespace Regnbuelinja.DAL
                             _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
                             _db.Billetter.Add(nyBillett);
                             await _db.SaveChangesAsync();
+                            return true;
                         }
-                        else
-                        {
-                            _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billett for annen rute enn rute i " +
-                                "bestilling eller returrute. Avreise/ankomsttid må også stemme overens");
-                            return false;
-                        }
-
+                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billett for annen rute enn rute i " +
+                            "bestilling eller returrute. Avreise/ankomsttid må også stemme overens");
+                       return false;
                     }
-
-                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
-                    return true;
-
                 }
                 _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller" +
                             " billetten har reise som allerede har vært");
@@ -677,14 +691,15 @@ namespace Regnbuelinja.DAL
         // betaling utfra rutepris)
         // Bestilling - fremmednøkkel endres ikke da billetten er knyttet til kunde via bestilling.
         // Endrer kun mellom voksen og barn ettersom bestillingen er knyttet til en spesifikk rute og ferd - ny bestilling og billett hvis kunden skal til en ny destinasjon
-        public async Task<bool> EndreBillett(int id)
+        public async Task<bool> EndreBillett(Billetter billett)
         {
             try
             {
-                Billett endreBillett = await _db.Billetter.FindAsync(id);
+                Billett endreBillett = await _db.Billetter.FindAsync(billett.Id);
                 if (endreBillett != null)
                 {
-                    if (!endreBillett.Bestilling.Betalt && (endreBillett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
+                    Bestillinger bestilling = endreBillett.Bestilling;
+                    if (!bestilling.Betalt && (endreBillett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
                     {
                         if (endreBillett.Voksen) endreBillett.Voksen = false;
                         else endreBillett.Voksen = true;
@@ -694,15 +709,15 @@ namespace Regnbuelinja.DAL
                         return true;
 
                     }
-                    _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
+                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestillingen er betalt eller reisa er gjennomført. Kan ikke endre billett");
                     return false;
                 }
-                _log.LogInformation("BestillingRepository.cs: EndreBestilling: Fant ikke bestillingen i databasen");
+                _log.LogInformation("BestillingRepository.cs: EndreBillett: Fant ikke billett i databasen");
                 return false;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: EndreBestilling: Databasefeil: " + e);
+                _log.LogInformation("BestillingRepository.cs: EndreBillett: Databasefeil: " + e);
                 return false;
             }
         }
@@ -721,6 +736,8 @@ namespace Regnbuelinja.DAL
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
                         _db.Remove(somSkalSlettes);
+                        await _db.SaveChangesAsync();
+                        return true;
                     }
                     _log.LogInformation("BestillingRepository.cs: SlettBestilling: Bestillingen er ikke betalt enda. Kan ikke slettes");
                     return false;
@@ -915,7 +932,7 @@ namespace Regnbuelinja.DAL
                         string startpunkt = ferd.Rute.Startpunkt;
                         string endepunkt = ferd.Rute.Endepunkt;
                         DateTime AnkomstTid = ferd.AnkomstTid;
-                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid) > 0))).Select(f => new FerdRute()
+                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt.Equals(endepunkt)) && (f.Rute.Endepunkt.Equals(startpunkt)) && f.AvreiseTid.CompareTo(AnkomstTid) > 0))).Select(f => new FerdRute()
                         {
                             FId = f.Id,
                             AvreiseTid = f.AvreiseTid.ToString("o"),
@@ -968,6 +985,34 @@ namespace Regnbuelinja.DAL
             {
                 _log.LogInformation("BestillingRepository.cs: HentBestillingerForKunde: Feil i databasen: " + e + ". Bestillinger ikke hentet");
                 return null;
+            }
+        }
+
+        public async Task<bool> EndreBruker(Bruker bruker, string username)
+        {
+            try
+            {
+                Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
+                if(somSkalEndres != default && somSkalEndres.Brukernavn == username)
+                {
+                    string passord = bruker.Passord;
+                    byte[] salt = LagEtSalt();
+                    byte[] hash = LagEnHash(passord, salt);
+
+                    somSkalEndres.Passord = hash;
+                    somSkalEndres.Salt = salt;
+
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: EndreBruker: Bruker endret");
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: EndreBruker: Fant ikke bruker i databasen.");
+                return false;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreBruker: Bruker ikke endret. Databasefeil: " + e);
+                return false;
             }
         }
 
@@ -1169,19 +1214,19 @@ namespace Regnbuelinja.DAL
                     somSkalEndres.Telefonnr = person.Telefonnr;
 
                     await _db.SaveChangesAsync();
-                    _log.LogInformation("BestillingRepository.cs: EndreKunde: Vellykket! Kunde endret");
+                    _log.LogInformation("BestillingRepository.cs: EndrePerson: Vellykket! Personalia endret");
                     return true;
 
                 }
                 else
                 {
-                    _log.LogInformation("BestillingRepository.cs: EndreKunde: Kunde finnes ikke i databasen");
+                    _log.LogInformation("BestillingRepository.cs: EndrePerson: Fant ikke personen i databasen");
                     return false;
                 }
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: EndreKunde: Feil i databasen. Kunde ikke endret. " + e);
+                _log.LogInformation("BestillingRepository.cs: EndrePerson: Feil i databasen. Person ikke endret. " + e);
                 return false;
             }
         }
@@ -1217,7 +1262,7 @@ namespace Regnbuelinja.DAL
             }
         }
 
-        public async Task<bool> LoggInn(Bruker bruker)
+        public async Task<int> LoggInn(Bruker bruker)
         {
             try
             {
@@ -1225,21 +1270,48 @@ namespace Regnbuelinja.DAL
                 if (brukerIDB == default(Brukere))
                 {
                     _log.LogInformation("BestillingRepository.cs: LoggInn: Ingen bruker funnet i database med brukernavn " + bruker.Brukernavn);
-                    return false;
+                    return 0;
                 }
                 byte[] hash = LagEnHash(bruker.Passord, brukerIDB.Salt);
                 bool OK = hash.SequenceEqual(brukerIDB.Passord);
                 if (OK)
                 {
                     _log.LogInformation("BestillingRepository.cs: LoggInn: Vellykket! Bruker logget inn");
-                    return true;
+                    return brukerIDB.Id;
                 }
                 _log.LogInformation("BestillingRepository.cs: LogInn: Logg inn feilet");
-                return false;
+                return 0;
 
             } catch (Exception e) {
                 _log.LogInformation("BestillingRepository.cs: LoggInn: Databasefeil: " + e);
-                return false;
+                return 0;
+            }
+        }
+
+        public async Task<Personer> HentProfil(string username)
+        {
+            try
+            {
+                Brukere bruker = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(username));
+                if(bruker != null)
+                {
+                    Personer brukerProfil = new Personer()
+                    {
+                        Id = bruker.Person.Id,
+                        Fornavn = bruker.Person.Fornavn,
+                        Etternavn = bruker.Person.Etternavn,
+                        Epost = bruker.Person.Epost,
+                        Telefonnr = bruker.Person.Telefonnr
+                    };
+                    _log.LogInformation("BestillingRepository.cs: HentProfil: Vellykket! Brukerprofil returnert");
+                    return brukerProfil;
+                }
+                _log.LogInformation("BestillingRepository.cs: HentProfil: Fant ikke bruker i databasen");
+                return null;
+            } catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: HentProfil: Brukerprofil ikke hentet. Databasefeil: " + e);
+                return null;
             }
         }
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Regnbuelinja.DAL;
 using Regnbuelinja.Models;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace Regnbuelinja.Controllers
         private readonly IBestillingRepository _db;
 
         private readonly ILogger<AdminController> _log;
+        private const string _brukernavn = "";
         private const string _loggetInn = "loggetInn";
 
         public AdminController(IBestillingRepository db, ILogger<AdminController> log)
@@ -359,20 +361,15 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            if (ModelState.IsValid)
-            {
-                bool EndretBestilling = await _db.EndreBestilling(bestilling);
-                if (EndretBestilling)
-                {
-                    _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
-                    return Ok(EndretBestilling);
-                }
-                _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
-                    "gjennomførte reiser");
+           bool EndretBestilling = await _db.EndreBestilling(bestilling);
+           if (EndretBestilling)
+           {   
+                _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
+                return Ok(EndretBestilling);
+           }
+            _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
+                "gjennomførte reiser");
                 return NotFound("Bestilling eller kunde ikke funnet, eller bestillingen er betalt eller bestillingen inneholder gjennomførte ubetalte reiser");
-            }
-            _log.LogInformation("AdminController.cs: EndreBestilling: Feil i inputvalideringen.");
-            return BadRequest("Feil i inputvalidering på server.");
         }
 
         [HttpDelete("bestilling/{id}")]
@@ -389,7 +386,7 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettBestilling: Bestilling slettet.");
                 return Ok(slettet);
             }
-            _log.LogInformation("AdminController.cs: SlettBillett: Ikke slettet. Fant ikke bestillingen eller inneholder gjennomført(e) og ubetalt(e) reiser eller " +
+            _log.LogInformation("AdminController.cs: SlettBestilling: Ikke slettet. Fant ikke bestillingen eller inneholder gjennomført(e) og ubetalt(e) reiser eller " +
                 " eller betalt(e) og ikke gjennomført(e)");
             return NotFound("Bestilling ikke funnet eller inneholder gjennomført(e), ubetalt(e) reise(r) eller ugjennomført(e), betalt(e) reise(r)");
         }
@@ -428,24 +425,7 @@ namespace Regnbuelinja.Controllers
             _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
             return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
         }
-        /*
-        [HttpPost("bestillinger")]
-        public async Task<ActionResult> LagreBestilling(Bestilling bestilling)
-        {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
-            {
-                return Unauthorized("Ikke logget inn");
-            }
-            bool BillettLagret = await _db.LagreBestilling2(bestilling);
-            if (BillettLagret)
-            {
-                _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
-                return Ok(BillettLagret);
-            }
-            _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
-            return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
-        }
-        */
+        
         [HttpDelete("billett/{id}")]
         public async Task<ActionResult> SlettBillett(int id)
         {
@@ -466,13 +446,13 @@ namespace Regnbuelinja.Controllers
         }
 
         [HttpPut("billett/{id}")]
-        public async Task<ActionResult> EndreBillett(int id)
+        public async Task<ActionResult> EndreBillett(Billetter billett)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            bool EndretBillett = await _db.EndreBillett(id);
+            bool EndretBillett = await _db.EndreBillett(billett);
             if (EndretBillett)
             {
                 _log.LogInformation("AdminController.cs: EndreBillett: Vellykket! Billett endret");
@@ -749,6 +729,28 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server");
         }
 
+        [HttpPut("bruker")]
+        public async Task<ActionResult> EndreBruker(Bruker bruker)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            if (ModelState.IsValid)
+            {
+                bool brukerEndret = await _db.EndreBruker(bruker, HttpContext.Session.GetString(_brukernavn));
+                if (brukerEndret)
+                {
+                    _log.LogInformation("AdminController.cs: EndreBruker: Passord endret");
+                    return Ok(brukerEndret);
+                }
+                _log.LogInformation("AdminController.cs: EndreBruker: Feil bruker-Id. Kan ikke endre andre brukere");
+                return Unauthorized("Kan ikke endre andre brukere");
+            }
+            return BadRequest("Feil i inputvalidering på server");
+        }
+
         [HttpPost("kunder")]
         public async Task<ActionResult> LagreKunde(Personer kunde)
         {
@@ -771,21 +773,41 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server");
         }
 
+        [HttpGet("profil")]
+        public async Task<ActionResult> HentProfil()
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            Personer bruker = await _db.HentProfil(HttpContext.Session.GetString(_brukernavn));
+            if(bruker != null)
+            {
+                _log.LogInformation("AdminController.cs: HentProfil: Databasefeil. Kunne ikke hente profil");
+                return new ServiceUnavailableResult("Databasefeil. Kunne ikke hente profil");
+            }
+            _log.LogInformation("AdminController.cs: HentProfil: Vellykket! Brukerprofil hentet");
+            return Ok(bruker);
+        }
+
         [HttpPost("logg_inn")]
         public async Task<ActionResult> LoggInn(Bruker bruker)
         {
             if (ModelState.IsValid)
             {
-                bool loggetInn = await _db.LoggInn(bruker);
-                if(loggetInn)
+                int loggetInn = await _db.LoggInn(bruker);
+                if(loggetInn != 0)
                 {
                     _log.LogInformation("AdminController.cs: LoggInn: Bruker logget inn vellykket.");
                     HttpContext.Session.SetString(_loggetInn, "loggetInn");
-                    return Ok(loggetInn);
+                    HttpContext.Session.SetString(_brukernavn, bruker.Brukernavn);
+                    return Ok(true);
                 }
                 _log.LogInformation("AdminController.cs: LoggInn: Feil brukernavn eller passord. Ikke logget inn");
                 HttpContext.Session.SetString(_loggetInn, "");
-                return Ok(loggetInn);
+                HttpContext.Session.SetString(_brukernavn, "");
+                return Ok(false);
             } 
             _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
             return BadRequest("Feil i inputvalideringen på server");

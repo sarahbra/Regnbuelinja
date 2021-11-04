@@ -9,10 +9,11 @@ namespace Regnbuelinja.Models
     public class Ruter
     {
         public int Id { get; set; }
-        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
+        [RegularExpression(@"[a-zA-ZæøåÆØÅ]{2,30}")]
         public string Startpunkt { get; set; }
-        [RegularExpression(@"[a-zA-ZæøåÆØÅ. \-]{2,20}")]
+        [RegularExpression(@"[a-zA-ZæøåÆØÅ]{2,30}")]
         public string Endepunkt { get; set; }
+    
         public double Pris { get; set; }
     }
 }

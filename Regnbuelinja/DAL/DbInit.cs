@@ -48,7 +48,10 @@ namespace Regnbuelinja.DAL
                 var baat8 = new Baat { Navn = "The Queen" };
 
 
-                var ferd1 = new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0) , AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0)};
+                var ferd1 = new Ferd { Baat = baat1, Rute = rute1, AvreiseTid = new DateTime(2021, 12, 1, 13, 0, 0), AnkomstTid = new DateTime(2021, 12, 2, 11, 0, 0) };
+                var ferd2 = new Ferd { Baat = baat2, Rute = rute3, AvreiseTid = new DateTime(2021, 12, 23, 14, 0, 0), AnkomstTid = new DateTime(2021, 12, 28, 17, 0, 0) };
+                var ferd3 = new Ferd { Baat = baat8, Rute = rute10, AvreiseTid = new DateTime(2021, 12, 4, 9, 0, 0), AnkomstTid = new DateTime(2021, 12, 10, 19, 30, 0) };
+                var ferd4 = new Ferd { Baat = baat3, Rute = rute4, AvreiseTid = new DateTime(2021, 12, 6, 12, 30, 30), AnkomstTid = new DateTime(2021, 12, 9, 2, 22, 30, 0)};
                 
 
 
@@ -121,10 +124,23 @@ namespace Regnbuelinja.DAL
 
                 var billett1 = new Billett { Ferd = ferd1, Voksen = true };
                 var billett2 = new Billett { Ferd = ferd1, Voksen = false };
+                var billett3 = new Billett { Ferd = ferd2, Voksen = true };
+                var billett4 = new Billett { Ferd = ferd3, Voksen = false };
+                var billett5 = new Billett { Ferd = ferd4, Voksen = true };
+                
 
                 List<Billett> billetter = new List<Billett>();
                 billetter.Add(billett1);
                 billetter.Add(billett2);
+                
+
+                List<Billett> billetter2 = new List<Billett>();
+                billetter2.Add(billett3);
+                billetter2.Add(billett4);
+
+                List<Billett> billetter3 = new List<Billett>();
+                billetter3.Add(billett5);
+
 
                 Person kunde1 = new Person
                 {
@@ -133,6 +149,58 @@ namespace Regnbuelinja.DAL
                     Telefonnr = "22222222",
                     Epost = "kunde@mail.no"
                 };
+
+                Person kunde2 = new Person
+                {
+                    Fornavn = "Tor",
+                    Etternavn = "Kjempestøl",
+                    Telefonnr = "47833220",
+                    Epost = "tor@ikkeoslomet.no"
+                };
+
+                Person kunde3 = new Person
+                {
+                    Fornavn = "Justin",
+                    Etternavn = "Case",
+                    Telefonnr = "99887766",
+                    Epost = "justincase@icloud.com"
+                };
+                Person kunde4 = new Person
+                {
+                    Fornavn = "Curley",
+                    Etternavn = "Pubes",
+                    Telefonnr = "69696969",
+                    Epost = "curly@gmail.com"
+                };
+                Person kunde5 = new Person
+                {
+                    Fornavn = "McDonald",
+                    Etternavn = "Berger",
+                    Telefonnr = "87778888",
+                    Epost = "deilicious@hotmail.com"
+                };
+                Person kunde6 = new Person
+                {
+                    Fornavn = "Moe",
+                    Etternavn = "Lester",
+                    Telefonnr = "44445555",
+                    Epost = "okidoki@outlook.com"
+                };
+                Person kunde7 = new Person
+                {
+                    Fornavn = "Trude",
+                    Etternavn = "Lutt",
+                    Telefonnr = "12345678",
+                    Epost = "trude@sss.org"
+                };
+                Person kunde8 = new Person
+                {
+                    Fornavn = "Lydia",
+                    Etternavn = "Nalen",
+                    Telefonnr = "99999999",
+                    Epost = "nalenmin@wow.no"
+                };
+
 
                 Person ansatt1 = new Person
                 {
@@ -164,12 +232,23 @@ namespace Regnbuelinja.DAL
                 context.Brukere.Add(nyBruker);
 
                 context.KunderOgAnsatte.Add(kunde1);
+                context.KunderOgAnsatte.Add(kunde2);
+                context.KunderOgAnsatte.Add(kunde3);
+                context.KunderOgAnsatte.Add(kunde4);
+                context.KunderOgAnsatte.Add(kunde5);
+                context.KunderOgAnsatte.Add(kunde6);
+                context.KunderOgAnsatte.Add(kunde7);
+                context.KunderOgAnsatte.Add(kunde8);
                 context.KunderOgAnsatte.Add(ansatt1);
 
                 //Hardkodet totalpris
-                var bestilling1 = new Bestillinger { Billetter = billetter, Kunde = kunde1};
+                var bestilling1 = new Bestillinger { Billetter = billetter, Kunde = kunde1 };
+                var bestilling2 = new Bestillinger { Billetter = billetter2, Kunde = kunde4 };
+                var bestilling3 = new Bestillinger { Billetter = billetter3, Kunde = kunde2 };
 
                 context.Bestillinger.Add(bestilling1);
+                context.Bestillinger.Add(bestilling2);
+                context.Bestillinger.Add(bestilling3);
                 context.SaveChanges();
             }
         }

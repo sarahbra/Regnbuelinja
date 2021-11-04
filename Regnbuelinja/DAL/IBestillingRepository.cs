@@ -28,7 +28,7 @@ namespace Regnbuelinja.DAL
         Task<bool> EndreBestilling(Bestilling bestilling);
         Task<Billetter> HentEnBillett(int id);
         Task<bool> LagreBillett(Billetter billett);
-        Task<bool> EndreBillett(int id);
+        Task<bool> EndreBillett(Billetter billett);
         Task<bool> SlettBillett(int id);
         Task<List<Billetter>> HentAlleBilletter();
         Task<List<Billetter>> HentBilletterForBestilling(int id);
@@ -38,6 +38,7 @@ namespace Regnbuelinja.DAL
         Task<List<Bestilling>> HentBestillingerForKunde(int id);
         Task<List<FerdRute>> HentFerdRuterForBestilling(int id);
         Task<bool> LagreBruker(Bruker bruker);
+        Task<bool> EndreBruker(Bruker bruker, string username);
         Task<int> LagreKunde(Personer kunde);
         Task<bool> EndrePerson(Personer person);
         Task<bool> SlettKunde(int id);
@@ -45,7 +46,8 @@ namespace Regnbuelinja.DAL
         Task<List<Personer>> HentAlleKunder();
         Task<Personer> HentEnAnsatt(int id);
         Task<List<Personer>> HentAlleAnsatte();
-        Task<bool> LoggInn(Bruker bruker);
+        Task<int> LoggInn(Bruker bruker);
+        Task<Personer> HentProfil(string username);
         Task<List<string>> HentAvgangshavner();
         Task<bool> LeggKundeTilBestilling(int BId, int KId);
         Task<double> HentPris(int id);
