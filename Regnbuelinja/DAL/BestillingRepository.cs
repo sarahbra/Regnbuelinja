@@ -694,15 +694,15 @@ namespace Regnbuelinja.DAL
                         return true;
 
                     }
-                    _log.LogInformation("BestillingRepository.cs: EndreBestilling: Bestillingen er betalt. Kan ikke endres");
+                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestillingen er betalt. Kan ikke endre billett");
                     return false;
                 }
-                _log.LogInformation("BestillingRepository.cs: EndreBestilling: Fant ikke bestillingen i databasen");
+                _log.LogInformation("BestillingRepository.cs: EndreBillett: Fant ikke billett i databasen");
                 return false;
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: EndreBestilling: Databasefeil: " + e);
+                _log.LogInformation("BestillingRepository.cs: EndreBillett: Databasefeil: " + e);
                 return false;
             }
         }
@@ -915,7 +915,7 @@ namespace Regnbuelinja.DAL
                         string startpunkt = ferd.Rute.Startpunkt;
                         string endepunkt = ferd.Rute.Endepunkt;
                         DateTime AnkomstTid = ferd.AnkomstTid;
-                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid) > 0))).Select(f => new FerdRute()
+                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt.Equals(endepunkt)) && (f.Rute.Endepunkt.Equals(startpunkt)) && f.AvreiseTid.CompareTo(AnkomstTid) > 0))).Select(f => new FerdRute()
                         {
                             FId = f.Id,
                             AvreiseTid = f.AvreiseTid.ToString("o"),

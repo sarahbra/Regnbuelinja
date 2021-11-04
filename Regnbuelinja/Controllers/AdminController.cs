@@ -359,20 +359,15 @@ namespace Regnbuelinja.Controllers
             {
                 return Unauthorized("Ikke logget inn");
             }
-            if (ModelState.IsValid)
-            {
-                bool EndretBestilling = await _db.EndreBestilling(bestilling);
-                if (EndretBestilling)
-                {
-                    _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
-                    return Ok(EndretBestilling);
-                }
-                _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
-                    "gjennomførte reiser");
+           bool EndretBestilling = await _db.EndreBestilling(bestilling);
+           if (EndretBestilling)
+           {   
+                _log.LogInformation("AdminController.cs: EndreBestilling: Vellykket! Bestilling endret");
+                return Ok(EndretBestilling);
+           }
+            _log.LogInformation("AdminController.cs: EndreBestilling: Databasefeil eller bestilling ikke endret da den inneholder betalte reiser eller ubetalte " +
+                "gjennomførte reiser");
                 return NotFound("Bestilling eller kunde ikke funnet, eller bestillingen er betalt eller bestillingen inneholder gjennomførte ubetalte reiser");
-            }
-            _log.LogInformation("AdminController.cs: EndreBestilling: Feil i inputvalideringen.");
-            return BadRequest("Feil i inputvalidering på server.");
         }
 
         [HttpDelete("bestilling/{id}")]
