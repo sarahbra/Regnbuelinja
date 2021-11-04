@@ -428,24 +428,7 @@ namespace Regnbuelinja.Controllers
             _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
             return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
         }
-        /*
-        [HttpPost("bestillinger")]
-        public async Task<ActionResult> LagreBestilling(Bestilling bestilling)
-        {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
-            {
-                return Unauthorized("Ikke logget inn");
-            }
-            bool BillettLagret = await _db.LagreBestilling2(bestilling);
-            if (BillettLagret)
-            {
-                _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
-                return Ok(BillettLagret);
-            }
-            _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
-            return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
-        }
-        */
+       
         [HttpDelete("billett/{id}")]
         public async Task<ActionResult> SlettBillett(int id)
         {
