@@ -8,6 +8,7 @@ import { Baat } from '../models/baat';
 import { Rute } from '../models/rute';
 import { Kunde } from '../models/kunde';
 import { Ferd } from '../models/ferd';
+import { FerdRute } from '../models/ferdRute';
 import { formatDate } from '@angular/common';
 import { Bestilling } from '../models/bestilling';
 import { AdminPersonalia } from '../models/adminPersonalia';
@@ -39,6 +40,7 @@ export class EndreComponent implements OnInit {
   visEndreAdminPassord: boolean = false;
 
   visEndreBillett: boolean = false;
+  alleFerder: Array<FerdRute> = [];
   alleBaater: Array<Baat> = [];
   alleRuter: Array<Rute> = [];
   alleBestillinger: Array<Bestilling> = [];
@@ -62,6 +64,9 @@ export class EndreComponent implements OnInit {
   tidSplittet: Array<string> = [];
   dato: Date;
   isoDato: string = '';
+
+  voksen: any;
+  valgtBestilling: any;
 
   valideringBaat = {
     id: [null],
@@ -170,9 +175,8 @@ export class EndreComponent implements OnInit {
   };
   valideringBillett = {
     id: [null, Validators.required],
-    fId: [null, Validators.required],
-    bId: [null, Validators.required],
-    voksen: [null, Validators.required],
+    fIdForm: [null, Validators.required],
+    bIdForm: [null, Validators.required]
   };
 
   constructor(
@@ -232,6 +236,7 @@ export class EndreComponent implements OnInit {
             this.hentAdminBrukernavn();
             break;
           case 'billett':
+            this.hentAlleBestillinger();
             this.visEndreBillett = true;
             this.hentEnBillett(params.id);
             this.billettId = params.id;
@@ -245,6 +250,10 @@ export class EndreComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  ngAfterViewInit(){
+    this.voksen = document.getElementById('voksen');
   }
 
   vedSubmit(type: string) {
@@ -347,10 +356,11 @@ export class EndreComponent implements OnInit {
   hentEnBillett(id: number) {
     this._http.get<Billett>('/api/admin/billett/' + id).subscribe(
       (billett) => {
+  
         this.skjemaBillett.patchValue({ id: billett.id });
-        this.skjemaBillett.patchValue({ fId: billett.fId });
-        this.skjemaBillett.patchValue({ bId: billett.bId });
-        this.skjemaBillett.patchValue({ voksen: billett.voksen.toString() });
+        this.skjemaBillett.patchValue({ fIdForm: billett.fId });
+        this.skjemaBillett.patchValue({ bIdForm: billett.bId });
+        this.voksen.checked = billett.voksen;
       },
       (error) => {
         console.log(error);
@@ -359,11 +369,14 @@ export class EndreComponent implements OnInit {
   }
 
   endreBillett() {
+
+    //[selected]="this.skjemaBillett.controls['bIdForm'].value" 
     const id = this.skjemaBillett.value.id;
     const fId = this.skjemaBillett.value.fId;
     const bId = this.skjemaBillett.value.bId;
-    const voksen = this.skjemaBillett.value.voksen == 'Voksen' ? true : false;
-    const endretBillett = new Billett(fId, bId, voksen);
+    const voksenBool = this.voksen.checked;
+
+    const endretBillett = new Billett(fId, bId, voksenBool);
 
     this._http.put('api/admin/billett/' + id, endretBillett).subscribe(
       (retur) => {
@@ -628,6 +641,25 @@ export class EndreComponent implements OnInit {
     this._http.get<Kunde[]>('/api/admin/kunder').subscribe(
       (kunder) => {
         this.alleKunder = kunder;
+      },
+      (error) => console.log(error)
+    );
+  }
+
+  hentAlleBestillinger() {
+    this._http.get<Bestilling[]>('/api/admin/bestillinger').subscribe(
+      (bestillinger) => {
+        this.alleBestillinger = bestillinger;
+      },
+      (error) => console.log(error)
+    );
+  }
+
+  hentAlleFerderForBestilling() {
+    
+    this._http.get<FerdRute[]>('/api/admin/bestilling/' + this.valgtBestilling.id + "/ferder").subscribe(
+      (ferder) => {
+        this.alleFerder = ferder;
       },
       (error) => console.log(error)
     );
