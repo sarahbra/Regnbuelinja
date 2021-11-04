@@ -1,0 +1,68 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Ny Kunde</h4>
+    </div>
+
+    <div class="modal-body">
+        <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
+
+          <label>Fornavn</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="fornavnForm" class="form-control" placeholder="Fornavn" autofocus />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.fornavnForm.valid || forms.controls.fornavnForm.pristine">
+                Fornavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
+              </small>
+            </div>
+          </div>
+          
+          <label>Etternavn</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="etternavnForm" class="form-control" placeholder="Etternavn" />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.etternavnForm.valid || forms.controls.etternavnForm.pristine">
+                Etternavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
+              </small>
+            </div>
+          </div>
+
+          <label>Epost</label>
+          <div class="form-group row">
+              <div class="col-sm-4">
+                <input type="text" formControlName="epostForm" class="form-control" placeholder="Epost" />
+              </div>
+              <div>
+                <small class="alert alert-warning"
+                  [hidden]="forms.controls.epostForm.valid || forms.controls.epostForm.pristine">
+                  Ugyldig epost
+                </small>
+              </div>
+            </div>
+
+          <label>Telefonnummer</label>
+          <div class="form-group row">
+            <div class="col-sm-4">
+              <input type="text" formControlName="telefonForm" class="form-control" placeholder="Telefonnr" />
+            </div>
+            <div>
+              <small class="alert alert-warning"
+                [hidden]="forms.controls.telefonForm.valid || forms.controls.telefonForm.pristine">
+                Telefonnummeret kan kun bestå av 8 tall
+              </small>
+            </div>
+          </div>  
+
+          <div class="modal-footer">      
+            <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+            <button type="submit" class="btn btn-success" [disabled]="!forms.valid">Lagre</button>
+          </div>
+            
+        </form>
+    </div>
+</div>

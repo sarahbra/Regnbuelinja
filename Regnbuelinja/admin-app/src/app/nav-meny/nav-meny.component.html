@@ -1,0 +1,40 @@
+<header *ngIf="nav.visible">
+    <nav class="navbar navbar-expand-md navbar-toggleable-sm navbar-light border-bottom box-shadow mb-4">
+        <div class="container">
+            <a class="navbar-brand" routerLink="/">Regnbuelinja Admin</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse"
+                aria-label="Toggle navigation" [attr.aria-expanded]="isExpanded" (click)="toggle()">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-md-inline-flex flex-md-row-reverse" [ngClass]="{ show: isExpanded }">
+                <ul class="navbar-nav flex-grow">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" routerLink="/ruter">Ruter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" routerLink="/baater">Båter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" routerLink="/ferder">Ferder</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" routerLink="/kunder">Kunder</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" routerLink="/billetter">Billetter</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" routerLink="/bestillinger">Bestillinger</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-success text-uppercase font-weight-bold" routerLink="/admin">Min
+                            bruker</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link text-primary text-uppercase font-weight-bold" href={{logoutUrl}}>Logg ut</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,40 @@
+<div class="container">
+    <div>
+        <div class="col-sm-12">
+            <button class='btn btn-primary btn-lg mb-4  style="white-space: nowrap"' (click)="leggTilBestilling()">Legg
+                til
+                bestilling</button>
+            <h2 class="mb-4"> Alle bestillinger </h2>
+            <div *ngIf=" laster">Laster bestillinger.....
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Kunde-id</th>
+                        <th>Totalpris</th>
+                        <th>Status for betaling</th>
+                        <th>Billetter</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let bestilling of alleBestillinger">
+                    <tr>
+                        <td>{{bestilling.id}}</td>
+                        <td>{{bestilling.kId}}</td>
+                        <td>{{bestilling.totalpris}} NOK</td>
+                        <td>{{bestilling.betalt == true ? "Betalt": "Ikke betalt"}}</td>
+                        <td><button class="btn btn-primary" style="white-space: nowrap"
+                                (click)="visBilletter(bestilling.id)">Vis
+                                billetter</button></td>
+                        <td><button class="btn btn-danger" (click)="visModalOgSlett(bestilling.id)">Slett</button></td>
+                        <td><button *ngIf="!this.bestilling.betalt" class="btn btn-success"
+                                [routerLink]="['/endre/', bestilling.id, 'bestilling']">Endre</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

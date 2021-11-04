@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  <main class="form-signin">
+    <form [formGroup]="loginSkjema" (ngSubmit)="vedSubmit()">
+      <h1 class="h3 mb-3 fw-normal">Innlogging</h1>
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <input type="text" formControlName="brukernavn" class="form-control top" placeholder="Brukernavn" autofocus />
+        </div>
+
+        <div>
+          <small class="alert alert-warning"
+            [hidden]=" loginSkjema.controls.brukernavn.valid || loginSkjema.controls.brukernavn.pristine">
+            Brukernavnet må bestå av 2 til 20 bokstaver
+          </small>
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <input type="password" formControlName="passord" class="form-control buttom" placeholder="Passord" />
+        </div>
+        <div>
+          <small class="alert alert-warning"
+            [hidden]="loginSkjema.controls.passord.valid || loginSkjema.controls.passord.pristine">
+            Passordet må bestå av minimium 6 tegn, minst en bokstav og et tall
+          </small>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <button class="btn btn-lg btn-primary btn-block " type="submit" [disabled]="!loginSkjema.valid">Log
+            inn</button>
+        </div>
+        <div>
+          <small class="alert alert-danger" *ngIf="loginError">Feil brukernavn eller passord, prøv igjen</small>
+        </div>
+      </div>
+      <p class="mt-3 text-muted">&copy; Regnbuelinja</p>
+    </form>
+  </main>
+</div>

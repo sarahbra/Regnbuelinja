@@ -1,0 +1,64 @@
+<div class="modal-content" ng-class="modal-size : 1300px">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{title}}</h4>
+    </div>
+    <div class="modal-body" *ngIf="visBilletter">
+        <div class="container">
+            <div class="col-md-12 col-sm-8">
+                <div *ngIf="laster">Laster billetter.....</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Billett-id</th>
+                            <th>Bestillings-id</th>
+                            <th>Ferd-id</th>
+                            <th>Voksen/barn</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody *ngFor="let billett of alleBilletter">
+                        <tr>
+                            <td>{{billett.id}}</td>
+                            <td>{{billett.bId}}</td>
+                            <td>{{billett.fId}}</td>
+                            <td>{{billett.voksen == true ? "Voksen" : "Barn"}}</td>
+                            <td><button class="btn btn-danger" (click)="slettBillett(billett.id)">Slett</button>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal-body" *ngIf="!visBilletter">
+        <div class="container">
+            <div class="col-md-12 col-sm-8">
+                <div *ngIf="laster">Laster billetter.....</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Bestillings-id</th>
+                            <th>Kunde-id</th>
+                            <th>Totalpris</th>
+                            <th>Betalt</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody *ngFor="let bestilling of alleBestillinger">
+                        <tr>
+                            <td>{{bestilling.id}}</td>
+                            <td>{{bestilling.kId}}</td>
+                            <td>{{bestilling.totalpris}}</td>
+                            <td>{{bestilling.betalt == true? "Betalt": "Ikke betalt"}}</td>
+                            <td><button class="btn btn-danger" (click)="slettBestilling(bestilling.id)">Slett</button>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
+    </div>
+</div>

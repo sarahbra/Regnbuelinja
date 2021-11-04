@@ -1,0 +1,31 @@
+<div class="container">
+    <div>
+        <div class="col-md-12">
+            <button class='btn btn-primary btn-lg mb-4 ' (click)="leggTilBillett()">Legg til Billett</button>
+            <h2 class="mb-4"> Alle billetter </h2>
+            <div *ngIf="laster">Laster billetter.....</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Ferd-id</th>
+                        <th>Bestillings-id</th>
+                        <th>Voksen/barn</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let billett of alleBilletter">
+                    <tr>
+                        <td>{{billett.id}}</td>
+                        <td>{{billett.fId}}</td>
+                        <td>{{billett.bId}}</td>
+                        <td>{{billett.voksen == true ? "Voksen" : "Barn"}}</td>
+                        <td><button class="btn btn-danger" (click)="visModalOgSlett(billett.id)">Slett</button></td>
+                        <td><button class="btn btn-success" [routerLink]="['/endre/', billett.id, 'billett']">Endre</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
