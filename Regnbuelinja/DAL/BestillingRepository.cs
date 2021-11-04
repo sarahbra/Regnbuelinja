@@ -624,18 +624,39 @@ namespace Regnbuelinja.DAL
                         _db.Billetter.Add(nyBillett);
                         await _db.SaveChangesAsync();
                         _log.LogInformation("BestillingRepository.cs: LagreBillett: Første billett lagret til bestilling");
-
+                        return true;
                     }
 
                     else
                     {
                         Ferd IBestilling = bestilling.Billetter.First().Ferd;
+                        Ferd returFerd = bestilling.Billetter.Where(b => b.Ferd != IBestilling).Select(b => b.Ferd).FirstOrDefault();
+
+                        if(returFerd != null)
+                        {
+                            if(ferd.Id == IBestilling.Id || returFerd.Id == ferd.Id)
+                            {
+                                Billett nyBillett = new Billett()
+                                {
+                                    Bestilling = bestilling,
+                                    Ferd = ferd,
+                                    Voksen = billett.Voksen
+                                };
+                                _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
+                                _db.Billetter.Add(nyBillett);
+                                await _db.SaveChangesAsync();
+                                return true;
+                            }
+                            _log.LogInformation("BestillingRepository.cs: Kan ikke lagre billett som ikke er tur/retur-ferd på denne bestillingen");
+                            return false;
+                        } 
                         string StartpunktIBestilling = IBestilling.Rute.Startpunkt;
                         string EndepunktIBestilling = IBestilling.Rute.Endepunkt;
 
                         // Hvis ferden i nybillett er lik ferden til eksisterende billett eller det er en returferd (med passende avreise/ankomsttid)
+                        
                         if ((ferd == IBestilling) || (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt) &&
-                            (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0)))
+                                (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0)))
                         {
 
                             Billett nyBillett = new Billett()
@@ -647,19 +668,12 @@ namespace Regnbuelinja.DAL
                             _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
                             _db.Billetter.Add(nyBillett);
                             await _db.SaveChangesAsync();
+                            return true;
                         }
-                        else
-                        {
-                            _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billett for annen rute enn rute i " +
-                                "bestilling eller returrute. Avreise/ankomsttid må også stemme overens");
-                            return false;
-                        }
-
+                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billett for annen rute enn rute i " +
+                            "bestilling eller returrute. Avreise/ankomsttid må også stemme overens");
+                       return false;
                     }
-
-                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
-                    return true;
-
                 }
                 _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller" +
                             " billetten har reise som allerede har vært");
