@@ -601,7 +601,7 @@ namespace Regnbuelinja.DAL
 
         // Hvis kunde ønsker å legge til flere billetter til bestillingen sin. Krever at bestillingsId finnes,
         // og at reisen ikke har vært og er ubetalt (igjen, for enkelhetsskyld => sendes til regnskapsavdelingen)
-        // Det kreves også at ruta er lik ruta til originalbestillingen, eller lik en eventuell retur-reise. Hvis man skal legge til
+        // Det kreves også at ferd er lik originalbilletten, eller lik en eventuell retur-reise (med passende avreisetid). Hvis man skal legge til
         // billett for en annen strekning må en ny bestilling opprettes.
         public async Task<bool> LagreBillett(Billetter billett)
         {
@@ -610,7 +610,7 @@ namespace Regnbuelinja.DAL
                 Bestillinger bestilling = await _db.Bestillinger.FindAsync(billett.BId);
                 Ferd ferd = await _db.Ferder.FindAsync(billett.FId);
 
-                if(bestilling != null && ferd != null)
+                if(bestilling != null && ferd != null && !bestilling.Betalt)
                 {
                     if(!bestilling.Billetter.Any())
                     {
@@ -629,25 +629,30 @@ namespace Regnbuelinja.DAL
 
                     else
                     {
-                        string StartpunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
-                        string EndepunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
+                        Ferd IBestilling = bestilling.Billetter.First().Ferd;
+                        string StartpunktIBestilling = IBestilling.Rute.Endepunkt;
+                        string EndepunktIBestilling = IBestilling.Rute.Endepunkt;
 
-                        if ((StartpunktIBestilling.Equals(ferd.Rute.Startpunkt) && EndepunktIBestilling.Equals(ferd.Rute.Endepunkt)) ||
-                        (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt)))
+                        // Hvis ferden i nybillett er lik ferden til eksisterende billett eller det er en returferd (med passende avreise/ankomsttid)
+                        if ((ferd == IBestilling) || (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt) &&
+                            (ferd.AvreiseTid.CompareTo(IBestilling.AnkomstTid) > 0) ))
                         {
-                            if (!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
+
+                            Billett nyBillett = new Billett()
                             {
-                                Billett nyBillett = new Billett()
-                                {
-                                    Bestilling = bestilling,
-                                    Ferd = ferd,
-                                    Voksen = billett.Voksen
-                                };
-                                _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
-                                _db.Billetter.Add(nyBillett);
-                                await _db.SaveChangesAsync();
-                            }
-                             
+                                Bestilling = bestilling,
+                                Ferd = ferd,
+                                Voksen = billett.Voksen
+                            };
+                            _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
+                            _db.Billetter.Add(nyBillett);
+                            await _db.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billett for annen rute enn rute i " +
+                                "bestilling eller returrute. Avreise/ankomsttid må også stemme overens");
+                            return false;
                         }
                         
                     }
@@ -905,7 +910,7 @@ namespace Regnbuelinja.DAL
                         string startpunkt = ferd.Rute.Startpunkt;
                         string endepunkt = ferd.Rute.Endepunkt;
                         DateTime AnkomstTid = ferd.AnkomstTid;
-                        gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid)>0))).Select(f => new Ferder()
+                            gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid)>0))).Select(f => new Ferder()
                         {
                             FId = f.Id,
                             RId = f.Rute.Id,
