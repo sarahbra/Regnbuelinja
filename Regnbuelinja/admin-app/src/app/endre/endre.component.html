@@ -226,7 +226,7 @@
                 <label>Fornavn</label>
                 <input class="form-control" formControlName="fornavn" />
                 <p class="alert alert-warning"
-                    [hidden]="skjemaAdmin.controls.fornavn.valid || skjemaKunde.controls.fornavn.pristine">
+                    [hidden]="skjemaAdmin.controls.fornavn.valid || skjemaAdmin.controls.fornavn.pristine">
                     Fornavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
                 </p>
             </div>
@@ -235,7 +235,7 @@
                 <label>Etternavn</label>
                 <input class="form-control" formControlName="etternavn" />
                 <p class="alert alert-warning"
-                    [hidden]="skjemaAdmin.controls.etternavn.valid || skjemaKunde.controls.etternavn.pristine">
+                    [hidden]="skjemaAdmin.controls.etternavn.valid || skjemaAdmin.controls.etternavn.pristine">
                     Etternavn kan kun bestå av bokstaver, og må være mellom 2-30 tegn
                 </p>
             </div>
@@ -244,7 +244,7 @@
                 <label>Epost</label>
                 <input class="form-control" formControlName="epost" />
                 <p class="alert alert-warning"
-                    [hidden]="skjemaAdmin.controls.epost.valid || skjemaKunde.controls.epost.pristine && skjemaKunde.controls.epost.touched">
+                    [hidden]="skjemaAdmin.controls.epost.valid || skjemaAdmin.controls.epost.pristine && skjemaAdmin.controls.epost.touched">
                     Ugyldig epost
                 </p>
             </div>
@@ -253,13 +253,13 @@
                 <label>Telefonummer</label>
                 <input class="form-control" formControlName="telefonnr" />
                 <p class="alert alert-warning"
-                    [hidden]="skjemaAdmin.controls.telefonnr.valid || skjemaKunde.controls.telefonnr.pristine">
+                    [hidden]="skjemaAdmin.controls.telefonnr.valid || skjemaAdmin.controls.telefonnr.pristine">
                     Telefonnummer kan kun innehold tall og må være 8 siffer
                 </p>
             </div>
 
             <div class="form-group">
-                <button type="submit" [disabled]="!skjemaKunde.valid" class="btn btn-success btn-lg">Endre</button>
+                <button type="submit" [disabled]="!skjemaAdmin.valid" class="btn btn-success btn-lg">Endre</button>
                 <button class="btn btn-default " routerLink="/kunder">Tilbake</button>
             </div>
         </form>
@@ -271,53 +271,47 @@
     <div class="col-md-8">
         <h3 class="mb-4">Endre billett med id {{this.billettId}}</h3>
         <form [formGroup]="skjemaBillett" (ngSubmit)="vedSubmit('billett')">
-        
+
             <input class="form-control" formControlName="id" type="hidden" />
-<!--
+            <!--
             <input class="form-control" formControlName="fId" type="hidden" />
             <input class="form-control" formControlName="bId" type="hidden" />
 
 -->
             <label>Bestilling (bId) </label>
             <div class="form-group">
-            <select class="form-control" formControlName="bIdForm" [(ngModel)]="valgtBestilling"(change)="hentAlleFerderForBestilling()">
-                <option *ngFor="let bestilling of alleBestillinger" [ngValue]="bestilling" >{{bestilling.id}}</option>
-            </select>
-            <p class="alert alert-warning" [hidden]="skjemaBillett.controls.bIdForm.valid || skjemaBillett.controls.bIdForm.hasError('required')">
-                Obligatorisk
-            </p>
+                <select class="form-control" formControlName="bIdForm" [(ngModel)]="valgtBestilling"
+                    (change)="hentAlleFerderForBestilling()">
+                    <option *ngFor="let bestilling of alleBestillinger" [ngValue]="bestilling">{{bestilling.id}}
+                    </option>
+                </select>
+                <p class="alert alert-warning"
+                    [hidden]="skjemaBillett.controls.bIdForm.valid || skjemaBillett.controls.bIdForm.hasError('required')">
+                    Obligatorisk
+                </p>
             </div>
 
             <label>Ferd (fId)</label>
             <div class="form-group">
-            <select class="form-control " formControlName="fIdForm">
-                <option *ngFor="let ferd of alleFerder" [ngValue]="ferd.fId">{{ferd.strekning}}, {{ferd.avreiseTid | date:'dd/MM/yyyy HH:mm'}} - {{ferd.ankomstTid | date:'dd/MM/yyyy HH:mm'}}</option>
-            </select>
-            <p class="alert alert-warning " [hidden]="skjemaBillett.controls.fIdForm.valid || skjemaBillett.controls.fIdForm.hasError('required')">
-                Obligatorisk
-            </p>
+                <select class="form-control " formControlName="fIdForm">
+                    <option *ngFor="let ferd of alleFerder" [ngValue]="ferd.fId">{{ferd.strekning}}, {{ferd.avreiseTid |
+                        date:'dd/MM/yyyy HH:mm'}} - {{ferd.ankomstTid | date:'dd/MM/yyyy HH:mm'}}</option>
+                </select>
+                <p class="alert alert-warning "
+                    [hidden]="skjemaBillett.controls.fIdForm.valid || skjemaBillett.controls.fIdForm.hasError('required')">
+                    Obligatorisk
+                </p>
             </div>
 
-            
             <div class="form-group row">
                 <div class="col-sm-2">
                     <label>Voksen: </label>
                 </div>
                 <div class="col-sm-1">
-                    <input type="checkbox" id="voksen" class="btn-check"/>
+                    <input type="checkbox" id="voksen" class="btn-check" />
                 </div>
-               
-            </div>
 
-<!--
-            <div class="form-group">
-                <label>Voksen/Barn</label>
-                <select class="form-control" formControlName="voksen">
-                    <option value="false">Barn</option>
-                    <option value="true">Voksen</option>
-                </select>
             </div>
--->
 
             <div class="form-group">
                 <button type="submit" class="btn btn-success btn-lg">Endre</button>
@@ -332,7 +326,7 @@
     <div class="col-md-8">
         <h3 class="mb-4">Endre passord</h3>
         <form [formGroup]="skjemaAdminPassord" (ngSubmit)="vedSubmit('adminPassord')">
-            <label>Brukernavn: {{adminBrukerPassord.brukernavn}}</label>
+            <label>Brukernavn: {{brukernavn}}</label>
 
             <div class="form-group">
                 <label>Skriv inn nytt passord</label>
@@ -344,7 +338,8 @@
             </div>
 
             <div class="form-group">
-                <button type="submit" [disabled]="!skjemaKunde.valid" class="btn btn-success btn-lg">Endre</button>
+                <button type="submit" [disabled]="!skjemaAdminPassord.valid"
+                    class="btn btn-success btn-lg">Endre</button>
                 <button class="btn btn-default " routerLink="/kunder">Tilbake</button>
             </div>
         </form>

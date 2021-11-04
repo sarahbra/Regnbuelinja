@@ -651,7 +651,7 @@ namespace Regnbuelinja.Controllers
         }
 
         [HttpPut("kunde/{id}")]
-        public async Task<ActionResult> EndreKunde(Personer person)
+        public async Task<ActionResult> EndreKunde(int id, Personer person)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
@@ -659,6 +659,7 @@ namespace Regnbuelinja.Controllers
             }
             if (ModelState.IsValid)
             {
+                person.Id = id;
                 bool endretPerson = await _db.EndrePerson(person);
                 if (endretPerson)
                 {
@@ -781,14 +782,26 @@ namespace Regnbuelinja.Controllers
                 return Unauthorized("Ikke logget inn");
             }
 
-            Personer bruker = await _db.HentProfil(HttpContext.Session.GetString(_brukernavn));
+            string brukernavn = HttpContext.Session.GetString(_brukernavn);
+            Personer bruker = await _db.HentProfil(brukernavn);
             if(bruker == null)
             {
                 _log.LogInformation("AdminController.cs: HentProfil: Databasefeil. Kunne ikke hente profil");
                 return NotFound();
             }
             _log.LogInformation("AdminController.cs: HentProfil: Vellykket! Brukerprofil hentet");
-            return Ok(bruker);
+
+            var profil = new
+            {
+                Id = bruker.Id,
+                Fornavn = bruker.Fornavn,
+                Etternavn = bruker.Etternavn,
+                Epost = bruker.Epost,
+                Telefonnr = bruker.Telefonnr,
+                Brukernavn = brukernavn,
+            };
+
+            return Ok(profil);
         }
 
         [HttpPost("logg_inn")]
