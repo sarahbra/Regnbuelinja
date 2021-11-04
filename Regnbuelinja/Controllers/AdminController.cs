@@ -384,7 +384,7 @@ namespace Regnbuelinja.Controllers
                 _log.LogInformation("AdminController.cs: SlettBestilling: Bestilling slettet.");
                 return Ok(slettet);
             }
-            _log.LogInformation("AdminController.cs: SlettBillett: Ikke slettet. Fant ikke bestillingen eller inneholder gjennomført(e) og ubetalt(e) reiser eller " +
+            _log.LogInformation("AdminController.cs: SlettBestilling: Ikke slettet. Fant ikke bestillingen eller inneholder gjennomført(e) og ubetalt(e) reiser eller " +
                 " eller betalt(e) og ikke gjennomført(e)");
             return NotFound("Bestilling ikke funnet eller inneholder gjennomført(e), ubetalt(e) reise(r) eller ugjennomført(e), betalt(e) reise(r)");
         }
@@ -423,24 +423,7 @@ namespace Regnbuelinja.Controllers
             _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
             return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
         }
-        /*
-        [HttpPost("bestillinger")]
-        public async Task<ActionResult> LagreBestilling(Bestilling bestilling)
-        {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
-            {
-                return Unauthorized("Ikke logget inn");
-            }
-            bool BillettLagret = await _db.LagreBestilling2(bestilling);
-            if (BillettLagret)
-            {
-                _log.LogInformation("AdminController.cs: LagreBillett: Billett lagret vellykket");
-                return Ok(BillettLagret);
-            }
-            _log.LogInformation("AdminController.cs: LagreBillett: Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er allerede betalt");
-            return NotFound("Bestilling eller ferd ikke funnet, ferden har vært eller bestillingen er betalt");
-        }
-        */
+        
         [HttpDelete("billett/{id}")]
         public async Task<ActionResult> SlettBillett(int id)
         {
