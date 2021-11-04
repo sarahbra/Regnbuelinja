@@ -701,17 +701,7 @@ namespace Regnbuelinja.DAL
                     Bestillinger bestilling = endreBillett.Bestilling;
                     if (!bestilling.Betalt && (endreBillett.Ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
                     {
-                        if (endreBillett.Voksen)
-                        {
-                            if(endreBillett.Bestilling.Billetter.Count(b => b.Voksen) > 1)
-                            {
-                                endreBillett.Voksen = false;
-                            }
-                            else {
-                                _log.LogInformation("BestillingRepository: Endrebillett: Kan ikke endre til barnebillett da reisen krever minst en voksen passasjer");
-                                return false;
-                            }
-                        }
+                        if (endreBillett.Voksen) endreBillett.Voksen = false;
                         else endreBillett.Voksen = true;
 
                         _log.LogInformation("BestillingRepository.cs: EndreBillett: Vellykket! Billetten er endret");
@@ -719,7 +709,7 @@ namespace Regnbuelinja.DAL
                         return true;
 
                     }
-                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestillingen er betalt. Kan ikke endre billett");
+                    _log.LogInformation("BestillingRepository.cs: EndreBillett: Bestillingen er betalt eller reisa er gjennomført. Kan ikke endre billett");
                     return false;
                 }
                 _log.LogInformation("BestillingRepository.cs: EndreBillett: Fant ikke billett i databasen");
@@ -746,6 +736,8 @@ namespace Regnbuelinja.DAL
                     {
                         _log.LogInformation("BestillingRepository.cs: SlettBestilling: Vellykket. Bestilling slettet");
                         _db.Remove(somSkalSlettes);
+                        await _db.SaveChangesAsync();
+                        return true;
                     }
                     _log.LogInformation("BestillingRepository.cs: SlettBestilling: Bestillingen er ikke betalt enda. Kan ikke slettes");
                     return false;
