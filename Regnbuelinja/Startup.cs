@@ -39,6 +39,8 @@ namespace Regnbuelinja
 
             app.UseSession();
 
+            app.UseDefaultFiles();
+
             app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
