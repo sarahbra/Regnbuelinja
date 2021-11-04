@@ -9,7 +9,6 @@ namespace Regnbuelinja.Models
         public string Fornavn { get; set; }
         [RegularExpression(@"^[a-zA-ZæøåÆØÅ. \-]{2,30}$")]
         public string Etternavn { get; set; }
-        //[RegularExpression(@"^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9]+)*\\.([a-z]{2,4})$")]
         [RegularExpression(@"^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$")]
         public string Epost { get; set; }
         [RegularExpression(@"^[0-9]{8}$")]

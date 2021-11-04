@@ -459,7 +459,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(EndretBillett);
             }
             _log.LogInformation("AdminController.cs: EndreBillett: Billett ikke funnet, eller billett allerede brukt eller betalt.");
-            return NotFound("Billett ikke funnet, billett er allerede brukt eller betalt");
+            return NotFound("Billett ikke funnet, eller billetten allerede brukt eller billetten er betalt");
         }
 
         [HttpGet("billett/{id}")]
@@ -771,6 +771,20 @@ namespace Regnbuelinja.Controllers
                 return new ServiceUnavailableResult("Databasefeil. Kunden ikke opprettet");
             }
             return BadRequest("Feil i inputvalidering på server");
+        }
+
+        [HttpGet("bruker")]
+        public ActionResult HentBruker()
+        {
+            if(string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+            if(!string.IsNullOrEmpty(HttpContext.Session.GetString(_brukernavn)))
+            {
+                return Ok(HttpContext.Session.GetString(_brukernavn));
+            }
+            return Ok(false);
         }
 
         [HttpGet("profil")]
