@@ -586,13 +586,13 @@ namespace Regnbuelinja.Controllers
         }
 
         [HttpGet("bestilling/{id}/ferder")]
-        public async Task<ActionResult> HentFerderForBestilling(int id)
+        public async Task<ActionResult> HentFerdRuterForBestilling(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
             {
                 return Unauthorized("Ikke logget inn");
             }
-            List<Ferder> alleFerder = await _db.HentFerderForBestilling(id);
+            List<FerdRute> alleFerder = await _db.HentFerdRuterForBestilling(id);
             if (alleFerder != null)
             {
                 _log.LogInformation("AdminController.cs: HentFerderForBestilling: Vellykket! Ferder hentet");

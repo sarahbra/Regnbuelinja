@@ -864,72 +864,76 @@ namespace Regnbuelinja.DAL
         // Hvis ingen billetter ligger inne hentes alle ferder
         // Hvis en ferd og en returferd ligger i bestillingen returneres disse
         // Hvis kun en ferd er bestillt returneres ferden samt alle returferder for samme rute.
-        public async Task<List<Ferder>> HentFerderForBestilling(int id)
+        public async Task<List<FerdRute>> HentFerdRuterForBestilling(int id)
         {
             try
             {
                 Bestillinger bestilling = await _db.Bestillinger.FindAsync(id);
                 if(bestilling == default)
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Bestilling ikke funnet i databasen");
+                    _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Bestilling ikke funnet i databasen");
                     return null;
                 }
-                List<Ferder> gyldigeFerder;
+                List<FerdRute> gyldigeFerder;
                 if(!bestilling.Billetter.Any())
                 {
-                    gyldigeFerder = await _db.Ferder.Select(f => new Ferder()
+                    gyldigeFerder = await _db.Ferder.Select(f => new FerdRute()
                     {
                         FId = f.Id,
-                        RId = f.Rute.Id,
-                        BId = f.Baat.Id,
                         AvreiseTid = f.AvreiseTid.ToString("o"),
-                        AnkomstTid = f.AnkomstTid.ToString("o")
+                        AnkomstTid = f.AnkomstTid.ToString("o"),
+                        Strekning = (f.Rute.Startpunkt + " - " + f.Rute.Endepunkt)
                     }).ToListAsync();
                 } else
                 {
-                    gyldigeFerder = new List<Ferder>();
+                    gyldigeFerder = new List<FerdRute>();
 
                     Ferd ferd = bestilling.Billetter.First().Ferd;
-                    Ferder ferdSomHentes = new Ferder() {
+                    FerdRute ferdSomHentes = new FerdRute() {
                         FId = ferd.Id,
-                        BId = ferd.Baat.Id,
-                        RId = ferd.Rute.Id,
                         AnkomstTid = ferd.AnkomstTid.ToString("o"),
-                        AvreiseTid = ferd.AvreiseTid.ToString("o")
+                        AvreiseTid = ferd.AvreiseTid.ToString("o"),
+                        Strekning = (ferd.Rute.Startpunkt + " - " + ferd.Rute.Endepunkt)
                     };
 
                     gyldigeFerder.Add(ferdSomHentes);
 
                     Ferd returFerd = bestilling.Billetter.Where(b => b.Ferd.Id != ferd.Id).Select(b => b.Ferd).FirstOrDefault();
-                    if(returFerd!=default)
+                    if(returFerd != default)
                     {
-                        gyldigeFerder.Add(ferdSomHentes);
-                        _log.LogInformation("BestillingRepository.cs: Vellykket! Ferd og returferd returnert");
+                        FerdRute returFerdRute = new FerdRute()
+                        {
+                            FId = ferd.Id,
+                            AvreiseTid = returFerd.AvreiseTid.ToString("o"),
+                            AnkomstTid = returFerd.AnkomstTid.ToString("o"),
+                            Strekning = (returFerd.Rute.Startpunkt + " - " + ferd.Rute.Endepunkt)
+                        };
+                        gyldigeFerder.Add(returFerdRute);
+                        _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Vellykket! Ferd og returferd returnert");
                     } else
                     {
                         string startpunkt = ferd.Rute.Startpunkt;
                         string endepunkt = ferd.Rute.Endepunkt;
                         DateTime AnkomstTid = ferd.AnkomstTid;
-                            gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid)>0))).Select(f => new Ferder()
+                            gyldigeFerder = await _db.Ferder.Where(f => (((f.Rute.Startpunkt == endepunkt) && (f.Rute.Endepunkt == startpunkt) && f.AvreiseTid.CompareTo(AnkomstTid)>0))).Select(f => new FerdRute()
                         {
                             FId = f.Id,
-                            RId = f.Rute.Id,
-                            BId = f.Baat.Id,
                             AvreiseTid = f.AvreiseTid.ToString("o"),
-                            AnkomstTid = f.AnkomstTid.ToString("o")
+                            AnkomstTid = f.AnkomstTid.ToString("o"),
+                            Strekning = (f.Rute.Startpunkt + " - " + f.Rute.Endepunkt)
                         }).ToListAsync();
                         gyldigeFerder.Add(ferdSomHentes);
                     }
                 }
                 if (!gyldigeFerder.Any())
                 {
-                    _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Ingen gyldige ferder funnet");
+                    _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Ingen gyldige ferder funnet");
                 }
-                _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Gyldige ferder returnert");
+                _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Gyldige ferder returnert");
                 return gyldigeFerder;
             } catch(Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: HentFerderForBestilling: Databasefeil: " + e);
+                _log.LogInformation("BestillingRepository.cs: HentFerdRuterForBestilling: Databasefeil: " + e);
                 return null;
             }
         }
