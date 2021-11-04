@@ -609,36 +609,57 @@ namespace Regnbuelinja.DAL
             {
                 Bestillinger bestilling = await _db.Bestillinger.FindAsync(billett.BId);
                 Ferd ferd = await _db.Ferder.FindAsync(billett.FId);
+
                 if(bestilling != null && ferd != null)
                 {
-                    string StartpunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
-                    string EndepunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
-                    if((StartpunktIBestilling.Equals(ferd.Rute.Startpunkt) && EndepunktIBestilling.Equals(ferd.Rute.Endepunkt)) || 
-                        (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt))) {
-                        if (!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
+                    if(!bestilling.Billetter.Any())
+                    {
+                        Billett nyBillett = new Billett()
                         {
-                            Billett nyBillett = new Billett()
-                            {
-                                Bestilling = bestilling,
-                                Ferd = ferd,
-                                Voksen = billett.Voksen
-                            };
-                            _db.Billetter.Add(nyBillett);
-                            await _db.SaveChangesAsync();
-                            _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
-                            return true;
-                        }
-                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller" +
-                            " billetten har reise som allerede har vært");
-                        return false;
+                            Bestilling = bestilling,
+                            Ferd = ferd,
+                            Voksen = billett.Voksen
+                        };
+
+                        _db.Billetter.Add(nyBillett);
+                        await _db.SaveChangesAsync();
+                        _log.LogInformation("BestillingRepository.cs: LagreBillett: Første billett lagret til bestilling");
+
                     }
-                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Kan ikke legge til billetter" +
-                        " for en annen reise i bestillingen. Opprett heller ny bestilling");
-                    return false;
+
+                    else
+                    {
+                        string StartpunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Startpunkt;
+                        string EndepunktIBestilling = bestilling.Billetter.First().Ferd.Rute.Endepunkt;
+
+                        if ((StartpunktIBestilling.Equals(ferd.Rute.Startpunkt) && EndepunktIBestilling.Equals(ferd.Rute.Endepunkt)) ||
+                        (EndepunktIBestilling.Equals(ferd.Rute.Startpunkt) && StartpunktIBestilling.Equals(ferd.Rute.Endepunkt)))
+                        {
+                            if (!bestilling.Betalt && (ferd.AnkomstTid.CompareTo(DateTime.Now) > 0))
+                            {
+                                Billett nyBillett = new Billett()
+                                {
+                                    Bestilling = bestilling,
+                                    Ferd = ferd,
+                                    Voksen = billett.Voksen
+                                };
+                                _log.LogInformation("BestillingRepository.cs: LagreBillett: Billett lagt til bestilling med billetter");
+                                _db.Billetter.Add(nyBillett);
+                                await _db.SaveChangesAsync();
+                            }
+                             
+                        }
+                        
+                    }
+                    
+                    _log.LogInformation("BestillingRepository.cs: LagreBillett: Vellykket! Billett lagt til bestilling " + bestilling.Id);
+                    return true;
+
                 }
-                
-                _log.LogInformation("BestillingRepository.cs: LagreBillett: Fant ikke bestilling eller ferd i databasen");
+                _log.LogInformation("BestillingRepository.cs: LagreBillett: Bestillingen er allerede betalt eller" +
+                            " billetten har reise som allerede har vært");
                 return false;
+
             }
             catch (Exception e)
             {
