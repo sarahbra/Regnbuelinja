@@ -46,7 +46,7 @@ namespace Regnbuelinja_Test
 
         void ISession.Clear()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         Task ISession.CommitAsync(CancellationToken cancellationToken)

@@ -275,6 +275,8 @@ namespace Regnbuelinja.DAL
             }
         }
 
+
+        // Fiks test at ankomstTid er etter avreiseTid
         public async Task<bool> LagreFerd(Ferder ferdSomLagres)
         {
             try
@@ -691,6 +693,7 @@ namespace Regnbuelinja.DAL
         // betaling utfra rutepris)
         // Bestilling - fremmednøkkel endres ikke da billetten er knyttet til kunde via bestilling.
         // Endrer kun mellom voksen og barn ettersom bestillingen er knyttet til en spesifikk rute og ferd - ny bestilling og billett hvis kunden skal til en ny destinasjon
+
         public async Task<bool> EndreBillett(Billetter billett)
         {
             try

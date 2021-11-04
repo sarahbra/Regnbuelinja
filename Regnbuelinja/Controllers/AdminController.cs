@@ -830,7 +830,8 @@ namespace Regnbuelinja.Controllers
         [HttpGet("logg_ut")]
         public ActionResult LoggUt([FromQuery(Name = "returUrl")] string returUrl)
         {
-            HttpContext.Session.Clear();
+            HttpContext.Session.SetString(_loggetInn, "");
+            HttpContext.Session.SetString(_brukernavn, "");
             if (returUrl == null || returUrl.Length == 0)
             {
                 returUrl = "/admin/login";
