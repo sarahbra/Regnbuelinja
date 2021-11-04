@@ -729,6 +729,28 @@ namespace Regnbuelinja.Controllers
             return BadRequest("Feil i inputvalidering på server");
         }
 
+        [HttpPut("bruker")]
+        public async Task<ActionResult> EndreBruker(Bruker bruker)
+        {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString(_loggetInn)))
+            {
+                return Unauthorized("Ikke logget inn");
+            }
+
+            if (ModelState.IsValid)
+            {
+                bool brukerEndret = await _db.EndreBruker(bruker, (int)HttpContext.Session.GetInt32(_brukerId));
+                if (brukerEndret)
+                {
+                    _log.LogInformation("AdminController.cs: EndreBruker: Passord endret");
+                    return Ok(brukerEndret);
+                }
+                _log.LogInformation("AdminController.cs: EndreBruker: Feil bruker-Id. Kan ikke endre andre brukere");
+                return Unauthorized("Kan ikke endre andre brukere");
+            }
+            return BadRequest("Feil i inputvalidering på server");
+        }
+
         [HttpPost("kunder")]
         public async Task<ActionResult> LagreKunde(Personer kunde)
         {
@@ -780,12 +802,12 @@ namespace Regnbuelinja.Controllers
                     _log.LogInformation("AdminController.cs: LoggInn: Bruker logget inn vellykket.");
                     HttpContext.Session.SetString(_loggetInn, "loggetInn");
                     HttpContext.Session.SetInt32(_brukerId, loggetInn);
-                    return Ok(loggetInn);
+                    return Ok(true);
                 }
                 _log.LogInformation("AdminController.cs: LoggInn: Feil brukernavn eller passord. Ikke logget inn");
                 HttpContext.Session.SetString(_loggetInn, "");
                 HttpContext.Session.SetInt32(_brukerId, 0);
-                return Ok(loggetInn);
+                return Ok(false);
             } 
             _log.LogInformation("AdminController.cs: LoggInn: Feil i inputvalidering for brukernavn og/eller passord");
             return BadRequest("Feil i inputvalideringen på server");

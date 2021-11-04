@@ -27,7 +27,7 @@ namespace Regnbuelinja_Test
         public async Task LoggInnOK()
         {
             //Arrange
-            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(true);
+            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(It.Is<int>(i => i != 0));
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
             mockSession[_loggetInn] = _loggetInn;
@@ -46,7 +46,7 @@ namespace Regnbuelinja_Test
         public async Task LoggInnFeilBrukerinput()
         {
             //Arrange
-            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(true);
+            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(It.Is<int>(i => i != 0));
 
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
@@ -68,7 +68,7 @@ namespace Regnbuelinja_Test
         public async Task LoggInnFeilBrukernavnEllerPassord()
         {
             //Arrange
-            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(false);
+            mockRep.Setup(b => b.LoggInn(It.IsAny<Bruker>())).ReturnsAsync(0);
 
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 

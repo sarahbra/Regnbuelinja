@@ -971,6 +971,34 @@ namespace Regnbuelinja.DAL
             }
         }
 
+        public async Task<bool> EndreBruker(Bruker bruker, int userId)
+        {
+            try
+            {
+                Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
+                if(somSkalEndres != default && somSkalEndres.Id == userId)
+                {
+                    string passord = bruker.Passord;
+                    byte[] salt = LagEtSalt();
+                    byte[] hash = LagEnHash(passord, salt);
+
+                    somSkalEndres.Passord = hash;
+                    somSkalEndres.Salt = salt;
+
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: EndreBruker: Bruker endret");
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: EndreBruker: Fant ikke bruker i databasen.");
+                return false;
+            }
+            catch (Exception e)
+            {
+                _log.LogInformation("BestillingRepository.cs: EndreBruker: Bruker ikke endret. Databasefeil: " + e);
+                return false;
+            }
+        }
+
         public async Task<bool> LagreBruker(Bruker bruker)
         {
             try
@@ -1169,19 +1197,19 @@ namespace Regnbuelinja.DAL
                     somSkalEndres.Telefonnr = person.Telefonnr;
 
                     await _db.SaveChangesAsync();
-                    _log.LogInformation("BestillingRepository.cs: EndreKunde: Vellykket! Kunde endret");
+                    _log.LogInformation("BestillingRepository.cs: EndrePerson: Vellykket! Personalia endret");
                     return true;
 
                 }
                 else
                 {
-                    _log.LogInformation("BestillingRepository.cs: EndreKunde: Kunde finnes ikke i databasen");
+                    _log.LogInformation("BestillingRepository.cs: EndrePerson: Fant ikke personen i databasen");
                     return false;
                 }
             }
             catch (Exception e)
             {
-                _log.LogInformation("BestillingRepository.cs: EndreKunde: Feil i databasen. Kunde ikke endret. " + e);
+                _log.LogInformation("BestillingRepository.cs: EndrePerson: Feil i databasen. Person ikke endret. " + e);
                 return false;
             }
         }
