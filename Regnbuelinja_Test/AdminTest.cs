@@ -1833,7 +1833,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as UnauthorizedObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<int>(),It.IsAny<Billetter>()) as UnauthorizedObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
@@ -1852,7 +1852,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as OkObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<int>(),It.IsAny<Billetter>()) as OkObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
@@ -1872,7 +1872,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<Billetter>()) as NotFoundObjectResult;
+            var resultat = await adminController.EndreBillett(It.IsAny<int>(),It.IsAny<Billetter>()) as NotFoundObjectResult;
 
             // Assert
             Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
@@ -2628,7 +2628,7 @@ namespace Regnbuelinja_Test
 
             //Assert
             Assert.Equal((int)HttpStatusCode.BadRequest, resultat.StatusCode);
-            Assert.Equal("Feil i inputvalidering på server.", resultat.Value);
+            Assert.Equal("Feil i inputvalidering på server", resultat.Value);
         }
 
         [Fact]
@@ -2647,7 +2647,7 @@ namespace Regnbuelinja_Test
 
             //Assert
             Assert.Equal((int)HttpStatusCode.InternalServerError, resultat.StatusCode);
-            Assert.Equal("Databasefeil. Kunde ikke lagret", resultat.Value);
+            Assert.Equal("Databasefeil. Kunden ikke opprettet", resultat.Value);
         }
 
 
@@ -2668,6 +2668,65 @@ namespace Regnbuelinja_Test
             //Assert
             Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
             Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task EndreBrukerIkkeLoggetInn()
+        {
+            //Arrange
+            mockRep.Setup(b => b.EndreBruker(It.IsAny<Bruker>(), It.IsAny<string>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _ikkeLoggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.EndreBruker(It.IsAny<Bruker>()) as UnauthorizedObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.Unauthorized, resultat.StatusCode);
+            Assert.Equal("Ikke logget inn", resultat.Value);
+        }
+
+        [Fact]
+        public async Task EndreBrukerLoggetInnOk()
+        {
+            //Arrange
+            mockRep.Setup(b => b.EndreBruker(It.IsAny<Bruker>(), It.IsAny<string>())).ReturnsAsync(true);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.EndreBruker(It.IsAny<Bruker>()) as OkObjectResult;
+
+            //Assert
+            Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
+            Assert.True((bool)resultat.Value);
+        }
+
+
+        [Fact]
+        public async Task EndreBrukerLoggetInnIkkeOK()
+        {
+            //Arrange
+
+            mockRep.Setup(b => b.EndreBruker(It.IsAny<Bruker>(), It.IsAny<string>())).ReturnsAsync(false);
+            var adminController = new AdminController(mockRep.Object, mockLog.Object);
+
+            mockSession[_loggetInn] = _loggetInn;
+            mockHttpContext.Setup(s => s.Session).Returns(mockSession);
+            adminController.ControllerContext.HttpContext = mockHttpContext.Object;
+
+            //Act
+            var resultat = await adminController.EndreBruker(It.IsAny<Bruker>()) as NotFoundObjectResult;
+
+            // Assert
+            Assert.Equal((int)HttpStatusCode.NotFound, resultat.StatusCode);
+            Assert.Equal("Bestilling eller kunde ikke funnet, eller bestillingen er betalt eller bestillingen inneholder gjennomførte ubetalte reiser", resultat.Value);
         }
 
     }
