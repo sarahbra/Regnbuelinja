@@ -7,7 +7,7 @@
 - s317473
 - s311596
 
-Hele applikasjonen (inkludert oppgave1) kjører på http://localhost:5000/. Det er en knapp på første siden (index.html) til admin-applikasjonen. Admin-applikasjonen kjører på http://localhost:5000/admin
+Hele applikasjonen (inkludert oppgave 1) kjører på http://localhost:5000/. Det er en knapp på første siden (index.html) til admin-applikasjonen. Admin-applikasjonen kjører på http://localhost:5000/admin. Du kan altså bare trykke på start.
 
 ## Logginn for adminbruker:
 
@@ -16,7 +16,7 @@ Hele applikasjonen (inkludert oppgave1) kjører på http://localhost:5000/. Det 
 
 ### INFO
 
-Vi misforstod oppgave 1 og manglet noe funksjonalitet (kunde og betaling). For å reflektere det vi manglet i oppgave 2 har vi lagt til en registreringsside for kunde i kundeapplikasjonen og vedlikehold av denne i adminapplikasjonen. Vi har lagt til funksjonalitet fra oppgave 1 i oppgave 2 fordi vi har valgt å levere prosjektet som ett, og det vil da se rart ut om admin kan vedlikeholde kunde, men i kundeapplikasjonen oppgir man ingen kundeinformasjon.
+Vi misforstod oppgave 1 og manglet noe funksjonalitet (kunde og betaling). For å reflektere noe av det vi manglet i oppgave 2 har vi lagt til en registreringsside for kunde i kundeapplikasjonen og vedlikehold av denne i adminapplikasjonen. Vi har lagt til funksjonalitet fra oppgave 1 i oppgave 2 fordi vi har valgt å levere prosjektet som ett, og det vil da se rart ut om admin kan vedlikeholde kunde, men i kundeapplikasjonen oppgir man ingen kundeinformasjon.
 
 Vi hadde ingen form for betaling i første oppgave. Derfor har vi lagt til en ‘boolean betaling’ på bestilling. Vi ser for oss at man kan bestille reise uten å ha betalt ved bestilling. I vår løsning er det altså mulig å betale senere.
 
