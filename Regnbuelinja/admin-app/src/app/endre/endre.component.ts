@@ -168,15 +168,22 @@ export class EndreComponent implements OnInit {
     betalt: ['false', Validators.required],
   };
 
-  valideringPassord = {
-    //Legge til pattern her!
-    passord: [null, Validators.required],
-  };
-
   valideringBillett = {
     id: [null, Validators.required],
     fIdForm: [null, Validators.required],
     bIdForm: [null, Validators.required],
+  };
+
+  valideringPassord = {
+    passord: [
+      null,
+      Validators.compose([
+        Validators.required,
+        Validators.pattern(
+          '(?=.*[0-9])(?=.*[a-zA-ZæøåÆØÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}'
+        ),
+      ]),
+    ],
   };
 
   constructor(
@@ -363,15 +370,18 @@ export class EndreComponent implements OnInit {
   }
 
   endreBillett() {
-    //[selected]="this.skjemaBillett.controls['bIdForm'].value"
+
     const id = this.skjemaBillett.value.id;
-    const fId = this.skjemaBillett.value.fId;
-    const bId = this.skjemaBillett.value.bId;
+    const fId = this.skjemaBillett.controls['fIdForm'].value;
+    const bId = this.skjemaBillett.controls['bIdForm'].value;
     const voksenBool = this.voksen.checked;
 
     const endretBillett = new Billett(fId, bId, voksenBool);
+    endretBillett.id = id;
+    console.log(id);
+    console.log(endretBillett);
 
-    this._http.put('api/admin/billett/' + id, endretBillett).subscribe(
+    this._http.put('/api/admin/billett/' + id, endretBillett).subscribe(
       (retur) => {
         this._router.navigate(['/billetter']);
       },
