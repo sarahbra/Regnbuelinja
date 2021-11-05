@@ -1847,6 +1847,8 @@ namespace Regnbuelinja_Test
         public async Task EndreBillettLoggetInnOk()
         {
             //Arrange
+            Billetter billett = new Billetter { Id = 1, BId = It.IsAny<int>(), FId = It.IsAny<int>(), Voksen = It.IsAny<bool>() };
+            Billetter billett2 = new Billetter { Id = 1, BId = It.IsAny<int>(), FId = It.IsAny<int>(), Voksen = It.IsAny<bool>() };
             mockRep.Setup(b => b.EndreBillett(It.IsAny<Billetter>())).ReturnsAsync(true);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
@@ -1855,7 +1857,7 @@ namespace Regnbuelinja_Test
             adminController.ControllerContext.HttpContext = mockHttpContext.Object;
 
             //Act
-            var resultat = await adminController.EndreBillett(It.IsAny<int>(),It.IsAny<Billetter>()) as OkObjectResult;
+            var resultat = await adminController.EndreBillett(1,billett2) as OkObjectResult;
 
             //Assert
             Assert.Equal((int)HttpStatusCode.OK, resultat.StatusCode);
@@ -2169,6 +2171,7 @@ namespace Regnbuelinja_Test
         public async Task EndreKundeLoggetInnIkkeOK()
         {
             //Arrange
+
             mockRep.Setup(b => b.EndrePerson(It.IsAny<Personer>())).ReturnsAsync(false);
             var adminController = new AdminController(mockRep.Object, mockLog.Object);
 
