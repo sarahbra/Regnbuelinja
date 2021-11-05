@@ -17,6 +17,13 @@ export class LeggTilFerdModal {
   alleBaater: Array<Baat> = [];
   alleRuter: Array<Rute> = [];
 
+  //Formater dato
+  dateArray: Array<string> = [];
+  datoSplittet: Array<string> = [];
+  tidSplittet: Array<string> = [];
+  dato: Date;
+  isoDato: string = '';
+
   allForms = {
     bIdForm: [null, Validators.required],
     rIdForm: [null, Validators.required],
@@ -66,6 +73,31 @@ export class LeggTilFerdModal {
     this.hentAlleBaater();
   }
 
+  formaterDato(datoString: string) {
+    //Splitter til to deler. Del 1 = dato, del 2 = tid
+    this.dateArray = datoString.split(' ', 2);
+
+    //Splitter dato i tre deler ved "/"
+    this.datoSplittet = this.dateArray[0].split('/', 3);
+
+    //Splitter tid i to deler ved ":"
+    this.tidSplittet = this.dateArray[1].split(':', 2);
+
+    //Lager ny dato med datostring
+    this.dato = new Date(
+      parseInt(this.datoSplittet[2]),
+      parseInt(this.datoSplittet[1]) - 1,
+      parseInt(this.datoSplittet[0])
+    );
+
+    //Legger til tid-string
+    this.dato.setHours(parseInt(this.tidSplittet[0]));
+    this.dato.setMinutes(parseInt(this.tidSplittet[1]));
+
+    //konverterer hele avreisedato + tid til isoString som server må ha
+    return (this.isoDato = this.dato.toISOString());
+  }
+
   vedSubmit() {
     const bId = this.forms.value.bIdForm;
     const rId = this.forms.value.rIdForm;
@@ -77,8 +109,12 @@ export class LeggTilFerdModal {
     const avreiseTid = avreiseDato + ' ' + avreiseKlokkeslett;
     const ankomstTid = ankomstDato + ' ' + ankomstKlokkeslett;
 
-    const ferd = new Ferd(bId, rId, avreiseTid, ankomstTid);
-    //const rute = null;
+    const ferd = new Ferd(
+      bId,
+      rId,
+      this.formaterDato(avreiseTid),
+      this.formaterDato(ankomstTid)
+    );
 
     this._http.post('/api/admin/ferder', ferd).subscribe(
       (ok) => {

@@ -5,6 +5,8 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { FerdRute } from '../models/ferdRute';
 import { Bestilling } from '../models/bestilling';
 import { Billett } from '../models/billett';
+import { AlertLagreModal } from '../modals/alert-lagre.modal';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   templateUrl: './legg_tilBillett.modal.html',
@@ -22,7 +24,11 @@ export class LeggTilBillettModal {
     bIdForm: [null, Validators.required],
   };
 
-  constructor(public modal: NgbActiveModal, private _http: HttpClient) {}
+  constructor(
+    public modal: NgbActiveModal,
+    private _http: HttpClient,
+    public modalService: NgbModal
+  ) {}
 
   ngOnInit() {
     this.forms = this.fb.group(this.allForms);
@@ -46,9 +52,15 @@ export class LeggTilBillettModal {
           this.modal.close('Mislykket');
         }
       },
-      (error) => {
-        this.modal.close('Mislykket');
-        console.log(error);
+      (res) => {
+        //AlertModal
+        console.log(res.error);
+        const modalRef = this.modalService.open(AlertLagreModal, {
+          backdrop: 'static',
+          keyboard: false,
+        });
+        let textBody: string = res.error;
+        modalRef.componentInstance.updateBody(textBody);
       }
     );
   }
