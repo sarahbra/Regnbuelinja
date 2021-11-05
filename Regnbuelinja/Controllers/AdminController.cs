@@ -238,7 +238,7 @@ namespace Regnbuelinja.Controllers
                     return Ok(FerdLagret);
                 }
                 _log.LogInformation("AdminController.cs: LagreFerd: Databasefeil eller feil rute/båt-id. Bruker ikke opprettet.");
-                return NotFound("Rute eller båt ikke funnet eller databasefeil");
+                return NotFound("Rute eller båt ikke funnet eller ");
             }
             return BadRequest("Feil i inputvalidering på server");
         }
