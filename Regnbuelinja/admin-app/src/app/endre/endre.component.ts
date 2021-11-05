@@ -363,15 +363,18 @@ export class EndreComponent implements OnInit {
   }
 
   endreBillett() {
-    //[selected]="this.skjemaBillett.controls['bIdForm'].value"
+
     const id = this.skjemaBillett.value.id;
-    const fId = this.skjemaBillett.value.fId;
-    const bId = this.skjemaBillett.value.bId;
+    const fId = this.skjemaBillett.controls['fIdForm'].value;
+    const bId = this.skjemaBillett.controls['bIdForm'].value;
     const voksenBool = this.voksen.checked;
 
     const endretBillett = new Billett(fId, bId, voksenBool);
+    endretBillett.id = id;
+    console.log(id);
+    console.log(endretBillett);
 
-    this._http.put('api/admin/billett/' + id, endretBillett).subscribe(
+    this._http.put('/api/admin/billett/' + id, endretBillett).subscribe(
       (retur) => {
         this._router.navigate(['/billetter']);
       },

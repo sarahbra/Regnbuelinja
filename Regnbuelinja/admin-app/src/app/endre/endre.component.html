@@ -273,35 +273,8 @@
         <form [formGroup]="skjemaBillett" (ngSubmit)="vedSubmit('billett')">
 
             <input class="form-control" formControlName="id" type="hidden" />
-            <!--
-            <input class="form-control" formControlName="fId" type="hidden" />
-            <input class="form-control" formControlName="bId" type="hidden" />
-
--->
-            <label>Bestilling (bId) </label>
-            <div class="form-group">
-                <select class="form-control" formControlName="bIdForm" [(ngModel)]="valgtBestilling"
-                    (change)="hentAlleFerderForBestilling()">
-                    <option *ngFor="let bestilling of alleBestillinger" [ngValue]="bestilling">{{bestilling.id}}
-                    </option>
-                </select>
-                <p class="alert alert-warning"
-                    [hidden]="skjemaBillett.controls.bIdForm.valid || skjemaBillett.controls.bIdForm.hasError('required')">
-                    Obligatorisk
-                </p>
-            </div>
-
-            <label>Ferd (fId)</label>
-            <div class="form-group">
-                <select class="form-control " formControlName="fIdForm">
-                    <option *ngFor="let ferd of alleFerder" [ngValue]="ferd.fId">{{ferd.strekning}}, {{ferd.avreiseTid |
-                        date:'dd/MM/yyyy HH:mm'}} - {{ferd.ankomstTid | date:'dd/MM/yyyy HH:mm'}}</option>
-                </select>
-                <p class="alert alert-warning "
-                    [hidden]="skjemaBillett.controls.fIdForm.valid || skjemaBillett.controls.fIdForm.hasError('required')">
-                    Obligatorisk
-                </p>
-            </div>
+            <input class="form-control" formControlName="fIdForm" type="hidden" />
+            <input class="form-control" formControlName="bIdForm" type="hidden" />
 
             <div class="form-group row">
                 <div class="col-sm-2">

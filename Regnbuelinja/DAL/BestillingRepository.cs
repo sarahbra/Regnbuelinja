@@ -590,7 +590,7 @@ namespace Regnbuelinja.DAL
                 {
                     _log.LogInformation("BestillingRepository.cs: HentEnBillett: Ingen billett med id " + id + " i databasen");
                 }
-                System.Diagnostics.Debug.WriteLine(billett.Voksen);
+              
                 return billett;
             }
             catch (Exception e)
