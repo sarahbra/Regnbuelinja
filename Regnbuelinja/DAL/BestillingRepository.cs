@@ -290,18 +290,24 @@ namespace Regnbuelinja.DAL
                 }
                 DateTime avreiseTid = ParseDatoLocal(ferdSomLagres.AvreiseTid);
                 DateTime ankomstTid = ParseDatoLocal(ferdSomLagres.AnkomstTid);
-                Ferd nyFerd = new Ferd()
+                if(avreiseTid.CompareTo(ankomstTid) < 0)
                 {
-                    Rute = rute,
-                    Baat = båt,
-                    AvreiseTid = avreiseTid,
-                    AnkomstTid = ankomstTid
-                };
+                    Ferd nyFerd = new Ferd()
+                    {
+                        Rute = rute,
+                        Baat = båt,
+                        AvreiseTid = avreiseTid,
+                        AnkomstTid = ankomstTid
+                    };
 
-                _db.Ferder.Add(nyFerd);
-                await _db.SaveChangesAsync();
-                _log.LogInformation("BestillingRepository.cs: Vellykket! Ferd lagret i databasen");
-                return true;
+                    _db.Ferder.Add(nyFerd);
+                    await _db.SaveChangesAsync();
+                    _log.LogInformation("BestillingRepository.cs: Vellykket! Ferd lagret i databasen");
+                    return true;
+                }
+                _log.LogInformation("BestillingRepository.cs: Ferd ikke lagret. Avreisetid må være før ankomsttid");
+                return false;
+                
             }
             catch (Exception e)
             {
@@ -361,6 +367,7 @@ namespace Regnbuelinja.DAL
         }
 
         // En bestillt ferd kan ikke endres
+        // Avreisetid må være før ankomsttid
         public async Task<bool> EndreFerd(Ferder ferd)
         {
             try
@@ -381,10 +388,17 @@ namespace Regnbuelinja.DAL
                         _log.LogInformation("BestillingRepository.cs: EndreFerd: Rute eller båt ikke funnet i database. Kan ikke endre");
                         return false;
                     }
+                    DateTime AvreiseTid = ParseDatoLocal(ferd.AvreiseTid);
+                    DateTime AnkomstTid = ParseDatoLocal(ferd.AnkomstTid);
+                    if(AvreiseTid.CompareTo(AnkomstTid) > 0)
+                    {
+                        _log.LogInformation("BestillingRepository.cs: EndreFerd: Avreisetid etter ankomsttid er ikke tillatt. Ferd ikke endret");
+                        return false;
+                    }
                     ferdSomEndres.Rute = nyRute;
                     ferdSomEndres.Baat = nyBåt;
-                    ferdSomEndres.AvreiseTid = ParseDatoLocal(ferd.AvreiseTid);
-                    ferdSomEndres.AnkomstTid = ParseDatoLocal(ferd.AnkomstTid);
+                    ferdSomEndres.AvreiseTid = AvreiseTid;
+                    ferdSomEndres.AnkomstTid = AnkomstTid;
                     await _db.SaveChangesAsync();
                     _log.LogInformation("BestillingRepository.cs: EndreFerd: Vellykket! Ferd endret");
                     return true;
