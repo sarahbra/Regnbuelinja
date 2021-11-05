@@ -95,7 +95,7 @@ namespace Regnbuelinja.Controllers
                 return Ok(lagreBestilling);
             }
             _log.LogInformation("/Controllers/BestillingController.cs: LagreBestilling: Invalid client input.");
-            return ValidationProblem("Invalid input object from client");
+           return ValidationProblem("Invalid input object from client");
         }
 
         public async Task<ActionResult> HentAlleBestillingerForKunde(int id)
