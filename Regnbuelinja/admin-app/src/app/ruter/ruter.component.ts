@@ -12,7 +12,6 @@ import { VisAvhengigheterModal } from '../modals/slett-modaler/vis-avhengigheter
 @Component({
   //selector: 'app-ruter', -> Det er routing som gjelder så denne gjør
   templateUrl: './ruter.component.html',
-  //styleUrls: ['./ruter.css'],
 })
 export class RuterComponent implements OnInit {
   alleRuter: Array<Rute> = [];
@@ -47,7 +46,7 @@ export class RuterComponent implements OnInit {
     const modalRef = this.modalService.open(LeggTilRuteModal, {
       backdrop: 'static',
       keyboard: false,
-      size: 'lg'
+      size: 'lg',
     });
 
     modalRef.result.then((retur) => {

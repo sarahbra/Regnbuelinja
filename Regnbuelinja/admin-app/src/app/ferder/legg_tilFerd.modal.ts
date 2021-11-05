@@ -1,12 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  FormBuilder,
-  Form,
-} from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Baat } from '../models/baat';
@@ -24,8 +18,6 @@ export class LeggTilFerdModal {
   alleRuter: Array<Rute> = [];
 
   allForms = {
-    //bIdForm: [null, Validators.compose([Validators.required, Validators.pattern(/^\d+$/)])],
-    //rIdForm: [null, Validators.compose([Validators.required, Validators.pattern(/^\d+$/)])],
     bIdForm: [null, Validators.required],
     rIdForm: [null, Validators.required],
     avreiseDatoForm: [
@@ -96,14 +88,13 @@ export class LeggTilFerdModal {
         }
       },
       (res) => {
-        this.modal.close('Mislykket');
         console.log(res.error);
         //AlertModal
         const modalRef = this.modalService.open(AlertLagreModal, {
           backdrop: 'static',
           keyboard: false,
         });
-        let textBody: string = res.error;
+        let textBody: string = 'Ankomstdato må være senere enn avreisedato';
         modalRef.componentInstance.updateBody(textBody);
       }
     );
