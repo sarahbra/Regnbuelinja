@@ -149,15 +149,6 @@ namespace Regnbuelinja.DAL
                     Telefonnr = "22222222",
                     Epost = "kunde@mail.no"
                 };
-
-                Person kunde2 = new Person
-                {
-                    Fornavn = "Tor",
-                    Etternavn = "Kjempestøl",
-                    Telefonnr = "47833220",
-                    Epost = "tor@ikkeoslomet.no"
-                };
-
                 Person kunde3 = new Person
                 {
                     Fornavn = "Justin",
@@ -168,7 +159,7 @@ namespace Regnbuelinja.DAL
                 Person kunde4 = new Person
                 {
                     Fornavn = "Curley",
-                    Etternavn = "Pubes",
+                    Etternavn = "Tubes",
                     Telefonnr = "69696969",
                     Epost = "curly@gmail.com"
                 };
@@ -232,7 +223,6 @@ namespace Regnbuelinja.DAL
                 context.Brukere.Add(nyBruker);
 
                 context.KunderOgAnsatte.Add(kunde1);
-                context.KunderOgAnsatte.Add(kunde2);
                 context.KunderOgAnsatte.Add(kunde3);
                 context.KunderOgAnsatte.Add(kunde4);
                 context.KunderOgAnsatte.Add(kunde5);
@@ -244,7 +234,7 @@ namespace Regnbuelinja.DAL
                 //Hardkodet totalpris
                 var bestilling1 = new Bestillinger { Billetter = billetter, Kunde = kunde1 };
                 var bestilling2 = new Bestillinger { Billetter = billetter2, Kunde = kunde4 };
-                var bestilling3 = new Bestillinger { Billetter = billetter3, Kunde = kunde2 };
+                var bestilling3 = new Bestillinger { Billetter = billetter3, Kunde = kunde3 };
 
                 context.Bestillinger.Add(bestilling1);
                 context.Bestillinger.Add(bestilling2);
