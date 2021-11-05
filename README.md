@@ -22,6 +22,10 @@ Vi hadde ingen form for betaling i første oppgave. Derfor har vi lagt til en �
 
 Vi har en relativt kompleks databasestruktur med flere avhengigheter. Vi har satt opp en del ‘regler’ for disse avhengighetene som beskriver når det går an å endre, slette og legge til entiteter. Det er mulig at noen av disse reglene kan virke noe ulogiske i forhold til en realistisk versjon men vi har tatt beslutningene for å være tro mot modellene i databasen fra første oppgave samtidig som at det skal være så realistisk som mulig.
 
+Enhetstester:
+
+- Vi måtte lage noen "hotfixes" på slutten da noen metodekall til server feilet fordi Bruker ikke tok inn id. Vi fikk ikke tid til å endre bruker og rette opp alt som ville ha påvirket frontenden. Derfor har vi ikke enhetstester for hentBruker, endreBruker og hentProfil (testene feilet).
+
 # Regler:
 
 ## Rute:
