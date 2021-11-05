@@ -16,6 +16,7 @@ import { Billett } from '../models/billett';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AlertAvhengigheterFinnesModal } from '../modals/slett-modaler/alert-avhengigheter-finnes.modal';
 import { VisAvhengigheterModal } from '../modals/slett-modaler/vis-avhengigheter.modal';
+import { AlertLagreModal } from '../modals/alert-lagre.modal';
 
 @Component({
   templateUrl: './endre.component.html',
@@ -54,8 +55,6 @@ export class EndreComponent implements OnInit {
   baatId: number;
   kundeId: number;
   billettId: number;
-
-  //Brukernavn admin
 
   //Formater dato
   dateArray: Array<string> = [];
@@ -362,6 +361,8 @@ export class EndreComponent implements OnInit {
         this.skjemaBillett.patchValue({ fIdForm: billett.fId });
         this.skjemaBillett.patchValue({ bIdForm: billett.bId });
         this.voksen.checked = billett.voksen;
+        console.log(id);
+        console.log(billett);
       },
       (error) => {
         console.log(error);
@@ -370,23 +371,29 @@ export class EndreComponent implements OnInit {
   }
 
   endreBillett() {
-
     const id = this.skjemaBillett.value.id;
-    const fId = this.skjemaBillett.controls['fIdForm'].value;
-    const bId = this.skjemaBillett.controls['bIdForm'].value;
+    const fId = this.skjemaBillett.value.fIdForm;
+    const bId = this.skjemaBillett.value.bIdForm;
     const voksenBool = this.voksen.checked;
 
-    const endretBillett = new Billett(fId, bId, voksenBool);
-    endretBillett.id = id;
-    console.log(id);
-    console.log(endretBillett);
+    const endretBillett = {
+      fId,
+      bId,
+      voksenBool,
+    };
 
     this._http.put('/api/admin/billett/' + id, endretBillett).subscribe(
       (retur) => {
         this._router.navigate(['/billetter']);
       },
-      (error) => {
-        console.log(error);
+      (res) => {
+        console.log(res.error);
+        const modalRef = this.modalService.open(AlertLagreModal, {
+          backdrop: 'static',
+          keyboard: false,
+        });
+        let textBody: string = res.error;
+        modalRef.componentInstance.updateBody(textBody);
       }
     );
   }
