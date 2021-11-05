@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,21 @@ namespace Regnbuelinja
             app.UseRouting();
 
             app.UseSession();
+
+            // admin SPA ruting
+            app.Use(async (context, next) =>
+            {
+                var path = context.Request.Path.Value;
+                if (!path.StartsWith("/api") && path.StartsWith("/admin") && !Path.HasExtension(path))
+                {
+                    context.Request.Path = "/admin/index.html";
+                    await next();
+                }
+                else
+                {
+                    await next();
+                }
+            });
 
             app.UseDefaultFiles();
 
