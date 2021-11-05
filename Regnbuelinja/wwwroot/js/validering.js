@@ -1,5 +1,6 @@
 ﻿function validerFornavn(fornavn) {
-    const regexp = /^[a-zA-ZæøåÆØÅ\. \=]{2,20}$/;
+    //const regexp = /^[a-zA-ZæøåÆØÅ\. \=]{2,20}$/;
+    const regexp = /^[a-zA-ZøæåØÆÅ]{2,30}$/;
     const ok = regexp.test(fornavn);
     if (!ok) {
         $("#feilFornavn").html("Fornavnet må bestå av 2-20 bokstaver.");
@@ -11,7 +12,8 @@
 }
 
 function validerEtternavn(etternavn) {
-    const regexp = /^[a-zA-ZæøåÆØÅ\. \=]{2,30}$/;
+    //const regexp = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    const regexp = /^[a-zA-ZøæåØÆÅ]{2,30}$/;
     const ok = regexp.test(etternavn);
     if (!ok) {
         $("#feilEtternavn").html("Etternavnet må bestå av 2-20 bokstaver.");
@@ -23,6 +25,7 @@ function validerEtternavn(etternavn) {
 }
 
 function validerEpost(epost) {
+
     const regexp = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     const ok = regexp.test(epost);
     if (!ok) {

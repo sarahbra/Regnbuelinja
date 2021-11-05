@@ -1,0 +1,32 @@
+<div class="container">
+    <div>
+        <div class="col-md-12">
+            <button class='btn btn-primary btn-lg mb-4' (click)="leggTilRute()">Legg til rute</button>
+            <h2 class="mb-4"> Alle ruter </h2>
+            <div *ngIf="laster">Laster ruter.....</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Avreisehavn</th>
+                        <th>Ankomsthavn</th>
+                        <th>Pris</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let rute of alleRuter">
+                    <tr>
+                        <td>{{rute.id}}</td>
+                        <td>{{rute.startpunkt}}</td>
+                        <td>{{rute.endepunkt}}</td>
+                        <td>{{rute.pris}} NOK</td>
+                        <td><button class="btn btn-danger" (click)="visModalOgSlett(rute.id)">Slett</button></td>
+                        <td><button class="btn btn-success" [routerLink]="['/endre/',rute.id, 'rute']">Endre</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,59 +1,76 @@
 ﻿html {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 html,
 body {
-    margin: 0;
-    padding: 0;
-    font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
 }
 
 body {
-    font-size: 1rem;
+  font-size: 1rem;
 }
 
 h1 {
-    letter-spacing: 0.2rem;
-    text-transform: uppercase;
-    color: #563e7c;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+  color: #563e7c;
 }
 
 h3 {
-    padding-left: 20px;
+  padding-left: 20px;
 }
 
 #header {
-    height: 200px;
-    width: 100%;
-    background-image: url(./img/logo.png);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-color: #eff0f5;
-    margin-bottom: 4rem;
-    border-bottom: 10px solid;
-    border-image-slice: 1;
-    border-width: 2px;
-    border-image-source: linear-gradient(to left, #563e7c, blue, green, yellow, orange, red);
+  height: 200px;
+  width: 100%;
+  background-image: url(./img/logo.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-color: #eff0f5;
+  margin-bottom: 4rem;
+  border-bottom: 10px solid;
+  border-image-slice: 1;
+  border-width: 2px;
+  border-image-source: linear-gradient(
+    to left,
+    #563e7c,
+    blue,
+    green,
+    yellow,
+    orange,
+    red
+  );
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
-
 .page {
-    max-width: 600px;
-    margin-bottom: 60px;
+  max-width: 600px;
+  margin-bottom: 60px;
 }
 
 .datepicker {
-    font-size: 14px;
+  font-size: 14px;
+}
+
+#link-admin {
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 @media screen and (max-width: 400px) {
-    html {
-        font-size: 14px;
-    }
+  html {
+    font-size: 14px;
+  }
 }

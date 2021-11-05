@@ -1,19 +1,16 @@
 ﻿$("#kundeForm").submit(function (event) {
     event.preventDefault();
-    const valid = form.checkValidity();
-    $(form).addClass("was-validated");
-    if (!valid) {
-        return false;
-    }
-
+    
     const kunde = {
-        fornavn: $("#fornavn").val(),
-        etternavn: $("#etternavn").val(),
-        epost: $("#epost").val(),
-        telefonnr: $("#telefonnr").val()
+        fornavn: $("#Fornavn").val(),
+        etternavn: $("#Etternavn").val(),
+        epost: $("#Epost").val(),
+        telefonnr: $("#Telefonnr").val()
     };
 
+    console.log(kunde);
     if (validerKunde(kunde)) {
+    
         $.post("Bestilling/LagreKunde", kunde, function (id) {
             const bid = hentId();
             const params = new URLSearchParams();

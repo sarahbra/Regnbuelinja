@@ -581,7 +581,7 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Billetter billett = await _db.Billetter.Select(b => new Billetter()
+                Billetter billett = await _db.Billetter.Where(b => b.Id == id).Select(b => new Billetter()
                 {
                     Id = b.Id,
                     FId = b.Ferd.Id,
@@ -592,6 +592,7 @@ namespace Regnbuelinja.DAL
                 {
                     _log.LogInformation("BestillingRepository.cs: HentEnBillett: Ingen billett med id " + id + " i databasen");
                 }
+                System.Diagnostics.Debug.WriteLine(billett.Voksen);
                 return billett;
             }
             catch (Exception e)
@@ -995,8 +996,8 @@ namespace Regnbuelinja.DAL
         {
             try
             {
-                Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(bruker.Brukernavn));
-                if(somSkalEndres != default && somSkalEndres.Brukernavn == username)
+                Brukere somSkalEndres = await _db.Brukere.FirstOrDefaultAsync(b => b.Brukernavn.Equals(username));
+                if(somSkalEndres != default)
                 {
                     string passord = bruker.Passord;
                     byte[] salt = LagEtSalt();

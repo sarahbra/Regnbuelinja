@@ -17,43 +17,47 @@
 </head>
 <body>
     <div id="header"></div>
-    <div class="container-sm">
-        <div class="row">
-            <div class="col-md-6">
+    <div class="page container">
+        <div class="row justify-content-md-center">
+            <div class="col">
                 <h1 class="mb-5">Registrer kunde</h1>
-                <form id="kundeForm">
+                <form id="kundeForm" class="row needs-validation p-3" novalidate>
                     <div class="mb-3 p-0">
                         <label for="Fornavn">Fornavn</label>
-                        <input type="text" class="form-control" id="Fornavn" required>
+                        <input type="text" class="form-control" id="Fornavn" onchange="validerFornavn(this.value)" required>
                         <div class="invalid-feedback">
                             Du må skrive inn fornavn
                         </div>
-                        <span id="feilEpost" style="color: red"></span>
+                        <span id="feilFornavn" style="color: red"></span>
                     </div>
+
                     <div class="mb-3 p-0">
                         <label for="Etternavn">Etternavn</label>
-                        <input type="text" class="form-control" id="Etternavn" required>
+                        <input type="text" class="form-control" id="Etternavn" onchange="validerEtternavn(this.value)" required>
                         <div class="invalid-feedback">
                             Du må skrive inn etternavn
                         </div>
-                        <span id="feilEpost" style="color: red"></span>
+                        <span id="feilEtternavn" style="color: red"></span>
                     </div>
+
                     <div class="mb-3 p-0">
                         <label for="Epost">Epost</label>
-                        <input type="text" class="form-control" id="Epost" required />
+                        <input type="text" class="form-control" id="Epost" onchange="validerEpost(this.value)" required />
                         <div class="invalid-feedback">
                             Du må skrive inn epost
                         </div>
                         <span id="feilEpost" style="color: red"></span>
                     </div>
+
                     <div class="mb-3 p-0">
                         <label for="Telefonnr">Telefonnummer</label>
-                        <input type="text" class="form-control" id="Telefonnr" required />
+                        <input type="text" class="form-control" id="Telefonnr" onchange="validerTelefonnr(this.value)" required />
                         <div class="invalid-feedback">
                             Du må skrive inn telefonnummer
                         </div>
                         <span id="feilTelefonnr" style="color: red"></span>
                     </div>
+
                     <button class="btn btn-lg btn-primary col-sm-6" type="submit" style="background-color: #563e7c">
                         Registrer
                     </button>
@@ -62,7 +66,7 @@
             </div>
         </div>
     </div>
-    <scripts src="/js/kunderegistrering.html"></scripts>
-    <script src="/js/validering.js"></script>
+    <script src="./js/kunderegistrering.js"></script>
+    <script src="./js/validering.js"></script>
 </body>
 </html>

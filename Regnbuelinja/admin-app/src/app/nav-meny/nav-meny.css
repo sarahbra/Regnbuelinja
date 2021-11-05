@@ -1,0 +1,23 @@
+.navbar {
+  background-color: #eff0f5;
+  height: 120px;
+}
+
+a {
+  white-space: nowrap;
+}
+/* 
+a.btn {
+  border-radius: 0.25rem;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  white-space: nowrap;
+}
+a.btn:hover {
+  border-radius: 0.5rem;
+}
+ */
+.navbar li {
+  font-size: 18px;
+}
