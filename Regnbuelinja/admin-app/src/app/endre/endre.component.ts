@@ -371,7 +371,7 @@ export class EndreComponent implements OnInit {
 
     const endretBillett = new Billett(fId, bId, voksenBool);
 
-    this._http.put('api/admin/billett/' + id, endretBillett).subscribe(
+    this._http.put('/api/admin/billett/' + id, endretBillett).subscribe(
       (retur) => {
         this._router.navigate(['/billetter']);
       },
