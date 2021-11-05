@@ -168,15 +168,22 @@ export class EndreComponent implements OnInit {
     betalt: ['false', Validators.required],
   };
 
-  valideringPassord = {
-    //Legge til pattern her!
-    passord: [null, Validators.required],
-  };
-
   valideringBillett = {
     id: [null, Validators.required],
     fIdForm: [null, Validators.required],
     bIdForm: [null, Validators.required],
+  };
+
+  valideringPassord = {
+    passord: [
+      null,
+      Validators.compose([
+        Validators.required,
+        Validators.pattern(
+          '(?=.*[0-9])(?=.*[a-zA-ZæøåÆØÅ])([a-zA-ZæøåÆØÅ0-9]+){6,}'
+        ),
+      ]),
+    ],
   };
 
   constructor(
