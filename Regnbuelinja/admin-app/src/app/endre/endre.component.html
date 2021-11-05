@@ -278,7 +278,7 @@
 
             <div class="form-group row">
                 <div class="col-sm-2">
-                    <label>Voksen: </label>
+                    <label>Voksen:</label>
                 </div>
                 <div class="col-sm-1">
                     <input type="checkbox" id="voksen" class="btn-check" />
@@ -297,13 +297,12 @@
 <!--Endre admin-passord-->
 <div class="container mt-4" *ngIf="visEndreAdminPassord">
     <div class="col-md-8">
-        <h3 class="mb-4">Endre passord</h3>
+        <h3 class="mb-4">Endre passord for adminbruker</h3>
         <form [formGroup]="skjemaAdminPassord" (ngSubmit)="vedSubmit('adminPassord')">
-            <label>Brukernavn: {{brukernavn}}</label>
+            <h4 class="mb-4">Ditt brukernavn: {{brukernavn}}</h4>
 
             <div class="form-group">
-                <label>Skriv inn nytt passord</label>
-                <input class="form-control" formControlName="passord" />
+                <input class="form-control" formControlName="passord" placeholder="Skriv inn nytt passord" />
                 <p class="alert alert-warning"
                     [hidden]="skjemaAdminPassord.controls.passord.valid || skjemaAdminPassord.controls.passord.pristine">
                     Passord må bestå av minst 6 tegn hvorav minst ett tall

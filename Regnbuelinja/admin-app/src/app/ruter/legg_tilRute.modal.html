@@ -1,78 +1,56 @@
 <div class="modal-content">
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Ny Rute</h4>
-    </div>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Ny Rute</h4>
+  </div>
 
-    <div class="modal-body">
-        <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
+  <div class="modal-body">
+    <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
 
-            <label>Avreisehavn</label>
-            <div class="form-group row">
-              <div class="col-sm-4">
-                <input type="text" formControlName="startpunktForm" class="form-control" placeholder="Avreisehavn" autofocus />
-              </div>
-              <div>
-                <small class="alert alert-warning"
-                  [hidden]="forms.controls.startpunktForm.valid || forms.controls.startpunktForm.pristine">
-                  Avreisehavn kan kun inneholde bokstaver, mellom 2-30 tegn
-                </small>
-              </div>
-      
-            </div>
+      <label>Avreisehavn</label>
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <input type="text" formControlName="startpunktForm" class="form-control" placeholder="Avreisehavn"
+            autofocus />
+        </div>
+        <div>
+          <small class="alert alert-warning"
+            [hidden]="forms.controls.startpunktForm.valid || forms.controls.startpunktForm.pristine">
+            Avreisehavn kan kun inneholde bokstaver, mellom 2-30 tegn
+          </small>
+        </div>
 
-            <label>Ankomsthavn</label>
-            <div class="form-group row">
-              <div class="col-sm-4">
-                <input type="text" formControlName="endepunktForm" class="form-control" placeholder="Ankomsthavn" />
-              </div>
-              <div>
-                <small class="alert alert-warning"
-                  [hidden]="forms.controls.endepunktForm.valid || forms.controls.endepunktForm.pristine">
-                  Ankomsthavn kan kun inneholde bokstaver, mellom 2-30 tegn
-                </small>
-              </div>
-            </div>
+      </div>
 
-            <label>Pris</label>
-            <div class="form-group row">
-                <div class="col-sm-4">
-                  
-                  <input type="text" formControlName="prisForm" class="form-control" placeholder="Pris" />
-                </div>
-                <div>
-                  <small class="alert alert-warning"
-                    [hidden]="forms.controls.prisForm.valid || forms.controls.prisForm.pristine">
-                    Ugyldig pris
-                  </small>
-                </div>
-              </div>
-    <!--
-            <div class="form-group row">
-              <div class="col-sm-4">
-                <button class="btn btn-lg btn-primary btn-block " type="submit" [disabled]="!forms.valid">Log
-                  inn</button>
-              </div>
-              <div>
-                <small class="alert alert-danger"
-                *ngIf="loginError">Feil startpunkt, endepunkt eller pris, prøv igjen</small>
-              </div>
-            </div>
+      <label>Ankomsthavn</label>
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <input type="text" formControlName="endepunktForm" class="form-control" placeholder="Ankomsthavn" />
+        </div>
+        <div>
+          <small class="alert alert-warning"
+            [hidden]="forms.controls.endepunktForm.valid || forms.controls.endepunktForm.pristine">
+            Ankomsthavn kan kun inneholde bokstaver, mellom 2-30 tegn
+          </small>
+        </div>
+      </div>
 
+      <label>Pris</label>
+      <div class="form-group row">
+        <div class="col-sm-4">
 
-<p class="mt-3 text-muted">&copy; Regnbuelinja</p>
-    -->      
-            
-              <div class="modal-footer">      
-                <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
-                <button type="submit" class="btn btn-success" [disabled]="!forms.valid">Lagre</button>
-              </div>
-            
-        </form>
-    </div>
-   <!--
-    <div class="modal-footer">      
+          <input type="text" formControlName="prisForm" class="form-control" placeholder="Pris" />
+        </div>
+        <div>
+          <small class="alert alert-warning"
+            [hidden]="forms.controls.prisForm.valid || forms.controls.prisForm.pristine">
+            Ugyldig pris
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer">
         <button type="button" class="btn btn-default" (click)="modal.close('Lukk')">Lukk</button>
         <button type="submit" class="btn btn-success" [disabled]="!forms.valid">Lagre</button>
-    </div>
-  -->
+      </div>
+    </form>
+  </div>
 </div>

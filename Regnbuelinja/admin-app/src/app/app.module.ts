@@ -28,6 +28,7 @@ import { AlertAvhengigheterFinnesModal } from './modals/slett-modaler/alert-avhe
 import { SlettErrorModal } from './modals/slett-modaler/slett-error.modal';
 import { EndreComponent } from './endre/endre.component';
 import { VisBilletterForBestilling } from './modals/vis-billetter-for-bestilling.modal';
+import { AlertLagreModal } from './modals/alert-lagre.modal';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { VisBilletterForBestilling } from './modals/vis-billetter-for-bestilling
     EndreComponent,
     VisBilletterForBestilling,
     AdminBrukerComponent,
+    AlertLagreModal,
   ],
 
   imports: [

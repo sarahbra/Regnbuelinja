@@ -5,7 +5,7 @@
 
   <div class="modal-body">
     <form [formGroup]="forms" (ngSubmit)="vedSubmit()">
-      <label>Båt Navn</label>
+      <label>Båtnavn</label>
       <div class="form-group row">
         <div class="col-sm-4">
           <input type="text" formControlName="navnForm" class="form-control" placeholder="Båtnavn" autofocus />
@@ -13,7 +13,7 @@
         <div>
           <small class="alert alert-warning"
             [hidden]="forms.controls.navnForm.valid || forms.controls.navnForm.pristine">
-            Båt navn kan kun inneholde bokstaver og mellomrom, mellom 2-30 tegn
+            Båtnavn kan kun inneholde bokstaver og mellomrom, mellom 2-30 tegn
           </small>
         </div>
       </div>

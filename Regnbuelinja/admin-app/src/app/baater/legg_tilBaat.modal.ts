@@ -1,12 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  FormBuilder,
-  Form,
-} from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Baat } from '../models/baat';
 
